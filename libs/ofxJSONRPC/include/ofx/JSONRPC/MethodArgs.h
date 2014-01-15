@@ -33,34 +33,28 @@ namespace ofx {
 namespace JSONRPC {
 
 
-class AbstractMethod
-    /// \brief An abstract interface for method registration.
+class MethodArgs
+    /// \brief A contain all arguments for an JSONRPC method call.
 {
 public:
-    virtual ~AbstractMethod()
-        ///< \brief Destroy the AbstractMethod.
+    MethodArgs(const Json::Value& params = Json::Value::null):
+        params(params),
+        result(Json::Value::null),
+        error(Json::Value::null)
+        ///< \brief Create a MethodArgs with the given parameters.
+        ///< \param params The JSON contents of the JSONRPC request params.
+        ///<        If there are no arguments provided, the params are null.
     {
     }
 
-    virtual bool invoke(const Json::Value& request,
-                        Json::Value& response,
-                        Json::Value& error) = 0;
-        ///< \brief Invoke the method defined in this callback.
-        ///< \param request the request parameters.
-        ///< \param response the response data to be filled if needed.
-        ///< \param error the error data to be filled if needed.
-        ///< \returns true iff the method invocation was successful.
-        ///< \note If the invocation was not successful, invoke will return
-        ///<        false.  If needed, the invoked method can fill in the
-        ///<        error data as well.
+    const Json::Value params;
+        ///< \brief The JSON contents of the JSONRPC request params.
 
-    virtual std::string getName() const = 0;
-        ///< \brief Get the method name.
-        ///< \returns the name of the method.
+    Json::Value result;
+        ///< \brief The result to be returned, if required.
 
-    virtual Json::Value getDescription() const = 0;
-        ///< \brief Get the method's description.
-        ///< \returns the name of the method.
+    Json::Value error;
+        ///< \brief The error to be returned, if required.
 
 };
 
