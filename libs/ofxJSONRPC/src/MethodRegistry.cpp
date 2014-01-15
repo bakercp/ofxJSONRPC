@@ -59,19 +59,17 @@ Response MethodRegistry::processCall(const Request& request)
     {
         SharedMethodPtr pMethod = (*iter).second;
 
-        Json::Value jsonRequest = request.getParameters();
-        Json::Value jsonResponse; // to be filled by target method
-        Json::Value jsonError;    // to be filled by target method (if needed)
+        MethodArgs args(request.getParameters());
 
-        if (pMethod->invoke(jsonRequest, jsonResponse, jsonError))
+        if (pMethod->invoke(args))
         {
-            return Response(request.getID(), jsonResponse);
+            return Response(request.getID(), args.result);
         }
         else
         {
             return Response(request.getID(),
                             Error(Errors::RPC_ERROR_INVALID_REQUEST,
-                                  jsonError));
+                                  args.error));
         }
     }
     else

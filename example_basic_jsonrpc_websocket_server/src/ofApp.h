@@ -42,13 +42,9 @@ public:
     void update();
     void draw();
 
-    bool generateRandomNumber(const Json::Value& request,
-                              Json::Value& response,
-                              Json::Value& error);
+    bool generateRandomNumber(JSONRPC::MethodArgs& args);
 
-    bool setRandomNumber(const Json::Value& request,
-                         Json::Value& response,
-                         Json::Value& error);
+    bool setRandomNumber(JSONRPC::MethodArgs& args);
 
     ofColor bgColor;
 

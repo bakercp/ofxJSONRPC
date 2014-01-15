@@ -30,6 +30,7 @@
 #include "Poco/Exception.h"
 #include "ofx/JSONRPC/AbstractTypes.h"
 #include "ofx/JSONRPC/Error.h"
+#include "ofx/JSONRPC/MethodArgs.h"
 
 
 namespace ofx {
@@ -41,9 +42,7 @@ class Method: public AbstractMethod
     /// \brief A method callback class for registering JSONRPC methods.
 {
 public:
-    typedef bool (MethodClass::*MethodPtr)(const Json::Value& request,
-                                           Json::Value& response,
-                                           Json::Value& error);
+    typedef bool (MethodClass::*MethodPtr)(MethodArgs& args);
         ///< \brief A typedef for a method signature.
         ///< \details Methods of this type receieve a request.  Upon successful
         ///<        completion of the call, the response object should be filled
@@ -65,9 +64,7 @@ public:
     virtual ~Method();
         ///< \brief Destory the Method.
 
-    virtual bool invoke(const Json::Value& request,
-                        Json::Value& response,
-                        Json::Value& error);
+    virtual bool invoke(MethodArgs& args);
 
     virtual std::string getName() const;
 
@@ -109,11 +106,9 @@ Method<MethodClass>::~Method()
 
 
 template<class MethodClass>
-bool Method<MethodClass>::invoke(const Json::Value& request,
-                                 Json::Value& response,
-                                 Json::Value& error)
+bool Method<MethodClass>::invoke(MethodArgs& args)
 {
-    return ((_pObject->*_pMethod)(request, response, error));
+    return (_pObject->*_pMethod)(args);
 }
 
 

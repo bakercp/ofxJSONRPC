@@ -63,19 +63,15 @@ void ofApp::draw()
 }
 
 
-bool ofApp::generateRandomNumber(const Json::Value& request,
-                                 Json::Value& response,
-                                 Json::Value& error)
+bool ofApp::generateRandomNumber(JSONRPC::MethodArgs& args)
 {
-    response = ofRandom(1);
+    args.result = ofRandom(1);
     return true;
 }
 
-bool ofApp::setRandomNumber(const Json::Value& request,
-                            Json::Value& response,
-                            Json::Value& error)
+bool ofApp::setRandomNumber(JSONRPC::MethodArgs& args)
 {
-    double d = request.isDouble() ? request.asDouble() : 0;
+    double d = args.params.isDouble() ? args.params.asDouble() : 0;
 
     bgColor = ofColor(d * 255);
 

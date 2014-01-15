@@ -114,7 +114,6 @@ public:
         ///< \returns a MethodDescriptionMap containting a map of the
         ///<        method names and the method descriptions.
 
-
 protected:
     typedef std::shared_ptr<AbstractMethod> SharedMethodPtr;
         ///< \brief A shared pointer typedef to simplify pointer memory management.

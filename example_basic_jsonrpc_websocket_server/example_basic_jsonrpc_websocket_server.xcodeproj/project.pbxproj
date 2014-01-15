@@ -195,6 +195,7 @@
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E7F985F515E0DE99003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
+		FD8D37FC18864A8C008CA229 /* MethodArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MethodArgs.h; path = ../libs/ofxJSONRPC/include/ofx/JSONRPC/MethodArgs.h; sourceTree = "<group>"; };
 		FD9BC9CA18858F1F00566B4F /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = ../libs/ofxJSONRPC/include/ofx/JSONRPC/Utils.h; sourceTree = "<group>"; };
 		FD9BC9CB18858F6B00566B4F /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Utils.cpp; path = ../libs/ofxJSONRPC/src/Utils.cpp; sourceTree = "<group>"; };
 		FD9BC9CD1885964500566B4F /* JSONRPC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSONRPC.h; path = ../libs/ofxJSONRPC/include/ofx/JSONRPC/JSONRPC.h; sourceTree = "<group>"; };
@@ -624,6 +625,7 @@
 		8d637f949423983bb8cb1b76ccf3a53b /* JSONRPC */ = {
 			isa = PBXGroup;
 			children = (
+				FD8D37FC18864A8C008CA229 /* MethodArgs.h */,
 				FDDABECB1883C5B1004E0E30 /* MethodRegistry.h */,
 				b41915017cea68afdd5d7f438b86b49c /* BaseMessage.h */,
 				a72ba00649a33d94720e46b059265f22 /* Error.h */,

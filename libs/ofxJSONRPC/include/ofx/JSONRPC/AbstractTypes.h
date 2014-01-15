@@ -33,6 +33,9 @@ namespace ofx {
 namespace JSONRPC {
 
 
+class MethodArgs;
+
+
 class AbstractMethod
     /// \brief An abstract interface for method registration.
 {
@@ -42,9 +45,7 @@ public:
     {
     }
 
-    virtual bool invoke(const Json::Value& request,
-                        Json::Value& response,
-                        Json::Value& error) = 0;
+    virtual bool invoke(MethodArgs& args) = 0;
         ///< \brief Invoke the method defined in this callback.
         ///< \param request the request parameters.
         ///< \param response the response data to be filled if needed.
