@@ -49,26 +49,4 @@ std::string Utils::toString(const Json::Value& json, bool styled)
 }
 
 
-std::string Utils::toString(const Response& response, bool styled)
-{
-    if (!response.isErrorResponse())
-    {
-        // TODO
-        // success response
-        return toString(Response::toJSON(response), styled);
-    }
-    else
-    {
-        // error response
-        return toString(Response::toJSON(response), styled);
-    }
-}
-
-
-std::string Utils::toString(const Request& request, bool styled)
-{
-    return toString(Request::toJSON(request), styled);
-}
-
-
 } } // namespace ofx::JSONRPC

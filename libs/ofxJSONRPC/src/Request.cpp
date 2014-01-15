@@ -88,7 +88,7 @@ Json::Value Request::getParameters() const
 
 std::string Request::toString(bool styled) const
 {
-    return Utils::toString(*this, styled);
+    return Utils::toString(toJSON(*this), styled);
 }
 
 

@@ -48,9 +48,6 @@ public:
         ///<        with returns and thus easier to read.
         ///< \returns A raw string representation of the JSON.
 
-    static std::string toString(const Response& response, bool styled = false);
-    static std::string toString(const Request& request, bool styled = false);
-
 };
 
 
