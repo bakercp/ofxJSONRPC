@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<!-- Force latest IE rendering engine or ChromeFrame if installed -->
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+<meta charset="utf-8">
+<title>ofx::HTTP::BasicWebSocketServer</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="img/favicon.ico">
+<!-- Bootstrap styles -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<!-- Bootstrap switch -->
+<link rel="stylesheet" href="css/bootstrap-switch.min.css">
+<!-- FontAwesome -->
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<!-- Syntax highlighting. -->
+<link rel="stylesheet" href="css/prism.css">
+<!-- Generic page styles -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">ofx::HTTP::BasicWebSocketServer Demo</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Basic WebSocket Server Demo</h1>
+        <br>
+        <blockquote>
+            <p>
+                <code>ofx::HTTP::BasicWebSocketServer</code> is a simple server for WebSocket demos.  Below, you'll see a n HTML <code>span</code> that is updated from the openFrameworks app over a WebSocket.  The buttons below that will set the background color of the currently running openFrameworks app.
+            </p>
+        </blockquote>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="pull-left">
+                    <strong>Enable Random Text Stream</strong>
+                </div>
+                <div class="pull-right">
+                    <input type="checkbox" name="enable-random-text-stream" id="enable-random-text-stream" value="false"/>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <span id="random-text-stream"></span>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="pull-left">
+                    <strong>Get A Random Number From The Server</strong>
+                </div>
+                <div class="pull-right">
+                    <button type="button" id="get-random-number" class="btn btn-primary">Get Number</button>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <span id="random-number-get"></span>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="pull-left">
+                    <strong>Send A Random Number To The Server</strong>
+                </div>
+                <div class="pull-right">
+                    <button type="button" id="set-random-number" class="btn btn-primary">Set Number</button>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <span id="random-number-set"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap-switch.min.js"></script>
+    <script src="./js/jquery.jsonrpcclient.js"></script>
+    <script src="./js/jquery.json.js"></script>
+    <script src="./js/prism.js"></script>
+    <script src="./js/ofxUtils.js"></script>
+    <script src="./js/main.js"></script>
+</body> 
+</html>
