@@ -127,17 +127,20 @@ Response Response::fromJSON(const Json::Value& json)
             }
             else
             {
-                throw ParseException("Invalid JSONRPC: No result OR error");
+                throw Poco::Exception("Invalid JSONRPC: No result OR error",
+                                      Errors::RPC_ERROR_PARSE);
             }
         }
         else
         {
-            throw ParseException("Invalid JSONRPC: No ID");
+            throw Poco::Exception("Invalid JSONRPC: No ID",
+                                  Errors::RPC_ERROR_PARSE);
         }
     }
     else
     {
-        throw ParseException("Invalid JSONRPC: No Version String");
+        throw Poco::Exception("Invalid JSONRPC: No Version String",
+                              Errors::RPC_ERROR_PARSE);
     }
 }
 

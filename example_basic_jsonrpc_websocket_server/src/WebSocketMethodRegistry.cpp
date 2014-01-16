@@ -70,7 +70,7 @@ void WebSocketMethodRegistry::onWebSocketFrameReceivedEvent(HTTP::WebSocketFrame
                 evt.getConnectionRef().sendFrame(response.toString());
             }
         }
-        catch (JSONRPC::ParseException& exc)
+        catch (Poco::Exception& exc)
         {
             JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
                                        JSONRPC::Error::METHOD_NOT_FOUND);

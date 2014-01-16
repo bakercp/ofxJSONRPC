@@ -92,7 +92,7 @@ public:
         ///< \brief Deserialize the JSON to a Response object.
         ///< \param json JSONRPC compatible JSON to deserialize.
         ///< \returns the deserialized Response.
-        ///< \throws ParseException if the JSON is not valid.
+        ///< \throws Poco::Exception if the JSON is not valid.
 
 protected:
     Json::Value _result;

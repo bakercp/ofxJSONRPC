@@ -150,12 +150,12 @@ Request Request::fromJSON(const Json::Value& json)
         }
         else
         {
-            throw ParseException("Invalid JSONRPC: No Method");
+            throw Poco::Exception("Invalid JSONRPC: No Method", Errors::RPC_ERROR_PARSE);
         }
     }
     else
     {
-        throw ParseException("Invalid JSONRPC: No Version String");
+        throw Poco::Exception("Invalid JSONRPC: No Version String", Errors::RPC_ERROR_PARSE);
     }
 }
 

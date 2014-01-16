@@ -91,7 +91,7 @@ public:
         ///< \brief Deserialize the JSON to a Error object.
         ///< \param json JSONRPC compatible JSON to deserialize.
         ///< \returns the deserialized Error.
-        ///< \throws ParseException if the JSON is not valid.
+        ///< \throws Poco::Exception if the JSON is not valid.
 
     static const Error NO_ERROR;            ///< \brief No Error
     static const Error PARSE_ERROR;         ///< \brief Parse Error

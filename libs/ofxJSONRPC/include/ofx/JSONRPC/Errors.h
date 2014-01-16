@@ -57,35 +57,5 @@ public:
 
 };
 
-///
-/// \brief JSONRPCException defines the base JSONRPC Exception
-///
-POCO_DECLARE_EXCEPTION(, JSONRPCException, Poco::Exception);
-
-///
-/// \brief ParseException defines and exception for Errors::RPC_ERROR_PARSE
-///
-POCO_DECLARE_EXCEPTION_CODE(, ParseException, JSONRPCException, Errors::RPC_ERROR_PARSE);
-
-///
-/// \brief InvalidRequestException defines and exception for Errors::RPC_ERROR_INVALID_REQUEST
-///
-POCO_DECLARE_EXCEPTION_CODE(, InvalidRequestException, JSONRPCException, Errors::RPC_ERROR_INVALID_REQUEST);
-
-///
-/// \brief MethodNotFoundException defines and exception for Errors::RPC_ERROR_METHOD_NOT_FOUND
-///
-POCO_DECLARE_EXCEPTION_CODE(, MethodNotFoundException, JSONRPCException, Errors::RPC_ERROR_METHOD_NOT_FOUND);
-
-///
-/// \brief InvalidParameterException defines and exception for Errors::RPC_ERROR_INVALID_PARAMETERS
-///
-POCO_DECLARE_EXCEPTION_CODE(, InvalidParameterException, JSONRPCException, Errors::RPC_ERROR_INVALID_PARAMETERS);
-
-///
-/// \brief JSONRPCException defines and exception for Errors::RPC_ERROR_INTERNAL_ERROR
-///
-POCO_DECLARE_EXCEPTION_CODE(, InternalErrorException, JSONRPCException, Errors::RPC_ERROR_INTERNAL_ERROR);
-
 
 } } // namespace ofx::JSONRPC

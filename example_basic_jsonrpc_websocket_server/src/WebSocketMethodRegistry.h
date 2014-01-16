@@ -41,8 +41,8 @@ class ClientInfo
 {
 public:
     ClientInfo(HTTP::WebSocketConnection* connection):
-    connection(connection),
-    nextUpdate(0)
+        connection(connection),
+        nextUpdate(0)
     {
     }
 
@@ -56,9 +56,9 @@ public:
     {
     }
 
-    unsigned long long nextUpdate;
     HTTP::WebSocketConnection* connection;
-    
+    unsigned long long nextUpdate;
+
 };
 
 

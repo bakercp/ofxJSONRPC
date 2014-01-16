@@ -91,7 +91,7 @@ public:
         ///< \brief Deserialize the JSON to a Request object.
         ///< \param json JSONRPC compatible JSON to deserialize.
         ///< \returns deserialized Request.
-        ///< \throws ParseException if the json is not valid.
+        ///< \throws Poco::Exception if the json is not valid.
 
 protected:
     std::string _method;

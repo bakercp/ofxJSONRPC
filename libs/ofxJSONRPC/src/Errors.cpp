@@ -69,12 +69,4 @@ std::string Errors::getErrorMessage(int code)
 }
 
 
-POCO_IMPLEMENT_EXCEPTION(JSONRPCException,          Poco::Exception,  "Unknown Exception");
-POCO_IMPLEMENT_EXCEPTION(ParseException,            JSONRPCException, "Parse Exception");
-POCO_IMPLEMENT_EXCEPTION(InvalidRequestException,   JSONRPCException, "Invalid Request Exception");
-POCO_IMPLEMENT_EXCEPTION(MethodNotFoundException,   JSONRPCException, "Method Not Found Exception");
-POCO_IMPLEMENT_EXCEPTION(InvalidParameterException, JSONRPCException, "Invalid Parameter Exception");
-POCO_IMPLEMENT_EXCEPTION(InternalErrorException,    JSONRPCException, "Internal Error Exception");
-
-
 } } // namespace ofx::JSONRPC
