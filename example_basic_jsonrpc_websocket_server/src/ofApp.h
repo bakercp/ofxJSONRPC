@@ -26,6 +26,7 @@
 #pragma once
 
 
+#include <map>
 #include "ofMain.h"
 #include "ofxHTTP.h"
 #include "ofxJSONRPC.h"

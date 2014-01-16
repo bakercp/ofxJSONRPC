@@ -25,9 +25,11 @@
 
 #pragma once
 
-#include "ofxHTTP.h"
+
+#include <map>
 #include <string>
 #include <json/json.h>
+#include "ofxHTTP.h"
 #include "ofx/JSONRPC/Utils.h"
 #include "ofx/JSONRPC/MethodRegistry.h"
 
@@ -35,10 +37,34 @@
 namespace ofx {
 
 
+class ClientInfo
+{
+public:
+    ClientInfo(HTTP::WebSocketConnection* connection):
+    connection(connection),
+    nextUpdate(0)
+    {
+    }
+
+
+    virtual ~ClientInfo()
+    {
+    }
+
+
+    void update()
+    {
+    }
+
+    unsigned long long nextUpdate;
+    HTTP::WebSocketConnection* connection;
+    
+};
+
+
 class WebSocketMethodRegistry: public JSONRPC::MethodRegistry
 {
 public:
-
     WebSocketMethodRegistry();
     virtual ~WebSocketMethodRegistry();
 
@@ -48,8 +74,7 @@ public:
     void onWebSocketFrameSentEvent(HTTP::WebSocketFrameEventArgs& evt);
     void onWebSocketErrorEvent(HTTP::WebSocketEventArgs& evt);
 
-
-    std::set<HTTP::WebSocketConnection*> connections;
+    std::map<const HTTP::WebSocketConnection*, ClientInfo> clients;
 
 };
 

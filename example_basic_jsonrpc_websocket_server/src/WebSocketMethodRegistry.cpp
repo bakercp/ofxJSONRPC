@@ -43,6 +43,8 @@ WebSocketMethodRegistry::~WebSocketMethodRegistry()
 void WebSocketMethodRegistry::onWebSocketOpenEvent(HTTP::WebSocketEventArgs& evt)
 {
     cout << "Connection opened from: " << evt.getConnectionRef().getClientAddress().toString() << endl;
+
+//    clients[&evt.getConnectionRef()] = ClientInfo();
 }
 
 
