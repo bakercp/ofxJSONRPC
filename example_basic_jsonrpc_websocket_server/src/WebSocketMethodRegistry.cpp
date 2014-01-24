@@ -1,6 +1,6 @@
 // =============================================================================
 //
-// Copyright (c) 2013 Christopher Baker <http://christopherbaker.net>
+// Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,6 @@ WebSocketMethodRegistry::WebSocketMethodRegistry()
 
 WebSocketMethodRegistry::~WebSocketMethodRegistry()
 {
-
 }
 
 
@@ -65,6 +64,7 @@ void WebSocketMethodRegistry::onWebSocketFrameReceivedEvent(HTTP::WebSocketFrame
         {
             JSONRPC::Request request = JSONRPC::Request::fromJSON(json);
             JSONRPC::Response response = processCall(request);
+            
             if (response.hasID())
             {
                 evt.getConnectionRef().sendFrame(response.toString());
@@ -79,7 +79,7 @@ void WebSocketMethodRegistry::onWebSocketFrameReceivedEvent(HTTP::WebSocketFrame
     }
     else
     {
-        cout << "NOT JSON: " << reader.getFormattedErrorMessages() << endl;
+        ofLogError() << "NOT JSON: " << reader.getFormattedErrorMessages();
     }
 }
 
@@ -92,7 +92,13 @@ void WebSocketMethodRegistry::onWebSocketFrameSentEvent(HTTP::WebSocketFrameEven
 
 void WebSocketMethodRegistry::onWebSocketErrorEvent(HTTP::WebSocketEventArgs& evt)
 {
-    cout << "Error from: " << evt.getConnectionRef().getClientAddress().toString() << endl;
+    ofLogError() << "Error from: " << evt.getConnectionRef().getClientAddress().toString();
+}
+
+
+bool WebSocketMethodRegistry::setRandomNumberStream(JSONRPC::MethodArgs& args)
+{
+
 }
 
 

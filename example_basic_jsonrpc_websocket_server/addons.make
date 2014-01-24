@@ -2,3 +2,5 @@ ofxHTTP
 ofxJSON
 ofxJSONRPC
 ofxMediaType
+ofxSSLManager
+ofxXmlSettings
