@@ -49,8 +49,10 @@ namespace std {
 #include <string>
 #include <json/json.h>
 #include "Poco/Mutex.h"
+#include "ofEvents.h"
 #include "ofx/JSONRPC/AbstractTypes.h"
 #include "ofx/JSONRPC/Method.h"
+#include "ofx/JSONRPC/MethodArgs.h"
 #include "ofx/JSONRPC/Response.h"
 #include "ofx/JSONRPC/Request.h"
 
@@ -77,10 +79,7 @@ public:
     virtual ~MethodRegistry();
         ///< \brief Destroy the MethodRegistry.
 
-    template <typename MethodClass>
-    void registerMethod(MethodClass* pObject,
-                        typename Method<MethodClass>::MethodPtr pMethod,
-                        const std::string& name,
+    std::shared_ptr<AbstractMethod> registerMethod(const std::string& name,
                         const Json::Value& description = Json::Value::null);
         ///< \brief Registers a method callback.
         ///< \param pObject A pointer to the class instance.
@@ -95,12 +94,12 @@ public:
         ///< \note If the given method does not exist, the unregister
         ///<        request will be ignored.
 
-    Response processCall(const Request& request);
+    Response processCall(const Request& request, const void* pClient);
         ///< \brief Process a Request.
         ///< \param request The incoming Request from a client.
         ///< \returns A success or error Response.
 
-    void processNotification(const Request& request);
+    void processNotification(const Request& request, const void* pClient);
         ///< \brief Process a Request.
         ///< \param request The incoming Request from a client.
 
@@ -131,22 +130,6 @@ protected:
         ///< \brief A mutext to ensure method map validity.
     
 };
-
-
-template <typename MethodClass>
-void MethodRegistry::registerMethod(MethodClass* pObject,
-                                    typename Method<MethodClass>::MethodPtr pMethod,
-                                    const std::string& name,
-                                    const Json::Value& description)
-{
-    SharedMethodPtr p = SharedMethodPtr(new Method<MethodClass>(pObject,
-                                                                pMethod,
-                                                                name,
-                                                                description));
-
-    Poco::Mutex::ScopedLock lock(_mutex);
-    _methodMap[name] = p; // shared pointer will release an existing method ptr
-}
 
 
 } } // namespace ofx::JSONRPC

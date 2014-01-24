@@ -40,6 +40,15 @@ MethodRegistry::~MethodRegistry()
 }
 
 
+MethodRegistry::SharedMethodPtr MethodRegistry::registerMethod(const std::string& name,
+                                                               const Json::Value& description)
+{
+    Poco::Mutex::ScopedLock lock(_mutex);
+    _methodMap[name] = SharedMethodPtr(new Method(name, description));
+    return _methodMap[name];
+}
+
+
 void MethodRegistry::unregisterMethod(const std::string& method)
 {
     Poco::Mutex::ScopedLock lock(_mutex);
@@ -51,7 +60,7 @@ void MethodRegistry::unregisterMethod(const std::string& method)
 }
 
 
-Response MethodRegistry::processCall(const Request& request)
+Response MethodRegistry::processCall(const Request& request, const void* pClient)
 {
     Poco::Mutex::ScopedLock lock(_mutex);
     MethodMapIter iter = _methodMap.find(request.getMethod());
@@ -61,16 +70,9 @@ Response MethodRegistry::processCall(const Request& request)
 
         MethodArgs args(request.getParameters());
 
-        if (pMethod->invoke(args))
-        {
-            return Response(request.getID(), args.result);
-        }
-        else
-        {
-            return Response(request.getID(),
-                            Error(Errors::RPC_ERROR_INVALID_REQUEST,
-                                  args.error));
-        }
+        ofNotifyEvent(*pMethod, args, pClient);
+
+        return Response(request.getID(), args.result);
     }
     else
     {
@@ -80,9 +82,10 @@ Response MethodRegistry::processCall(const Request& request)
 }
 
 
-void MethodRegistry::processNotification(const Request& request)
+void MethodRegistry::processNotification(const Request& request,
+                                         const void* pClient)
 {
-    processCall(request); // return nothing
+    processCall(request, pClient); // return nothing
 }
 
 

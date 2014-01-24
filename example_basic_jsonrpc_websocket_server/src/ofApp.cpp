@@ -39,14 +39,14 @@ void ofApp::setup()
     // Launch a browser with the address of the server.
     ofLaunchBrowser(server->getURL());
 
-    wsMethodRegistry.registerMethod(this,
-                                    &ofApp::generateRandomNumber,
-                                    "get-random-number");
 
+    ofAddListener(*wsMethodRegistry.registerMethod("get-random-number"),
+                  this,
+                  &ofApp::generateRandomNumber);
 
-    wsMethodRegistry.registerMethod(this,
-                                    &ofApp::setRandomNumber,
-                                    "set-random-number");
+    ofAddListener(*wsMethodRegistry.registerMethod("set-random-number"),
+                  this,
+                  &ofApp::setRandomNumber);
 
 }
 
@@ -62,13 +62,15 @@ void ofApp::draw()
 }
 
 
-bool ofApp::generateRandomNumber(JSONRPC::MethodArgs& args)
+bool ofApp::generateRandomNumber(const void* client,
+                                 JSONRPC::MethodArgs& args)
 {
     args.result = ofRandom(1);
     return true;
 }
 
-bool ofApp::setRandomNumber(JSONRPC::MethodArgs& args)
+bool ofApp::setRandomNumber(const void* client,
+                            JSONRPC::MethodArgs& args)
 {
     double d = args.params.isDouble() ? args.params.asDouble() : 0;
     bgColor = ofColor(d * 255);

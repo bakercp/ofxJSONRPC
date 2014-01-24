@@ -74,7 +74,7 @@ public:
     void onWebSocketFrameSentEvent(HTTP::WebSocketFrameEventArgs& evt);
     void onWebSocketErrorEvent(HTTP::WebSocketEventArgs& evt);
 
-    bool setRandomNumberStream(JSONRPC::MethodArgs& args);
+//    bool setRandomNumberStream(JSONRPC::MethodArgs& args);
 
     std::map<const HTTP::WebSocketConnection*, ClientInfo> clients;
 

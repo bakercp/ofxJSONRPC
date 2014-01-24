@@ -63,7 +63,7 @@ void WebSocketMethodRegistry::onWebSocketFrameReceivedEvent(HTTP::WebSocketFrame
         try
         {
             JSONRPC::Request request = JSONRPC::Request::fromJSON(json);
-            JSONRPC::Response response = processCall(request);
+            JSONRPC::Response response = processCall(request, &evt.getConnectionRef());
             
             if (response.hasID())
             {
@@ -96,10 +96,10 @@ void WebSocketMethodRegistry::onWebSocketErrorEvent(HTTP::WebSocketEventArgs& ev
 }
 
 
-bool WebSocketMethodRegistry::setRandomNumberStream(JSONRPC::MethodArgs& args)
-{
-
-}
+//bool WebSocketMethodRegistry::setRandomNumberStream(JSONRPC::MethodArgs& args)
+//{
+//
+//}
 
 
 } // namespace ofx

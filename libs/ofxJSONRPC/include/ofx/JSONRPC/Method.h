@@ -37,22 +37,11 @@ namespace ofx {
 namespace JSONRPC {
         
 
-template<class MethodClass>
 class Method: public AbstractMethod
     /// \brief A method callback class for registering JSONRPC methods.
 {
 public:
-    typedef bool (MethodClass::*MethodPtr)(MethodArgs& args);
-        ///< \brief A typedef for a method signature.
-        ///< \details Methods of this type receieve a request.  Upon successful
-        ///<        completion of the call, the response object should be filled
-        ///<        and the method should return true.  Upon failure, the error
-        ///<        object should be filled and the the method shoudl return
-        ///<        false.
-
-    Method(MethodClass* pObject,
-           MethodPtr pMethod,
-           const std::string& name,
+    Method(const std::string& name,
            const Json::Value& description = Json::Value::null);
         ///< \brief Create a Method Callback
         ///< \param pObject A pointer to the class instance.
@@ -64,19 +53,11 @@ public:
     virtual ~Method();
         ///< \brief Destory the Method.
 
-    virtual bool invoke(MethodArgs& args);
-
     virtual std::string getName() const;
 
     virtual Json::Value getDescription() const;
 
 private:
-    MethodClass* _pObject;
-        ///< \brief A pointer to the class instance.
-
-    MethodPtr _pMethod;
-        ///< \brief A pointer to the class instance method.
-
     std::string _name;
         ///< \brief The method's name.
 
@@ -86,41 +67,26 @@ private:
 };
 
 
-template<class MethodClass>
-Method<MethodClass>::Method(MethodClass* pObject,
-                            MethodPtr pMethod,
-                            const std::string& name,
+inline Method::Method(const std::string& name,
                             const Json::Value& description):
-    _pObject(pObject),
-    _pMethod(pMethod),
     _name(name),
     _description(description)
 {
 }
 
 
-template<class MethodClass>
-Method<MethodClass>::~Method()
+inline Method::~Method()
 {
 }
 
 
-template<class MethodClass>
-bool Method<MethodClass>::invoke(MethodArgs& args)
-{
-    return (_pObject->*_pMethod)(args);
-}
-
-
-template<class MethodClass>
-std::string Method<MethodClass>::getName() const
+inline std::string Method::getName() const
 {
     return _name;
 }
 
 
-template<class MethodClass>
-Json::Value Method<MethodClass>::getDescription() const
+inline Json::Value Method::getDescription() const
 {
     return _description;
 }

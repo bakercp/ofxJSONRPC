@@ -43,9 +43,11 @@ public:
     void update();
     void draw();
 
-    bool generateRandomNumber(JSONRPC::MethodArgs& args);
+    bool generateRandomNumber(const void* client,
+                              JSONRPC::MethodArgs& args);
 
-    bool setRandomNumber(JSONRPC::MethodArgs& args);
+    bool setRandomNumber(const void* client,
+                         JSONRPC::MethodArgs& args);
 
     ofColor bgColor;
 

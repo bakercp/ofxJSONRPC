@@ -36,7 +36,7 @@ namespace JSONRPC {
 class MethodArgs;
 
 
-class AbstractMethod
+class AbstractMethod: public ofEvent<MethodArgs>
     /// \brief An abstract interface for method registration.
 {
 public:
@@ -44,16 +44,6 @@ public:
         ///< \brief Destroy the AbstractMethod.
     {
     }
-
-    virtual bool invoke(MethodArgs& args) = 0;
-        ///< \brief Invoke the method defined in this callback.
-        ///< \param request the request parameters.
-        ///< \param response the response data to be filled if needed.
-        ///< \param error the error data to be filled if needed.
-        ///< \returns true iff the method invocation was successful.
-        ///< \note If the invocation was not successful, invoke will return
-        ///<        false.  If needed, the invoked method can fill in the
-        ///<        error data as well.
 
     virtual std::string getName() const = 0;
         ///< \brief Get the method name.
