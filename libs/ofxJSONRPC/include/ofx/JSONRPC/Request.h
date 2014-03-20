@@ -37,61 +37,70 @@ namespace ofx {
 namespace JSONRPC {
 
 
+/// \brief A JSONRPC 2.0 Request.
+/// \details An Request has the following format:
+///
+/// \code{.json}
+/// {
+///     "jsonrpc": "2.0",
+///     "method": "subtract",
+///     "params": {
+///         "subtrahend": 23,
+///         "minuend": 42
+///     },
+///     "id": 3
+/// }
+/// \endcode
+///
+/// \sa http://www.jsonrpc.org/specification
 class Request: public BaseMessage
-    /// \brief A JSONRPC 2.0 request.
-    /// \details An Request has the following format:
-    ///
-    /// \code{.json}
-    /// {
-    ///     "jsonrpc": "2.0",
-    ///     "method": "subtract",
-    ///     "params": {
-    ///         "subtrahend": 23,
-    ///         "minuend": 42
-    ///     },
-    ///     "id": 3
-    /// }
-    /// \endcode
-    ///
-    /// \sa http://www.jsonrpc.org/specification
 {
 public:
+    /// \brief Create a notification Request.
+    /// \param method The method's name.
     Request(const std::string& method);
-        ///< \brief Create a notification Request.
 
+    /// \brief Create a notification Request.
+    /// \param method The method's name.
+    /// \param parameters The parameters to pass to the method.
     Request(const std::string& method, const Json::Value& parameters);
-        ///< \brief Create a notification Request.
 
+    /// \brief Create a Request.
+    /// \param id The transatction identification number.
+    /// \param method The method's name.
     Request(const Json::Value& id, const std::string& method);
-        ///< \brief Create a Request.
 
+    /// \brief Create a Request.
+    /// \param id The transatction identification number.
+    /// \param method The method's name.
+    /// \param parameters The parameters to pass to the method.
     Request(const Json::Value& id,
             const std::string& method,
             const Json::Value& parameters);
-        ///< \brief Create a Request.
 
+    /// \brief Destroy the ErrorResponse.
     virtual ~Request();
-        ///< \brief Destroy the ErrorResponse.
 
+    /// \returns the request method.
     std::string getMethod() const;
-        ///< \returns the method.
 
+    /// \returns the request method parameters.
     Json::Value getParameters() const;
-        ///< \returns the method parameters.
 
+    /// \returns a raw json string of this Request
+    /// \param styled True if the output string should be pretty-print.
     std::string toString(bool styled = false) const;
-        ///< \returns a raw json string of this Request
 
+    /// \brief Serialize the Request object to JSON.
+    /// \param request the Request object to serialize.
+    /// \returns JSONRPC compatible JSON.
     static Json::Value toJSON(const Request& request);
-        ///< \brief Serialize the Request object to JSON.
-        ///< \param request the Request object to serialize.
-        ///< \returns JSONRPC compatible JSON.
 
+    /// \brief Deserialize the JSON to a Request object.
+    /// \param json JSONRPC compatible JSON to deserialize.
+    /// \returns deserialized Request.
+    /// \throws Poco::Exception if the json is not valid.
     static Request fromJSON(const Json::Value& json);
-        ///< \brief Deserialize the JSON to a Request object.
-        ///< \param json JSONRPC compatible JSON to deserialize.
-        ///< \returns deserialized Request.
-        ///< \throws Poco::Exception if the json is not valid.
 
 protected:
     std::string _method;

@@ -34,22 +34,21 @@ namespace ofx {
 namespace JSONRPC {
 
 
+/// \brief A BaseMessage is a base class for both Request and Response objects.
 class BaseMessage
-    /// \brief A BaseMessage is a base class for
-    ///         both Request and Response objects.
 {
 public:
+    /// \brief Create a BaseMessage.
     BaseMessage(const Json::Value& id);
-        ///< \brief Create a BaseMessage.
 
+    /// \brief Destroy the BaseMessage.
     virtual ~BaseMessage();
-        ///< \brief Destroy the BaseMessage.
 
+    /// \returns the message ID.
     Json::Value getID() const;
-        ///< \returns the message ID.
 
+    /// \return true iff the ID is not empty.
     bool hasID() const;
-        ///< \return true iff the ID is not empty.
 
 protected:
     Json::Value _id;

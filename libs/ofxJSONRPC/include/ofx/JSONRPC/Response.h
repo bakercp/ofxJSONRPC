@@ -38,61 +38,63 @@ namespace ofx {
 namespace JSONRPC {
 
 
+/// \brief A JSONRPC 2.0 Response.
+/// \details An Response has the following format:
+///
+/// \code{.json}
+/// {
+///     "jsonrpc": "2.0",
+///     "result": 19,
+///     "id": 1
+/// }
+/// \endcode
+///
+/// \sa http://www.jsonrpc.org/specification
 class Response: public BaseMessage
-    /// \brief A JSONRPC 2.0 response.
-    /// \details An Response has the following format:
-    ///
-    /// \code{.json}
-    /// {
-    ///     "jsonrpc": "2.0",
-    ///     "result": 19,
-    ///     "id": 1
-    /// }
-    /// \endcode
-    ///
-    /// \sa http://www.jsonrpc.org/specification
 {
 public:
+    /// \brief Create a default Error Response.
     Response();
-        ///< \brief Create a default Error Response.
-    
+
+    /// \brief Create a Response.
+    /// \param id The id of the original remote call.
+    /// \param result The results of the function call.
     Response(const Json::Value& id, const Json::Value& result);
-        ///< \brief Create a Response.
 
+    /// \brief Create a Response.
+    /// \param id The id of the original remote call.
+    /// \param error is the Error response. The Error MUST
+    ///        contain a valid error code.
     Response(const Json::Value& id, const Error& error);
-        ///< \brief Create a Response.
-        ///< \param id is the id of the original remote call.
-        ///< \param error is the Error response. The Error MUST
-        ///<        contain a valid error code.
 
+    /// \brief Destroy the Response.
     virtual ~Response();
-        ///< \brief Destroy the Response.
 
+    /// \returns result JSON data.
+    /// \note The JSON data will be empty if there is an error.
     Json::Value getResult() const;
-        ///< \returns result JSON data.
-        ///< \note The JSON data will be empty if there is an error.
 
+    /// \returns the Error.
+    /// \note The Error will be empty the response if the call was successful.
     Error getError() const;
-        ///< \returns the Error.
-        ///< \note The Error will be empty the response if the
-        ///<        call was successful.
 
+    /// \returns true iff an error code is present.
     bool isErrorResponse() const;
-        ///< \returns true iff an error code is present.
 
+    /// \returns a raw json string of this Response.
+    /// \param styled True if the output string should be pretty-print.
     std::string toString(bool styled = false) const;
-        ///< \returns a raw json string of this Response
 
+    /// \brief Serialize the Response object to JSON.
+    /// \param response the Response object to serialize.
+    /// \returns JSONRPC compatible JSON.
     static Json::Value toJSON(const Response& response);
-        ///< \brief Serialize the Response object to JSON.
-        ///< \param response the Response object to serialize.
-        ///< \returns JSONRPC compatible JSON.
 
+    /// \brief Deserialize the JSON to a Response object.
+    /// \param json JSONRPC compatible JSON to deserialize.
+    /// \returns the deserialized Response.
+    /// \throws Poco::Exception if the JSON is not valid.
     static Response fromJSON(const Json::Value& json);
-        ///< \brief Deserialize the JSON to a Response object.
-        ///< \param json JSONRPC compatible JSON to deserialize.
-        ///< \returns the deserialized Response.
-        ///< \throws Poco::Exception if the JSON is not valid.
 
 protected:
     Json::Value _result;

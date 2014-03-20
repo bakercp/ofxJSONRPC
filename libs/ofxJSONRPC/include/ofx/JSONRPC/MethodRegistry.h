@@ -50,7 +50,6 @@ namespace std {
 #include <json/json.h>
 #include "Poco/Mutex.h"
 #include "ofEvents.h"
-#include "ofx/JSONRPC/AbstractTypes.h"
 #include "ofx/JSONRPC/Method.h"
 #include "ofx/JSONRPC/MethodArgs.h"
 #include "ofx/JSONRPC/Response.h"
@@ -61,10 +60,10 @@ namespace ofx {
 namespace JSONRPC {
 
 
+/// \brief A MethodRegistry is a thread-safe method callback manager.
+/// \details Additionally, a MethodRegistry is in charge of invoking
+///         methods by name using the method signature defined in Method.
 class MethodRegistry
-    /// \brief A MethodRegistry is a thread-safe method callback manager.
-    /// \details Additionally, a MethodRegistry is in charge of invoking
-    ///         methods by name using the method signature defined in Method.
 {
 public:
     typedef std::map<std::string, Json::Value> MethodDescriptionMap;
@@ -73,63 +72,246 @@ public:
     typedef std::map<std::string, Json::Value>::iterator MethodDescriptionMapIter;
         ///< \brief A typedef for a MethodDescriptionMap iterator.
 
+    /// \brief Create a MethodRegistry.
     MethodRegistry();
-        ///< \brief Create a MethodRegistry.
 
+    /// \brief Destroy the MethodRegistry.
     virtual ~MethodRegistry();
-        ///< \brief Destroy the MethodRegistry.
 
-    std::shared_ptr<AbstractMethod> registerMethod(const std::string& name,
-                        const Json::Value& description = Json::Value::null);
-        ///< \brief Registers a method callback.
-        ///< \param pObject A pointer to the class instance.
-        ///< \param pMethod A pointer to the class instance method with the
-        ///<        MethodPtr method signature..
-        ///< \param name The method's name.
-        ///< \param description A description of the method's functionality.
 
+    /// \brief Register a method callback.
+    /// \details Each method needs a name, description, class and method.
+    ///        This method registers remote methods with the
+    ///        following signature:
+    ///
+    /// ~~~{.cpp}
+    ///    void ListenerClass::listenerMethod(const void* pSender, MethodArgs& args);
+    /// ~~~
+    ///
+    /// \param name The name of the class to be called by the client.
+    /// \param description A JSON description of any information to
+    ///        advertise with this method.  This might include a
+    ///        description of the functionality, the input / output
+    ///        arguments, expected values, etc.
+    /// \param listener A pointer to the listener class.
+    /// \param listenerMethod A pointer to the method to invoke.
+    /// \param priority The priority of the event.
+    template <class ListenerClass>
+    void registerMethod(const std::string& name,
+                        const Json::Value& description,
+                        ListenerClass* listener,
+                        void (ListenerClass::*listenerMethod)(const void*, MethodArgs&),
+                        int priority = OF_EVENT_ORDER_AFTER_APP);
+
+    /// \brief Register a method callback.
+    /// \details Each method needs a name, description, class and method.
+    ///        This method registers remote methods with the
+    ///        following signature:
+    ///
+    /// ~~~{.cpp}
+    ///    void ListenerClass::listenerMethod(MethodArgs& args);
+    /// ~~~
+    ///
+    /// \param name The name of the class to be called by the client.
+    /// \param description A JSON description of any information to
+    ///        advertise with this method.  This might include a
+    ///        description of the functionality, the input / output
+    ///        arguments, expected values, etc.
+    /// \param listener A pointer to the listener class.
+    /// \param listenerMethod A pointer to the method to invoke.
+    /// \param priority The priority of the event.
+    template <class ListenerClass>
+    void registerMethod(const std::string& name,
+                        const Json::Value& description,
+                        ListenerClass* listener,
+                        void (ListenerClass::*listenerMethod)(MethodArgs&),
+                        int priority = OF_EVENT_ORDER_AFTER_APP);
+
+    /// \brief Register a no argument method callback.
+    /// \details Each method needs a name, description, class and method.
+    ///        This method registers remote methods with the
+    ///        following signature:
+    ///
+    /// ~~~{.cpp}
+    ///    void ListenerClass::listenerMethod(const void* pSender);
+    /// ~~~
+    ///
+    /// \param name The name of the class to be called by the client.
+    /// \param description A JSON description of any information to
+    ///        advertise with this method.  This might include a
+    ///        description of the functionality, the input / output
+    ///        arguments, expected values, etc.
+    /// \param listener A pointer to the listener class.
+    /// \param listenerMethod A pointer to the method to invoke.
+    /// \param priority The priority of the event.
+    template <class ListenerClass>
+    void registerMethod(const std::string& name,
+                        const Json::Value& description,
+                        ListenerClass* listener,
+                        void (ListenerClass::*listenerMethod)(const void*),
+                        int priority = OF_EVENT_ORDER_AFTER_APP);
+
+    /// \brief Register a no argument method callback.
+    /// \details Each method needs a name, description, class and method.
+    ///        This method registers remote methods with the
+    ///        following signature:
+    ///
+    /// ~~~{.cpp}
+    ///    void ListenerClass::listenerMethod();
+    /// ~~~
+    ///
+    /// \param name The name of the class to be called by the client.
+    /// \param description A JSON description of any information to
+    ///        advertise with this method.  This might include a
+    ///        description of the functionality, the input / output
+    ///        arguments, expected values, etc.
+    /// \param listener A pointer to the listener class.
+    /// \param listenerMethod A pointer to the method to invoke.
+    /// \param priority The priority of the event.
+    template <class ListenerClass>
+    void registerMethod(const std::string& name,
+                        const Json::Value& description,
+                        ListenerClass* listener,
+                        void (ListenerClass::*listenerMethod)(void),
+                        int priority = OF_EVENT_ORDER_AFTER_APP);
+
+    /// \brief Unregister a method by name.
+    /// \param method is the name of the method callback to be removed.
+    /// \note If the given method does not exist, the unregister
+    ///        request will be ignored.
     void unregisterMethod(const std::string& method);
-        ///< \brief Unregister a method by name.
-        ///< \param method is the name of the method callback to be removed.
-        ///< \note If the given method does not exist, the unregister
-        ///<        request will be ignored.
 
-    Response processCall(const Request& request, const void* pClient);
-        ///< \brief Process a Request.
-        ///< \param request The incoming Request from a client.
-        ///< \returns A success or error Response.
+    /// \brief Process a Request.
+    /// \param pSender A pointer to the sender.  This might be a pointer
+    ///        to a session cookie or WebSocket connection.  While not
+    ///        required, this pointer is useful for returning
+    ///        client-specific method results or responding updating
+    ///        the calling client's session information.  The user is
+    ///        responsible for using this sender information in
+    ///        corresponding method callback.
+    /// \param request The incoming Request from a client.
+    /// \returns A success or error Response.
+    Response processCall(const void* pSender, const Request& request);
 
-    void processNotification(const Request& request, const void* pClient);
-        ///< \brief Process a Request.
-        ///< \param request The incoming Request from a client.
+    /// \brief Process a Request.
+    /// \param pSender A pointer to the sender.  This might be a pointer
+    ///        to a session cookie or WebSocket connection.  While not
+    ///        required, this pointer is useful for returning
+    ///        client-specific method results or responding updating
+    ///        the calling client's session information.  The user is
+    ///        responsible for using this sender information in
+    ///        corresponding method callback.
+    /// \param request The incoming Request from a client.
+    void processNotification(const void* pSender, const Request& request);
 
+    /// \brief Query the registry for the given method.
+    /// \param method the name of the method to find.
+    /// \returns true iff the given method is in the registry.
     bool hasMethod(const std::string& method) const;
-        ///< \brief Query the registry for the given method.
-        ///< \param method the name of the method to find.
-        ///< \returns true iff the given method is in the registry.
 
+    /// \brief Get a list of all method names and their descriptions.
+    /// \returns a MethodDescriptionMap containting a map of the
+    ///        method names and the method descriptions.
     MethodDescriptionMap getMethods() const;
-        ///< \brief Get a list of all method names and their descriptions.
-        ///< \returns a MethodDescriptionMap containting a map of the
-        ///<        method names and the method descriptions.
 
 protected:
-    typedef std::shared_ptr<AbstractMethod> SharedMethodPtr;
-        ///< \brief A shared pointer typedef to simplify pointer memory management.
+    typedef std::shared_ptr<Method> SharedMethodPtr;
+        ///< \brief A shared pointer typedef for methods to
+        ///<        simplify pointer memory management.
+
+    typedef std::shared_ptr<NoArgMethod> SharedNoArgMethodPtr;
+        ///< \brief A shared pointer typedef for no argument methods to
+        ///<        simplify pointer memory management.
 
     typedef std::map<std::string, SharedMethodPtr> MethodMap;
         ///< \brief A method map.
 
-    typedef std::map<std::string, SharedMethodPtr>::iterator MethodMapIter;
+    typedef std::map<std::string, SharedNoArgMethodPtr> NoArgMethodMap;
+        ///< \brief A void no argument method map.
+
+    typedef MethodMap::iterator MethodMapIter;
         ///< \brief A method map iterator.
+
+    typedef NoArgMethodMap::iterator NoArgMethodMapIter;
+        ///< \brief A no argument method map iterator.
 
     MethodMap _methodMap;
         ///< \brief Maps method names to their method pointers.
+
+    NoArgMethodMap _noArgMethodMap;
+        ///< \brief Maps no argument method names to their method pointers.
 
     mutable Poco::Mutex _mutex;
         ///< \brief A mutext to ensure method map validity.
     
 };
+
+
+template <class ListenerClass>
+void MethodRegistry::registerMethod(const std::string& name,
+                                    const Json::Value& description,
+                                    ListenerClass* listener,
+                                    void (ListenerClass::*listenerMethod)(const void*, MethodArgs&),
+                                    int priority)
+{
+    unregisterMethod(name);
+
+    Poco::Mutex::ScopedLock lock(_mutex);
+    _methodMap[name] = SharedMethodPtr(new Method(name, description));
+    _methodMap[name]->event += Poco::priorityDelegate(listener,
+                                                      listenerMethod,
+                                                      priority);
+}
+
+template <class ListenerClass>
+void MethodRegistry::registerMethod(const std::string& name,
+                                    const Json::Value& description,
+                                    ListenerClass* listener,
+                                    void (ListenerClass::*listenerMethod)(MethodArgs&),
+                                    int priority)
+{
+    unregisterMethod(name);
+
+    Poco::Mutex::ScopedLock lock(_mutex);
+    _methodMap[name] = SharedMethodPtr(new Method(name, description));
+    _methodMap[name]->event += Poco::priorityDelegate(listener,
+                                                listenerMethod,
+                                                priority);
+}
+
+template <class ListenerClass>
+void MethodRegistry::registerMethod(const std::string& name,
+                                    const Json::Value& description,
+                                    ListenerClass* listener,
+                                    void (ListenerClass::*listenerMethod)(const void*),
+                                    int priority)
+{
+    unregisterMethod(name);
+
+    Poco::Mutex::ScopedLock lock(_mutex);
+    _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name,
+                                                                 description));
+    _noArgMethodMap[name]->event += Poco::priorityDelegate(listener,
+                                                           listenerMethod,
+                                                           priority);
+}
+
+template <class ListenerClass>
+void MethodRegistry::registerMethod(const std::string& name,
+                                    const Json::Value& description,
+                                    ListenerClass* listener,
+                                    void (ListenerClass::*listenerMethod)(void),
+                                    int priority)
+{
+    unregisterMethod(name);
+
+    Poco::Mutex::ScopedLock lock(_mutex);
+    _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name,
+                                                                 description));
+    _noArgMethodMap[name]->event += Poco::priorityDelegate(listener,
+                                                           listenerMethod,
+                                                           priority);
+}
 
 
 } } // namespace ofx::JSONRPC

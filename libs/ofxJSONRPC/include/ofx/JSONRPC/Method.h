@@ -28,34 +28,37 @@
 
 #include <json/json.h>
 #include "Poco/Exception.h"
-#include "ofx/JSONRPC/AbstractTypes.h"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/MethodArgs.h"
 
 
 namespace ofx {
 namespace JSONRPC {
-        
 
-class Method: public AbstractMethod
-    /// \brief A method callback class for registering JSONRPC methods.
+
+/// \brief A method callback class for registering JSONRPC methods.
+template<typename EventType>
+class Method_
 {
 public:
-    Method(const std::string& name,
-           const Json::Value& description = Json::Value::null);
-        ///< \brief Create a Method Callback
-        ///< \param pObject A pointer to the class instance.
-        ///< \param pMethod A pointer to the class instance method with the
-        ///<        MethodPtr method signature..
-        ///< \param name The method's name.
-        ///< \param description A description of the method's functionality.
+    /// \brief Create a Method Callback
+    /// \param name The method's name.
+    /// \param description A description of the method's functionality.
+    Method_(const std::string& name,
+            const Json::Value& description = Json::Value::null);
 
-    virtual ~Method();
-        ///< \brief Destory the Method.
+    /// \brief Destory the Method.
+    virtual ~Method_();
 
-    virtual std::string getName() const;
+    /// \brief Get the method name.
+    /// \returns the name of the method.
+    std::string getName() const;
 
-    virtual Json::Value getDescription() const;
+    /// \brief Get the method's description.
+    /// \returns the name of the method.
+    Json::Value getDescription() const;
+
+    EventType event; ///< \brief The public event available for subscription.
 
 private:
     std::string _name;
@@ -67,26 +70,34 @@ private:
 };
 
 
-inline Method::Method(const std::string& name,
-                            const Json::Value& description):
+typedef Method_<ofEvent<MethodArgs> > Method;
+typedef Method_<ofEvent<void> >       NoArgMethod;
+
+
+template<typename ArgType>
+Method_<ArgType>::Method_(const std::string& name,
+                          const Json::Value& description):
     _name(name),
     _description(description)
 {
 }
 
 
-inline Method::~Method()
+template<typename ArgType>
+inline Method_<ArgType>::~Method_<ArgType>()
 {
 }
 
 
-inline std::string Method::getName() const
+template<typename ArgType>
+inline std::string Method_<ArgType>::getName() const
 {
     return _name;
 }
 
 
-inline Json::Value Method::getDescription() const
+template<typename ArgType>
+inline Json::Value Method_<ArgType>::getDescription() const
 {
     return _description;
 }
