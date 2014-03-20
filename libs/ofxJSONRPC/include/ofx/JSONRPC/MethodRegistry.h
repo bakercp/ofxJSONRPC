@@ -61,16 +61,17 @@ namespace JSONRPC {
 
 
 /// \brief A MethodRegistry is a thread-safe method callback manager.
-/// \details Additionally, a MethodRegistry is in charge of invoking
-///         methods by name using the method signature defined in Method.
+///
+/// \details Additionally, a MethodRegistry is in charge of invoking methods by
+/// name using the method signature defined in Method.
 class MethodRegistry
 {
 public:
+    /// \brief A typedef mapping method names to method descriptions.
     typedef std::map<std::string, Json::Value> MethodDescriptionMap;
-        ///< \brief A typedef mapping method names to method descriptions.
 
+    /// \brief A typedef for a MethodDescriptionMap iterator.
     typedef std::map<std::string, Json::Value>::iterator MethodDescriptionMapIter;
-        ///< \brief A typedef for a MethodDescriptionMap iterator.
 
     /// \brief Create a MethodRegistry.
     MethodRegistry();
@@ -78,14 +79,13 @@ public:
     /// \brief Destroy the MethodRegistry.
     virtual ~MethodRegistry();
 
-
     /// \brief Register a method callback.
-    /// \details Each method needs a name, description, class and method.
-    ///        This method registers remote methods with the
-    ///        following signature:
+    ///
+    /// Each method needs a name, description, class and method.  This method
+    /// registers remote methods with the following signature:
     ///
     /// ~~~{.cpp}
-    ///    void ListenerClass::listenerMethod(const void* pSender, MethodArgs& args);
+    ///     void ListenerClass::listenerMethod(const void* pSender, MethodArgs& args);
     /// ~~~
     ///
     /// \param name The name of the class to be called by the client.
@@ -104,9 +104,9 @@ public:
                         int priority = OF_EVENT_ORDER_AFTER_APP);
 
     /// \brief Register a method callback.
-    /// \details Each method needs a name, description, class and method.
-    ///        This method registers remote methods with the
-    ///        following signature:
+    ///
+    /// Each method needs a name, description, class and method.  This method
+    /// registers remote methods with the following signature:
     ///
     /// ~~~{.cpp}
     ///    void ListenerClass::listenerMethod(MethodArgs& args);
@@ -128,9 +128,9 @@ public:
                         int priority = OF_EVENT_ORDER_AFTER_APP);
 
     /// \brief Register a no argument method callback.
-    /// \details Each method needs a name, description, class and method.
-    ///        This method registers remote methods with the
-    ///        following signature:
+    ///
+    /// Each method needs a name, description, class and method. This method
+    /// registers remote methods with the following signature:
     ///
     /// ~~~{.cpp}
     ///    void ListenerClass::listenerMethod(const void* pSender);
@@ -152,9 +152,9 @@ public:
                         int priority = OF_EVENT_ORDER_AFTER_APP);
 
     /// \brief Register a no argument method callback.
-    /// \details Each method needs a name, description, class and method.
-    ///        This method registers remote methods with the
-    ///        following signature:
+    ///
+    /// Each method needs a name, description, class and method. This method
+    /// registers remote methods with the following signature:
     ///
     /// ~~~{.cpp}
     ///    void ListenerClass::listenerMethod();
