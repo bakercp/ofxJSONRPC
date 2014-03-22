@@ -39,7 +39,7 @@ namespace JSONRPC {
 
 
 /// \brief A JSONRPC 2.0 Response.
-/// \details An Response has the following format:
+/// An Response has the following format:
 ///
 /// \code{.json}
 /// {

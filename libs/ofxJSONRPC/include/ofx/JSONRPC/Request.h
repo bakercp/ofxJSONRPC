@@ -40,7 +40,7 @@ namespace JSONRPC {
 /// \brief A JSONRPC 2.0 Request.
 /// \details An Request has the following format:
 ///
-/// \code{.json}
+/// ~~~{.json}
 /// {
 ///     "jsonrpc": "2.0",
 ///     "method": "subtract",
@@ -50,7 +50,7 @@ namespace JSONRPC {
 ///     },
 ///     "id": 3
 /// }
-/// \endcode
+/// ~~~
 ///
 /// \sa http://www.jsonrpc.org/specification
 class Request: public BaseMessage

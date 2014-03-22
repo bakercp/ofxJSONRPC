@@ -26,30 +26,13 @@
 #pragma once
 
 
-#if (_MSC_VER)
-#include <memory>
-#else
-#include <tr1/memory>
-// import smart pointers utils into std
-namespace std {
-#if __cplusplus<201103L
-	using std::tr1::shared_ptr;
-	using std::tr1::weak_ptr;
-	using std::tr1::enable_shared_from_this;
-#endif
-	using std::tr1::static_pointer_cast;
-	using std::tr1::dynamic_pointer_cast;
-	using std::tr1::const_pointer_cast;
-	using std::tr1::__dynamic_cast_tag;
-}
-#endif
-
-
 #include <map>
 #include <string>
 #include <json/json.h>
 #include "Poco/Mutex.h"
 #include "ofEvents.h"
+#include "ofLog.h"
+#include "ofTypes.h" // std::shared_ptr
 #include "ofx/JSONRPC/Method.h"
 #include "ofx/JSONRPC/MethodArgs.h"
 #include "ofx/JSONRPC/Response.h"
@@ -62,11 +45,14 @@ namespace JSONRPC {
 
 /// \brief A MethodRegistry is a thread-safe method callback manager.
 ///
-/// \details Additionally, a MethodRegistry is in charge of invoking methods by
+/// Additionally, a MethodRegistry is in charge of invoking methods by
 /// name using the method signature defined in Method.
 class MethodRegistry
 {
 public:
+    /// \brief A typedef for a shared pointer.
+    typedef std::shared_ptr<MethodRegistry> SharedPtr;
+
     /// \brief A typedef mapping method names to method descriptions.
     typedef std::map<std::string, Json::Value> MethodDescriptionMap;
 
@@ -213,6 +199,13 @@ public:
     /// \returns a MethodDescriptionMap containting a map of the
     ///        method names and the method descriptions.
     MethodDescriptionMap getMethods() const;
+
+    /// \brief Make a shared pointer.
+    /// \returns a SharedPtr to a MethodRegistry.
+    static SharedPtr makeShared()
+    {
+        return SharedPtr(new MethodRegistry());
+    }
 
 protected:
     typedef std::shared_ptr<Method> SharedMethodPtr;

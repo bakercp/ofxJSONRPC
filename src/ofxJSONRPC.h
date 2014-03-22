@@ -34,3 +34,5 @@
 #include "ofx/JSONRPC/MethodRegistry.h"
 #include "ofx/JSONRPC/Request.h"
 #include "ofx/JSONRPC/Response.h"
+
+#include "ofx/JSONRPC/BasicJSONRPCServer.h"

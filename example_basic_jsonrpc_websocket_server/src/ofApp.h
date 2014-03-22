@@ -26,14 +26,35 @@
 #pragma once
 
 
-#include <map>
 #include "ofMain.h"
 #include "ofxHTTP.h"
 #include "ofxJSONRPC.h"
-#include "WebSocketMethodRegistry.h"
 
 
-using namespace ofx;
+using namespace ofx::HTTP;
+using namespace ofx::JSONRPC;
+
+
+class ClientInfo
+{
+public:
+    typedef std::shared_ptr<ClientInfo> SharedPtr;
+    
+    ClientInfo(const WebSocketConnection* wsc):
+        _wsc(wsc)
+    {
+    }
+
+
+    static SharedPtr makeShared(const WebSocketConnection* wsc)
+    {
+        return SharedPtr(new ClientInfo(wsc));
+    }
+
+private:
+    const WebSocketConnection* _wsc;
+
+};
 
 
 class ofApp: public ofBaseApp
@@ -43,15 +64,45 @@ public:
     void update();
     void draw();
 
-    bool generateRandomNumber(const void* client,
-                              JSONRPC::MethodArgs& args);
+    // WebSocket callbacks
+    void onWebSocketOpenEvent(WebSocketEventArgs& evt);
+    void onWebSocketCloseEvent(WebSocketEventArgs& evt);
+    void onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt);
+    void onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt);
+    void onWebSocketErrorEvent(WebSocketEventArgs& evt);
 
-    bool setRandomNumber(const void* client,
-                         JSONRPC::MethodArgs& args);
+    // Post events
+    void onHTTPPostEvent(PostEventArgs& evt);
+    void onHTTPFormEvent(PostFormEventArgs& evt);
+    void onHTTPUploadEvent(PostUploadEventArgs& args);
+
+
+    // RPC callbacks
+
+//    // Notification
+//    void enableRandomNumberStream(const void* pSender);
+//    void disableRandomStream(const void* pSender);
+//
+//    void reset();
+//
+//    // Methods
+//    void getRandomNumber(JSONRPC::MethodArgs& args);
+//    void setRandomNumber(JSONRPC::MethodArgs& args);
+//
+//    void getUniqueID(const void* pSender, JSONRPC::MethodArgs& args);
+//    void setUniqueID(const void* pSender, JSONRPC::MethodArgs& args);
+//
+
+    void notificationHiClient(const void* client);
+    void notificationHi();
+
+    void generateRandomNumber(const void* client, MethodArgs& args);
+    void setRandomNumber(const void* client, MethodArgs& args);
 
     ofColor bgColor;
 
-    HTTP::BasicWebSocketServer::SharedPtr server;
-    WebSocketMethodRegistry wsMethodRegistry;
+    BasicJSONRPCServer::SharedPtr server;
+
+    std::map<const WebSocketConnection*, ClientInfo::SharedPtr> clients;
 
 };

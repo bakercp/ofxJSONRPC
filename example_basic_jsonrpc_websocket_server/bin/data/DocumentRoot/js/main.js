@@ -73,21 +73,24 @@ function initializeButtons()
 
     $('#enable-random-text-stream').on('switch-change', function(e, data) {
         var $this = $(this);
-        JSONRPCClient.call("get-random-number", 
+        JSONRPCClient.call("enable-random-text-stream", 
             data.value,
             function(result) {
+                console.log("SUUCCESS");
                 console.log(result);
 
                 $('#random-number').html(result);
                 $this.button('reset');
             },
             function(error) {
-                alert("Failed callback.");
+                console.log("eeeeerrrrrrooor");
+                console.log(error);
                 $this.button('reset');
             });
+
         $this.button('loading');
 
-        data.value
+        // data.value
 
 
         var $element = $(data.el), value = data.value;
@@ -104,7 +107,8 @@ $(document).ready( function()
     // Initialize our JSONRPCClient
     JSONRPCClient = new $.JsonRpcClient(
         { 
-            socketUrl: getWebSocketURL(), // get a websocket for the localhost
+            ajaxUrl: getDefaultPostURL(),
+            socketUrl: getDefaultWebSocketURL(), // get a websocket for the localhost
             onmessage: onWebSocketMessage,
             onopen: onWebSocketOpen,
             onclose: onWebSocketClose,

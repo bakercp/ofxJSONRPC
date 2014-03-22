@@ -51,8 +51,7 @@ public:
     bool hasID() const;
 
 protected:
-    Json::Value _id;
-        ///< \brief The id of the remote call.
+    Json::Value _id; ///< \brief The id of the remote call.
 
     static const std::string PROTOCOL_VERSION_TAG;
         ///< \brief JSONRPC tag.

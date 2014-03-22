@@ -40,52 +40,65 @@ MethodRegistry::~MethodRegistry()
 }
 
 
-MethodRegistry::SharedMethodPtr MethodRegistry::registerMethod(const std::string& name,
-                                                               const Json::Value& description)
-{
-    Poco::Mutex::ScopedLock lock(_mutex);
-    _methodMap[name] = SharedMethodPtr(new Method(name, description));
-    return _methodMap[name];
-}
-
-
 void MethodRegistry::unregisterMethod(const std::string& method)
 {
     Poco::Mutex::ScopedLock lock(_mutex);
-    MethodMapIter iter = _methodMap.find(method);
-    if (iter != _methodMap.end())
+    
+    MethodMapIter methodIter = _methodMap.find(method);
+    if (methodIter != _methodMap.end())
     {
-        _methodMap.erase(iter);
+        _methodMap.erase(methodIter);
+        return;
+    }
+
+    NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
+    if (noArgMethodIter != _noArgMethodMap.end())
+    {
+        _noArgMethodMap.erase(noArgMethodIter);
+        return;
     }
 }
 
 
-Response MethodRegistry::processCall(const Request& request, const void* pClient)
+Response MethodRegistry::processCall(const void* pSender, const Request& request)
 {
     Poco::Mutex::ScopedLock lock(_mutex);
-    MethodMapIter iter = _methodMap.find(request.getMethod());
-    if (iter != _methodMap.end())
+    MethodMapIter methodIter = _methodMap.find(request.getMethod());
+    if (methodIter != _methodMap.end())
     {
-        SharedMethodPtr pMethod = (*iter).second;
-
         MethodArgs args(request.getParameters());
-
-        ofNotifyEvent(*pMethod, args, pClient);
-
+        // args are filled in by the event notification
+        ofNotifyEvent((*methodIter).second->event, args, pSender);
         return Response(request.getID(), args.result);
     }
     else
     {
-        return Response(request.getID(), // if there is one
-                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND));
+        return Response(request.getID(),
+                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+                              Request::toJSON(request)));
+    }
+
+    NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(request.getMethod());
+    if (noArgMethodIter != _noArgMethodMap.end())
+    {
+        ofNotifyEvent((*noArgMethodIter).second->event, pSender);
+
+        // no args to args to return, because it is a no-arg method
+        return Response(request.getID(), Json::Value::null);
+    }
+    else
+    {
+        return Response(request.getID(),
+                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+                              Request::toJSON(request)));
     }
 }
 
 
-void MethodRegistry::processNotification(const Request& request,
-                                         const void* pClient)
+void MethodRegistry::processNotification(const void* pSender,
+                                         const Request& request)
 {
-    processCall(request, pClient); // return nothing
+    processCall(pSender, request); // return nothing
 }
 
 
