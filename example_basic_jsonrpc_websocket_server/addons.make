@@ -1,4 +1,1 @@
-ofxHTTP
-ofxJSON
 ofxJSONRPC
-ofxMediaType
