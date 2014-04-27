@@ -234,7 +234,7 @@ protected:
     NoArgMethodMap _noArgMethodMap;
         ///< \brief Maps no argument method names to their method pointers.
 
-    mutable Poco::Mutex _mutex;
+    mutable Poco::FastMutex _mutex;
         ///< \brief A mutext to ensure method map validity.
     
 };
@@ -249,7 +249,7 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     _methodMap[name] = SharedMethodPtr(new Method(name, description));
     _methodMap[name]->event += Poco::priorityDelegate(listener,
                                                       listenerMethod,
@@ -265,7 +265,7 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     _methodMap[name] = SharedMethodPtr(new Method(name, description));
     _methodMap[name]->event += Poco::priorityDelegate(listener,
                                                 listenerMethod,
@@ -281,7 +281,7 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name,
                                                                  description));
     _noArgMethodMap[name]->event += Poco::priorityDelegate(listener,
@@ -298,7 +298,7 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name,
                                                                  description));
     _noArgMethodMap[name]->event += Poco::priorityDelegate(listener,

@@ -33,14 +33,19 @@ namespace JSONRPC {
 
 BasicJSONRPCServer::BasicJSONRPCServer(const BasicJSONRPCServer::Settings& settings):
     ofx::HTTP::BasicServer(settings),
+    _sessionCache(ofx::HTTP::SessionCache::makeShared()), 
     _postRoute(ofx::HTTP::PostRoute::makeShared(settings)),
     _webSocketRoute(ofx::HTTP::WebSocketRoute::makeShared(settings))
 {
     addRoute(_postRoute); // #2 for test
     addRoute(_webSocketRoute); // #1 for test
 
+    _postRoute->setSessionCache(_sessionCache);
+    _webSocketRoute->setSessionCache(_sessionCache);
+
     _postRoute->registerPostEvents(this);
     _webSocketRoute->registerWebSocketEvents(this);
+
 }
 
 
@@ -127,7 +132,7 @@ bool BasicJSONRPCServer::onWebSocketErrorEvent(ofx::HTTP::WebSocketEventArgs& ev
 bool BasicJSONRPCServer::onHTTPFormEvent(HTTP::PostFormEventArgs& args)
 {
     ofLogNotice("ofApp::onHTTPFormEvent") << "";
-    HTTP::Utils::dumpNameValueCollection(args.form, ofGetLogLevel());
+    HTTP::Utils::dumpNameValueCollection(args.getForm(), ofGetLogLevel());
     return false;  // We did not attend to this event, so pass it along.
 }
 
@@ -137,7 +142,7 @@ bool BasicJSONRPCServer::onHTTPPostEvent(HTTP::PostEventArgs& args)
     Json::Value json;
     Json::Reader reader;
 
-    if (reader.parse(args.data.getText(), json))
+    if (reader.parse(args.getBuffer().getText(), json))
     {
         try
         {

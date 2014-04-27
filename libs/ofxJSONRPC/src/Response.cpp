@@ -78,7 +78,7 @@ Error Response::getError() const
 
 bool Response::isErrorResponse() const
 {
-    return !getError().getCode() == Errors::RPC_ERROR_NONE;
+    return getError().getCode() != Errors::RPC_ERROR_NONE;
 }
 
 

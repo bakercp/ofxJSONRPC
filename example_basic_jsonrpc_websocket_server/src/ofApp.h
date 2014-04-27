@@ -105,4 +105,5 @@ public:
 
     std::map<const WebSocketConnection*, ClientInfo::SharedPtr> clients;
 
+
 };

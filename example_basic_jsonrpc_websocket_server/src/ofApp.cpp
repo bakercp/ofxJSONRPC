@@ -25,6 +25,8 @@
 
 #include "ofApp.h"
 
+#include "Poco/Net/HTTPCookie.h"
+
 
 void ofApp::setup()
 {
@@ -62,6 +64,8 @@ void ofApp::setup()
                            this,
                            &ofApp::notificationHiClient);
 
+
+//    HTTPCookie cookie("kookie");
 }
 
 
@@ -124,7 +128,6 @@ void ofApp::setRandomNumber(const void* client, MethodArgs& args)
 }
 
 
-
 void ofApp::onWebSocketOpenEvent(WebSocketEventArgs& evt)
 {
     clients[&evt.getConnectionRef()] = ClientInfo::SharedPtr(new ClientInfo(&evt.getConnectionRef()));
@@ -164,14 +167,14 @@ void ofApp::onWebSocketErrorEvent(WebSocketEventArgs& evt)
 
 void ofApp::onHTTPPostEvent(PostEventArgs& args)
 {
-    ofLogNotice("ofApp::onHTTPPostEvent") << "Data: " << args.data;
+    ofLogNotice("ofApp::onHTTPPostEvent") << "Data: " << args.getBuffer().getText();
 }
 
 
 void ofApp::onHTTPFormEvent(PostFormEventArgs& args)
 {
     ofLogNotice("ofApp::onHTTPFormEvent") << "";
-    Utils::dumpNameValueCollection(args.form, ofGetLogLevel());
+    Utils::dumpNameValueCollection(args.getBuffer().getText(), ofGetLogLevel());
 }
 
 

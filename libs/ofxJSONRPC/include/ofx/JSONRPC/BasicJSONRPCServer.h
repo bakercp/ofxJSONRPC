@@ -30,6 +30,7 @@
 #include "ofxHTTP.h"
 #include "ofx/HTTP/Server/BasicServer.h"
 #include "ofx/HTTP/Server/PostRouteSettings.h"
+#include "ofx/HTTP/Server/SessionCache.h"
 #include "ofx/HTTP/WebSocket/WebSocketRouteSettings.h"
 #include "ofx/JSONRPC/MethodRegistry.h"
 
@@ -80,6 +81,9 @@ public:
     }
 
 protected:
+    ofx::HTTP::SessionCache::SharedPtr _sessionCache;
+        ///< \brief A session cache for this server.
+
     ofx::HTTP::PostRoute::SharedPtr _postRoute;
         ///< \brief The PostRoute attached to this server.
 

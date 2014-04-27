@@ -55,8 +55,12 @@
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 		E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985F515E0DE99003869B5 /* Accelerate.framework */; };
-		FD61D43618DBD85E004586FF /* BaseSessionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD61D43418DBD85E004586FF /* BaseSessionManager.cpp */; };
 		FD61D43B18DC8A42004586FF /* BasicJSONRPCServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD61D43A18DC8A42004586FF /* BasicJSONRPCServer.cpp */; };
+		FD7312F518E0725D009D1D3D /* BaseAuthenticationRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7312F018E0725D009D1D3D /* BaseAuthenticationRoute.cpp */; };
+		FD7312F618E0725D009D1D3D /* HTTPAuthenticationRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7312F118E0725D009D1D3D /* HTTPAuthenticationRoute.cpp */; };
+		FD7312F718E0725D009D1D3D /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7312F218E0725D009D1D3D /* Session.cpp */; };
+		FD7312F818E0725D009D1D3D /* SessionAuthenticationRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7312F318E0725D009D1D3D /* SessionAuthenticationRoute.cpp */; };
+		FD7312F918E0725D009D1D3D /* SessionCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7312F418E0725D009D1D3D /* SessionCache.cpp */; };
 		ae32f1807796b1050e082651a5fbf40d /* json_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0f867b04bf36a560c2493c097d84756e /* json_value.cpp */; };
 		ba28d41531c2e5f68245dce188795e9e /* IPVideoFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16d2c2310805718db935df8364d6b0d9 /* IPVideoFrame.cpp */; };
 		bccd51113e9050297513852eadc84234 /* BasicServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = cb65392fe6e82bdc59d33e1bccd3de76 /* BasicServer.cpp */; };
@@ -192,10 +196,18 @@
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E7F985F515E0DE99003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
-		FD61D43418DBD85E004586FF /* BaseSessionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseSessionManager.cpp; path = ../../ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/BaseSessionManager.cpp; sourceTree = "<group>"; };
-		FD61D43518DBD85E004586FF /* BaseSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseSessionManager.h; path = ../../ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/BaseSessionManager.h; sourceTree = "<group>"; };
+		FD5B26C118DF2313000C951B /* BaseAuthenticationRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseAuthenticationRoute.h; path = ../../ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/BaseAuthenticationRoute.h; sourceTree = "<group>"; };
+		FD5B26C418DF232F000C951B /* HTTPAuthenticationRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPAuthenticationRoute.h; path = ../../ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/HTTPAuthenticationRoute.h; sourceTree = "<group>"; };
+		FD5B26C718DF234E000C951B /* SessionAuthenticationRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SessionAuthenticationRoute.h; path = ../../ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/SessionAuthenticationRoute.h; sourceTree = "<group>"; };
+		FD61D43518DBD85E004586FF /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Session.h; path = ../../ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/Session.h; sourceTree = "<group>"; };
 		FD61D43818DC8A1E004586FF /* BasicJSONRPCServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicJSONRPCServer.h; path = ../libs/ofxJSONRPC/include/ofx/JSONRPC/BasicJSONRPCServer.h; sourceTree = "<group>"; };
 		FD61D43A18DC8A42004586FF /* BasicJSONRPCServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicJSONRPCServer.cpp; path = ../libs/ofxJSONRPC/src/BasicJSONRPCServer.cpp; sourceTree = "<group>"; };
+		FD7312EF18E07245009D1D3D /* SessionCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SessionCache.h; path = ../../ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/SessionCache.h; sourceTree = "<group>"; };
+		FD7312F018E0725D009D1D3D /* BaseAuthenticationRoute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseAuthenticationRoute.cpp; path = ../../ofxHTTP/libs/ofxHTTP/Server/src/BaseAuthenticationRoute.cpp; sourceTree = "<group>"; };
+		FD7312F118E0725D009D1D3D /* HTTPAuthenticationRoute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTTPAuthenticationRoute.cpp; path = ../../ofxHTTP/libs/ofxHTTP/Server/src/HTTPAuthenticationRoute.cpp; sourceTree = "<group>"; };
+		FD7312F218E0725D009D1D3D /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Session.cpp; path = ../../ofxHTTP/libs/ofxHTTP/Server/src/Session.cpp; sourceTree = "<group>"; };
+		FD7312F318E0725D009D1D3D /* SessionAuthenticationRoute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SessionAuthenticationRoute.cpp; path = ../../ofxHTTP/libs/ofxHTTP/Server/src/SessionAuthenticationRoute.cpp; sourceTree = "<group>"; };
+		FD7312F418E0725D009D1D3D /* SessionCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SessionCache.cpp; path = ../../ofxHTTP/libs/ofxHTTP/Server/src/SessionCache.cpp; sourceTree = "<group>"; };
 		a041419e9510439eb8cc398aa10f0556 /* PostRouteSettings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = PostRouteSettings.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/PostRouteSettings.h; sourceTree = SOURCE_ROOT; };
 		a31fb08f6660ce0dc758509eca7313e4 /* MediaTypeMap.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MediaTypeMap.cpp; path = ../../../addons/ofxMediaType/libs/ofxMediaType/src/MediaTypeMap.cpp; sourceTree = SOURCE_ROOT; };
 		a60db4d20210f3d4aeae3501b3737536 /* FileSystemRoute.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = FileSystemRoute.cpp; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Server/src/FileSystemRoute.cpp; sourceTree = SOURCE_ROOT; };
@@ -473,6 +485,11 @@
 				ab38b29f0fb86c40c9dd7116cd8b3f4f /* PostRouteFileHandler.cpp */,
 				abc8c30e2ebaf4f110a7f2009ee50c78 /* PostRouteHandler.cpp */,
 				5b8a48cdb3cfff566ce19348433649d8 /* PostRouteSettings.cpp */,
+				FD7312F018E0725D009D1D3D /* BaseAuthenticationRoute.cpp */,
+				FD7312F118E0725D009D1D3D /* HTTPAuthenticationRoute.cpp */,
+				FD7312F218E0725D009D1D3D /* Session.cpp */,
+				FD7312F318E0725D009D1D3D /* SessionAuthenticationRoute.cpp */,
+				FD7312F418E0725D009D1D3D /* SessionCache.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -921,8 +938,11 @@
 				27b98264fd9179985e513b184dd3e2f9 /* PostRouteHandler.h */,
 				a041419e9510439eb8cc398aa10f0556 /* PostRouteSettings.h */,
 				6bd1ccc0106c972a82dfab4946fd90ba /* ServerEvents.h */,
-				FD61D43418DBD85E004586FF /* BaseSessionManager.cpp */,
-				FD61D43518DBD85E004586FF /* BaseSessionManager.h */,
+				FD61D43518DBD85E004586FF /* Session.h */,
+				FD5B26C118DF2313000C951B /* BaseAuthenticationRoute.h */,
+				FD5B26C418DF232F000C951B /* HTTPAuthenticationRoute.h */,
+				FD5B26C718DF234E000C951B /* SessionAuthenticationRoute.h */,
+				FD7312EF18E07245009D1D3D /* SessionCache.h */,
 			);
 			name = Server;
 			sourceTree = "<group>";
@@ -1075,12 +1095,14 @@
 				bccd51113e9050297513852eadc84234 /* BasicServer.cpp in Sources */,
 				f38851be2ac6db8fd8677b670b2f1174 /* FileSystemRoute.cpp in Sources */,
 				97a5373e9020a521b5197e1fd15a0a98 /* FileSystemRouteHandler.cpp in Sources */,
+				FD7312F718E0725D009D1D3D /* Session.cpp in Sources */,
 				215130b0d3eb5003df4afbbb749b1232 /* FileSystemRouteSettings.cpp in Sources */,
 				73e04db2a82e321625131decb8920bc4 /* PostRoute.cpp in Sources */,
 				cb67f58b2950890b0e7d525854ff8b5c /* PostRouteFileHandler.cpp in Sources */,
 				ff2423f5d26ed4a315f29b1ef4c8641c /* PostRouteHandler.cpp in Sources */,
 				9675775caf873922db56282af9692ecc /* PostRouteSettings.cpp in Sources */,
 				20aee3e38b45f425010060e6e7ad24f8 /* Utils.cpp in Sources */,
+				FD7312F518E0725D009D1D3D /* BaseAuthenticationRoute.cpp in Sources */,
 				2d396c8526000be18d46fca72d30eec3 /* BasicWebSocketServer.cpp in Sources */,
 				0221d1db90cb7f79aed47acaa09fbfc8 /* WebSocketConnection.cpp in Sources */,
 				3f0af80a73efa1bb436a0bb86ddfd7c8 /* WebSocketFrame.cpp in Sources */,
@@ -1093,13 +1115,15 @@
 				d5e7ad644fb83a08b697911011db029e /* BaseMessage.cpp in Sources */,
 				78ba1fd4e09251d06176cdd6c699b635 /* Error.cpp in Sources */,
 				3ecbbd88e4445067add3b75bd86bce3a /* Errors.cpp in Sources */,
-				FD61D43618DBD85E004586FF /* BaseSessionManager.cpp in Sources */,
 				7fc21e7a1a5f55f52854c237cc7eeec3 /* MethodRegistry.cpp in Sources */,
+				FD7312F918E0725D009D1D3D /* SessionCache.cpp in Sources */,
 				cc17cd77be0bb13d04bec09716ea26f5 /* Request.cpp in Sources */,
 				06675465b824889b515911efa512147a /* Response.cpp in Sources */,
 				02f59e0c50ca6d75d7c2e2de523898ff /* Utils.cpp in Sources */,
 				c06458734ff651c910d378b9328fcead /* MediaTypeMap.cpp in Sources */,
+				FD7312F818E0725D009D1D3D /* SessionAuthenticationRoute.cpp in Sources */,
 				7bda2f54df10a45bf4dbc88ae75fc7a1 /* ofSSLManager.cpp in Sources */,
+				FD7312F618E0725D009D1D3D /* HTTPAuthenticationRoute.cpp in Sources */,
 				63b57ac5bf4ef088491e0317dbb2ecaa /* ofxXmlSettings.cpp in Sources */,
 				933a2227713c720ceff80fd967d0a8ee /* tinyxml.cpp in Sources */,
 				9d44dc88ef9e7991b4a09951e2e4769f /* tinyxmlerror.cpp in Sources */,
@@ -1319,6 +1343,14 @@
 		E4B69B600A3A1757003C02F2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = NO;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1329,6 +1361,21 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
@@ -1405,6 +1452,14 @@
 		E4B69B610A3A1757003C02F2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = NO;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1414,6 +1469,21 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";

@@ -42,7 +42,7 @@ MethodRegistry::~MethodRegistry()
 
 void MethodRegistry::unregisterMethod(const std::string& method)
 {
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     
     MethodMapIter methodIter = _methodMap.find(method);
     if (methodIter != _methodMap.end())
@@ -62,7 +62,7 @@ void MethodRegistry::unregisterMethod(const std::string& method)
 
 Response MethodRegistry::processCall(const void* pSender, const Request& request)
 {
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     MethodMapIter methodIter = _methodMap.find(request.getMethod());
     if (methodIter != _methodMap.end())
     {
@@ -104,7 +104,7 @@ void MethodRegistry::processNotification(const void* pSender,
 
 bool MethodRegistry::hasMethod(const std::string& method) const
 {
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     return _methodMap.find(method) != _methodMap.end();
 }
 
@@ -112,7 +112,7 @@ bool MethodRegistry::hasMethod(const std::string& method) const
 MethodRegistry::MethodDescriptionMap MethodRegistry::getMethods() const
 {
     MethodRegistry::MethodDescriptionMap methods;
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     MethodMap::const_iterator iter = _methodMap.begin();
     while (iter != _methodMap.end())
     {
