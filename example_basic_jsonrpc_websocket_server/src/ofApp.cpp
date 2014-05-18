@@ -89,21 +89,45 @@ void ofApp::pong()
 
 void ofApp::getText(JSONRPC::MethodArgs& args)
 {
-    static const std::size_t LENGTH = 140;
-
-    // Generate a random start index.
-    std::size_t startIndex = (std::size_t)ofRandom(ipsum.length());
-
-    // Ensure that the length is valid.
-    std::size_t length = (startIndex + LENGTH) < ipsum.length() ? LENGTH : string::npos;
-
     // Set the result equal to the substring.
-    args.result = ipsum.substr(startIndex, length);
+    args.result = getRandomText();
 }
 
 
 void ofApp::setText(JSONRPC::MethodArgs& args)
 {
     // Set the user text.
-    userText = args.params.asString();
+    setUserText(args.params.asString());
 }
+
+
+std::string ofApp::getRandomText() const
+{
+    static const std::size_t LENGTH = 140;
+
+    ofScopedLock lock(mutex);
+
+   // Generate a random start index.
+    std::size_t startIndex = (std::size_t)ofRandom(ipsum.length());
+
+    // Ensure that the length is valid.
+    std::size_t length = (startIndex + LENGTH) < ipsum.length() ? LENGTH : string::npos;
+
+    // return the result equal to the substring.
+    return ipsum.substr(startIndex, length);
+}
+
+
+std::string ofApp::getUserText() const
+{
+    ofScopedLock lock(mutex);
+    return userText;
+}
+
+
+void ofApp::setUserText(const std::string& text)
+{
+    ofScopedLock lock(mutex);
+    userText = text;
+}
+
