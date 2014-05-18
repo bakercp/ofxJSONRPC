@@ -69,6 +69,8 @@
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 		E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985F515E0DE99003869B5 /* Accelerate.framework */; };
+		FDEF7E821928F60B00F7FAAE /* Deserializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEF7E801928F60B00F7FAAE /* Deserializer.cpp */; };
+		FDEF7E831928F60B00F7FAAE /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEF7E811928F60B00F7FAAE /* Serializer.cpp */; };
 		a74756e4cb27d44fb96d076ea8212fdf /* DefaultClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12545da8c2bc9bcaf4e8f43300ca42ee /* DefaultClient.cpp */; };
 		a747cf15c723fceaa2282746ee029460 /* BaseRouteSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 396b25119fdb479254d8e67a5bdf1ded /* BaseRouteSettings.cpp */; };
 		a8af031f8417316aff0d746e31105ff3 /* WebSocketFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32acc8388b45fc2366bec37405716760 /* WebSocketFrame.cpp */; };
@@ -272,6 +274,10 @@
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E7F985F515E0DE99003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
+		FDEF7E7E1928F5FF00F7FAAE /* Deserializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Deserializer.h; path = ../libs/ofxJSONRPC/include/ofx/JSONRPC/Deserializer.h; sourceTree = "<group>"; };
+		FDEF7E7F1928F5FF00F7FAAE /* Serializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Serializer.h; path = ../libs/ofxJSONRPC/include/ofx/JSONRPC/Serializer.h; sourceTree = "<group>"; };
+		FDEF7E801928F60B00F7FAAE /* Deserializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Deserializer.cpp; path = ../libs/ofxJSONRPC/src/Deserializer.cpp; sourceTree = "<group>"; };
+		FDEF7E811928F60B00F7FAAE /* Serializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Serializer.cpp; path = ../libs/ofxJSONRPC/src/Serializer.cpp; sourceTree = "<group>"; };
 		a03872290789ee7aa6a28395e36979d8 /* ClientEvents.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ClientEvents.cpp; path = ../../../addons/ofxHTTP/libs/ofxHTTP/src/ClientEvents.cpp; sourceTree = SOURCE_ROOT; };
 		a139aad0e138e28cd680d9b4d09117d5 /* CookieUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = CookieUtils.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/include/ofx/HTTP/CookieUtils.h; sourceTree = SOURCE_ROOT; };
 		a2941ca3b0cf610ba8a71765d491ccad /* DefaultSessionProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = DefaultSessionProvider.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/include/ofx/HTTP/DefaultSessionProvider.h; sourceTree = SOURCE_ROOT; };
@@ -468,6 +474,8 @@
 		58fecdac1899446538c610f2bc42617e /* src */ = {
 			isa = PBXGroup;
 			children = (
+				FDEF7E801928F60B00F7FAAE /* Deserializer.cpp */,
+				FDEF7E811928F60B00F7FAAE /* Serializer.cpp */,
 				0ca09c0918b38a5bb5ab23e1c48c9eb9 /* BaseMessage.cpp */,
 				2d38ab139d1b93b86760b082e6898472 /* Error.cpp */,
 				d00900d4d440334cc171f9febc43b200 /* Errors.cpp */,
@@ -549,6 +557,8 @@
 		8d637f949423983bb8cb1b76ccf3a53b /* JSONRPC */ = {
 			isa = PBXGroup;
 			children = (
+				FDEF7E7E1928F5FF00F7FAAE /* Deserializer.h */,
+				FDEF7E7F1928F5FF00F7FAAE /* Serializer.h */,
 				b41915017cea68afdd5d7f438b86b49c /* BaseMessage.h */,
 				a72ba00649a33d94720e46b059265f22 /* Error.h */,
 				244e7d502a374e8d617474d5706a9fbf /* Errors.h */,
@@ -1024,9 +1034,11 @@
 				6a1beef909b46e3410b48e5512db33a2 /* BaseClient.cpp in Sources */,
 				ee785ef526c01df6efe00ffed8ad8a0c /* BaseRequest.cpp in Sources */,
 				272951916f9204e4960463e3a7dc288c /* BaseResponse.cpp in Sources */,
+				FDEF7E821928F60B00F7FAAE /* Deserializer.cpp in Sources */,
 				f6afeb8afa51c11e04d848a5e851f4be /* BaseRouteHandler.cpp in Sources */,
 				a747cf15c723fceaa2282746ee029460 /* BaseRouteSettings.cpp in Sources */,
 				ac517fc7ce444339ca5012fabc95e7fe /* BaseServerSettings.cpp in Sources */,
+				FDEF7E831928F60B00F7FAAE /* Serializer.cpp in Sources */,
 				e77ee97ef5eea571099d1006058d75a2 /* BasicIPVideoServer.cpp in Sources */,
 				239c6407df8298e762e2884db6773292 /* BasicPostServer.cpp in Sources */,
 				ee315e7b626e839eb21ea928452f0e2b /* BasicServer.cpp in Sources */,
