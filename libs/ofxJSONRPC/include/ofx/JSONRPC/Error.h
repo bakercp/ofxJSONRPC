@@ -93,32 +93,47 @@ public:
     /// \throws Poco::Exception if the JSON is not valid.
     static Error fromJSON(const Json::Value& json);
 
-    static const Error NO_ERROR;            ///< \brief No Error
-    static const Error PARSE_ERROR;         ///< \brief Parse Error
-    static const Error INVALID_REQUEST;     ///< \brief Invalid Request
-    static const Error METHOD_NOT_FOUND;    ///< \brief Method Not Found
-    static const Error INVALID_PARAMETERS;  ///< \brief Invalid Parameters
-    static const Error INTERNAL_ERROR;      ///< \brief Internal Error
+    /// \brief No Error
+    static const Error NO_ERROR;
+
+    /// \brief Parse Error
+    static const Error PARSE_ERROR;
+
+    /// \brief Invalid Request
+    static const Error INVALID_REQUEST;
+
+    /// \brief Method Not Found
+    static const Error METHOD_NOT_FOUND;
+
+    /// \brief Invalid Parameters
+    static const Error INVALID_PARAMETERS;
+
+    /// \brief Internal Error
+    static const Error INTERNAL_ERROR;
 
 protected:
+    /// \brief A Number that indicates the error type that occurred.
+    /// \details This code MUST be an integer.
     int _code;
-        ///< \brief A Number that indicates the error type that occurred.
-        ///< \details This code MUST be an integer.
 
+    /// \brief A String providing a short description of the error.
+    /// \details The message SHOULD be limited to a concise single sentence.
     std::string _message;
-        ///< \brief A String providing a short description of the error.
-        ///< \details The message SHOULD be limited to a concise single sentence.
 
+    /// \brief A Json::Value that contains additional error info.
+    ///
+    /// This may be omitted. The value of this member is defined by the Server
+    /// (e.g. detailed error information, nested errors etc.).
     Json::Value _data;
-        ///< \brief A Primitive or Structured value that contains additional
-        ///<        information about the error.
-        ///< \details This may be omitted. The value of this member is defined
-        ///<        by the Server (e.g. detailed error information,
-        ///<        nested errors etc.).
 
-    static const std::string ERROR_CODE_TAG;    ///< \brief Error code tag.
-    static const std::string ERROR_MESSAGE_TAG; ///< \brief Error message tag.
-    static const std::string ERROR_DATA_TAG;    ///< \brief Error data tag.
+    /// \brief Error code tag.
+    static const std::string ERROR_CODE_TAG;
+
+    /// \brief Error message tag.
+    static const std::string ERROR_MESSAGE_TAG;
+
+    /// \brief Error data tag.
+    static const std::string ERROR_DATA_TAG;
 
 };
 

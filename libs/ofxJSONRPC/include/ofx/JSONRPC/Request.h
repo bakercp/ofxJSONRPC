@@ -38,7 +38,8 @@ namespace JSONRPC {
 
 
 /// \brief A JSONRPC 2.0 Request.
-/// \details An Request has the following format:
+///
+/// A Request has the following format:
 ///
 /// ~~~{.json}
 /// {
@@ -81,14 +82,21 @@ public:
     /// \brief Destroy the ErrorResponse.
     virtual ~Request();
 
+    /// \brief Get the request method.
     /// \returns the request method.
-    std::string getMethod() const;
+    const std::string& getMethod() const;
 
+    /// \brief Get the request parameters.
     /// \returns the request method parameters.
-    Json::Value getParameters() const;
+    const Json::Value& getParameters() const;
 
+    /// \brief Query whether this Request is a notification.
+    /// \returns true iff the id is null.
+    bool isNotification() const;
+
+    /// \brief Get the JSON Request as a string.
+    /// \param styled true if the output string should be pretty-print.
     /// \returns a raw json string of this Request
-    /// \param styled True if the output string should be pretty-print.
     std::string toString(bool styled = false) const;
 
     /// \brief Serialize the Request object to JSON.
@@ -103,17 +111,17 @@ public:
     static Request fromJSON(const Json::Value& json);
 
 protected:
+    /// \brief The method name.
     std::string _method;
-        ///< \brief The method name.
 
+    /// \brief The method parameters.
     Json::Value _parameters;
-        ///< \brief The method parameters.
 
+    /// \brief Method tag.
     static const std::string METHOD_TAG;
-        ///< \brief Method tag.
 
+    /// \brief Parameters tag.
     static const std::string PARAMS_TAG;
-        ///< \brief Parameters tag.
 
 };
 

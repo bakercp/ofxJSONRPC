@@ -27,6 +27,7 @@
 
 
 #include <json/json.h>
+#include "ofxHTTP.h"
 #include "ofx/JSONRPC/BaseMessage.h"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/Errors.h"
@@ -34,5 +35,6 @@
 #include "ofx/JSONRPC/MethodRegistry.h"
 #include "ofx/JSONRPC/Request.h"
 #include "ofx/JSONRPC/Response.h"
+#include "ofx/HTTP/BasicJSONRPCServer.h"
 
-#include "ofx/JSONRPC/BasicJSONRPCServer.h"
+namespace ofxJSONRPC = ofx::JSONRPC;

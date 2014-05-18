@@ -63,13 +63,38 @@ void MethodRegistry::unregisterMethod(const std::string& method)
 Response MethodRegistry::processCall(const void* pSender, const Request& request)
 {
     Poco::FastMutex::ScopedLock lock(_mutex);
-    MethodMapIter methodIter = _methodMap.find(request.getMethod());
+
+    const std::string& method = request.getMethod();
+
+    NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
+
+    MethodMapIter methodIter = _methodMap.find(method);
+
+    // Notifications do not have an ID because they do not return results.
+    bool isNotification = request.getID().isNull();
+
     if (methodIter != _methodMap.end())
     {
         MethodArgs args(request.getParameters());
-        // args are filled in by the event notification
+        // Argument result is filled in the event notification callback.
         ofNotifyEvent((*methodIter).second->event, args, pSender);
+
         return Response(request.getID(), args.result);
+    }
+    if (noArgMethodIter != _noArgMethodMap.end())
+    {
+        if (request.getParameters().isNull())
+        {
+            ofNotifyEvent((*noArgMethodIter).second->event, pSender);
+            return Response(request.getID(), Json::Value::null);
+        }
+        else
+        {
+            return Response(request.getID(),
+                            Error(Errors::RPC_ERROR_INVALID_REQUEST,
+                                  "This method does not support parameters.",
+                                  Request::toJSON(request)));
+        }
     }
     else
     {
@@ -78,20 +103,51 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
                               Request::toJSON(request)));
     }
 
-    NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(request.getMethod());
-    if (noArgMethodIter != _noArgMethodMap.end())
+
+
+    if (isNotification)
     {
         ofNotifyEvent((*noArgMethodIter).second->event, pSender);
 
-        // no args to args to return, because it is a no-arg method
+        // No args to args to return, because it is a no-arg method
         return Response(request.getID(), Json::Value::null);
+
+
+        std::cout << "THIS IS A NOTIFICATION: " << method << std::endl;
+
+
     }
     else
     {
-        return Response(request.getID(),
-                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
-                              Request::toJSON(request)));
+        std::cout << "THIS IS NOT A NOTIFICATION: " << method << std::endl;
     }
+
+
+
+
+//    if (methodIter != _methodMap.end())
+//    {
+//    }
+//    else
+//    {
+//        return Response(request.getID(),
+//                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+//                              Request::toJSON(request)));
+//    }
+//
+//        if (noArgMethodIter != _noArgMethodMap.end())
+//        {
+//            ofNotifyEvent((*noArgMethodIter).second->event, pSender);
+//
+//            // no args to args to return, because it is a no-arg method
+//            return Response(request.getID(), Json::Value::null);
+//        }
+//        else
+//        {
+//            return Response(request.getID(),
+//                            Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+//                                  Request::toJSON(request)));
+//        }
 }
 
 

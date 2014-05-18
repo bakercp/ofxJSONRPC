@@ -58,20 +58,20 @@ public:
     /// \returns the name of the method.
     Json::Value getDescription() const;
 
-    EventType event; ///< \brief The public event available for subscription.
-
+    /// \brief The public event available for subscription.
+    EventType event;
 private:
+    /// \brief The method's name.
     std::string _name;
-        ///< \brief The method's name.
 
+    /// \brief A description of the method's functionality.
     Json::Value _description;
-        ///< \brief A description of the method's functionality.
 
 };
 
 
 typedef Method_<ofEvent<MethodArgs> > Method;
-typedef Method_<ofEvent<void> >       NoArgMethod;
+typedef Method_<ofEvent<void> > NoArgMethod;
 
 
 template<typename ArgType>

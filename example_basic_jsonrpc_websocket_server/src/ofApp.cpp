@@ -25,8 +25,6 @@
 
 #include "ofApp.h"
 
-#include "Poco/Net/HTTPCookie.h"
-
 
 void ofApp::setup()
 {
@@ -34,172 +32,78 @@ void ofApp::setup()
 
     ofSetLogLevel(OF_LOG_VERBOSE);
 
-    BasicJSONRPCServerSettings settings;
+    ipsum = ofBufferFromFile("media/ipsum.txt").getText();
 
-    server = BasicJSONRPCServer::makeShared(settings);
+    pingPlayer.loadSound("media/ping.wav");
+    pongPlayer.loadSound("media/pong.wav");
 
-    server->start();
+    HTTP::BasicJSONRPCServerSettings settings;
+
+    server.setup(settings);
+
+    server.registerMethod("get-text",
+                          "Returns a random chunk of text to the client.",
+                          this,
+                          &ofApp::getText);
+
+    server.registerMethod("set-text",
+                          "Sets text from the user.",
+                          this,
+                          &ofApp::setText);
+
+    server.registerMethod("ping",
+                          "Send a JSONRPC Ping Notification",
+                          this,
+                          &ofApp::ping);
+
+    server.registerMethod("pong",
+                          "Send a JSONRPC Pong Notification",
+                          this,
+                          &ofApp::pong);
+
+    server.start();
 
     // Launch a browser with the address of the server.
-    ofLaunchBrowser(server->getURL());
-
-
-    server->registerMethod("get-random-number",
-                           "Get a random number.",
-                           this,
-                           &ofApp::generateRandomNumber);
-
-    server->registerMethod("set-random-number",
-                           "Set a random number",
-                            this,
-                            &ofApp::setRandomNumber);
-
-    server->registerMethod("hi",
-                           "hihi",
-                           this,
-                           &ofApp::notificationHi);
-
-    server->registerMethod("hi2",
-                           "hihi",
-                           this,
-                           &ofApp::notificationHiClient);
-
-
-//    HTTPCookie cookie("kookie");
-}
-
-
-void ofApp::update()
-{
+    ofLaunchBrowser(server.getURL());
 }
 
 
 void ofApp::draw()
 {
-    ofBackground(bgColor);
-    ofSetColor(255);
-
-    std::map<const WebSocketConnection*, ClientInfo::SharedPtr>::iterator iter = clients.begin();
-
-    int y = 14;
-
-    while (iter != clients.end())
-    {
-        std::string address = (*iter).first->getClientAddress().toString();
-
-        ofDrawBitmapStringHighlight(address, ofPoint(15, y));
-
-        y+= 14;
-
-        ++iter;
-    }
-
+    ofBackground(255);
+    ofDrawBitmapStringHighlight(userText, ofPoint(14, 18));
 }
 
 
-//void ofApp::setRandomNumberStream(const void* client, JSONRPC::MethodArgs& args)
-//{
-//    cout << "got that message " << client << JSONRPC::Utils::toString(args.params) << endl;
-//}
-//
-
-void ofApp::notificationHiClient(const void* client)
+void ofApp::ping()
 {
-    cout << "HI" << " " << client << endl;
+    pingPlayer.play();
 }
 
 
-void ofApp::notificationHi()
+void ofApp::pong()
 {
-    cout << "just hi" << endl;
+    pongPlayer.play();
 }
 
 
-void ofApp::generateRandomNumber(const void* client, MethodArgs& args)
+void ofApp::getText(JSONRPC::MethodArgs& args)
 {
-    args.result = ofRandom(1);
+    static const std::size_t LENGTH = 140;
+
+    // Generate a random start index.
+    std::size_t startIndex = (std::size_t)ofRandom(ipsum.length());
+
+    // Ensure that the length is valid.
+    std::size_t length = (startIndex + LENGTH) < ipsum.length() ? LENGTH : string::npos;
+
+    // Set the result equal to the substring.
+    args.result = ipsum.substr(startIndex, length);
 }
 
 
-void ofApp::setRandomNumber(const void* client, MethodArgs& args)
+void ofApp::setText(JSONRPC::MethodArgs& args)
 {
-    double d = args.params.isDouble() ? args.params.asDouble() : 0;
-    bgColor = ofColor(d * 255);
-}
-
-
-void ofApp::onWebSocketOpenEvent(WebSocketEventArgs& evt)
-{
-    clients[&evt.getConnectionRef()] = ClientInfo::SharedPtr(new ClientInfo(&evt.getConnectionRef()));
-}
-
-
-void ofApp::onWebSocketCloseEvent(WebSocketEventArgs& evt)
-{
-    std::map<const WebSocketConnection*, ClientInfo::SharedPtr>::iterator iter = clients.find(&evt.getConnectionRef());
-
-    if (iter != clients.end())
-    {
-        clients.erase(iter);
-    }
-
-    cout << "ofApp::Connection closed from: " << evt.getConnectionRef().getClientAddress().toString() << endl;
-}
-
-
-void ofApp::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt)
-{
-    cout << "ofApp::onWebSocketFrameReceivedEvent: " << evt.getConnectionRef().getClientAddress().toString() << endl;
-}
-
-
-void ofApp::onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt)
-{
-    cout << "ofApp::onWebSocketFrameSentEvent: " << evt.getConnectionRef().getClientAddress().toString() << endl;
-}
-
-
-void ofApp::onWebSocketErrorEvent(WebSocketEventArgs& evt)
-{
-    ofLogError("WebSocketMethodRegistry::onWebSocketErrorEvent") << "Error from: " << evt.getConnectionRef().getClientAddress().toString();
-}
-
-
-void ofApp::onHTTPPostEvent(PostEventArgs& args)
-{
-    ofLogNotice("ofApp::onHTTPPostEvent") << "Data: " << args.getBuffer().getText();
-}
-
-
-void ofApp::onHTTPFormEvent(PostFormEventArgs& args)
-{
-    ofLogNotice("ofApp::onHTTPFormEvent") << "";
-    Utils::dumpNameValueCollection(args.getBuffer().getText(), ofGetLogLevel());
-}
-
-
-void ofApp::onHTTPUploadEvent(PostUploadEventArgs& args)
-{
-    std::string stateString = "";
-
-    switch (args.getState())
-    {
-        case PostUploadEventArgs::UPLOAD_STARTING:
-            stateString = "STARTING";
-            break;
-        case PostUploadEventArgs::UPLOAD_PROGRESS:
-            stateString = "PROGRESS";
-            break;
-        case PostUploadEventArgs::UPLOAD_FINISHED:
-            stateString = "FINISHED";
-            break;
-    }
-
-    ofLogNotice("ofApp::onHTTPUploadEvent") << "";
-    cout << "         state: " << stateString << endl;
-    cout << " formFieldName: " << args.getFormFieldName() << endl;
-    cout << "orig. filename: " << args.getOriginalFilename() << endl;
-    cout << "      filename: " << args.getFilename() << endl;
-    cout << "      fileType: " << args.getFileType().toString() << endl;
-    cout << "# bytes xfer'd: " << args.getNumBytesTransferred() << endl;
+    // Set the user text.
+    userText = args.params.asString();
 }

@@ -23,19 +23,19 @@
 // =============================================================================
 
 
-#include "ofx/JSONRPC/BasicJSONRPCServer.h"
+#include "ofx/HTTP/BasicJSONRPCServer.h"
 
 
 namespace ofx {
-namespace JSONRPC {
+namespace HTTP {
 
 
 
 BasicJSONRPCServer::BasicJSONRPCServer(const BasicJSONRPCServer::Settings& settings):
-    ofx::HTTP::BasicServer(settings),
-    _sessionCache(ofx::HTTP::SessionCache::makeShared()), 
-    _postRoute(ofx::HTTP::PostRoute::makeShared(settings)),
-    _webSocketRoute(ofx::HTTP::WebSocketRoute::makeShared(settings))
+    BasicServer(settings),
+    _sessionCache(SessionCache::makeShared()),
+    _postRoute(PostRoute::makeShared(settings)),
+    _webSocketRoute(WebSocketRoute::makeShared(settings))
 {
     addRoute(_postRoute); // #2 for test
     addRoute(_webSocketRoute); // #1 for test
@@ -45,7 +45,6 @@ BasicJSONRPCServer::BasicJSONRPCServer(const BasicJSONRPCServer::Settings& setti
 
     _postRoute->registerPostEvents(this);
     _webSocketRoute->registerWebSocketEvents(this);
-
 }
 
 
@@ -59,31 +58,31 @@ BasicJSONRPCServer::~BasicJSONRPCServer()
 }
 
 
-ofx::HTTP::PostRoute::SharedPtr BasicJSONRPCServer::getPostRoute()
+PostRoute::SharedPtr BasicJSONRPCServer::getPostRoute()
 {
     return _postRoute;
 }
 
 
-ofx::HTTP::WebSocketRoute::SharedPtr BasicJSONRPCServer::getWebSocketRoute()
+WebSocketRoute::SharedPtr BasicJSONRPCServer::getWebSocketRoute()
 {
     return _webSocketRoute;
 }
 
 
-bool BasicJSONRPCServer::onWebSocketOpenEvent(ofx::HTTP::WebSocketEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketOpenEvent(WebSocketEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onWebSocketCloseEvent(ofx::HTTP::WebSocketEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketCloseEvent(WebSocketEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(ofx::HTTP::WebSocketFrameEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt)
 {
     Json::Value json;
     Json::Reader reader;
@@ -104,6 +103,7 @@ bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(ofx::HTTP::WebSocketFrame
         {
             JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
                                        JSONRPC::Error::METHOD_NOT_FOUND);
+
             evt.getConnectionRef().sendFrame(response.toString());
         }
 
@@ -111,25 +111,26 @@ bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(ofx::HTTP::WebSocketFrame
     }
     else
     {
-        ofLogNotice("WebSocketMethodResponder::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
+        ofLogNotice("BasicJSONRPCServer::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
+        ofLogNotice("BasicJSONRPCServer::onWebSocketFrameReceivedEvent") << evt.getFrameRef().getText();
         return false;  // We did not attend to this event, so pass it along.
     }
 }
 
 
-bool BasicJSONRPCServer::onWebSocketFrameSentEvent(ofx::HTTP::WebSocketFrameEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onWebSocketErrorEvent(ofx::HTTP::WebSocketEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketErrorEvent(WebSocketEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onHTTPFormEvent(HTTP::PostFormEventArgs& args)
+bool BasicJSONRPCServer::onHTTPFormEvent(PostFormEventArgs& args)
 {
     ofLogNotice("ofApp::onHTTPFormEvent") << "";
     HTTP::Utils::dumpNameValueCollection(args.getForm(), ofGetLogLevel());
@@ -137,7 +138,7 @@ bool BasicJSONRPCServer::onHTTPFormEvent(HTTP::PostFormEventArgs& args)
 }
 
 
-bool BasicJSONRPCServer::onHTTPPostEvent(HTTP::PostEventArgs& args)
+bool BasicJSONRPCServer::onHTTPPostEvent(PostEventArgs& args)
 {
     Json::Value json;
     Json::Reader reader;
@@ -167,40 +168,17 @@ bool BasicJSONRPCServer::onHTTPPostEvent(HTTP::PostEventArgs& args)
     }
     else
     {
-        ofLogNotice("WebSocketMethodResponder::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
+        ofLogNotice("BasicJSONRPCServer::onHTTPPostEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
 
         return false;  // We did not attend to this event, so pass it along.
     }
 }
 
 
-bool BasicJSONRPCServer::onHTTPUploadEvent(HTTP::PostUploadEventArgs& args)
+bool BasicJSONRPCServer::onHTTPUploadEvent(PostUploadEventArgs& args)
 {
-    std::string stateString = "";
-
-    switch (args.getState())
-    {
-        case HTTP::PostUploadEventArgs::UPLOAD_STARTING:
-            stateString = "STARTING";
-            break;
-        case HTTP::PostUploadEventArgs::UPLOAD_PROGRESS:
-            stateString = "PROGRESS";
-            break;
-        case HTTP::PostUploadEventArgs::UPLOAD_FINISHED:
-            stateString = "FINISHED";
-            break;
-    }
-
-    ofLogNotice("ofApp::onHTTPUploadEvent") << "";
-    cout << "         state: " << stateString << endl;
-    cout << " formFieldName: " << args.getFormFieldName() << endl;
-    cout << "orig. filename: " << args.getOriginalFilename() << endl;
-    cout << "      filename: " << args.getFilename() << endl;
-    cout << "      fileType: " << args.getFileType().toString() << endl;
-    cout << "# bytes xfer'd: " << args.getNumBytesTransferred() << endl;
-
-    return false;
+    return false;  // We did not attend to this event, so pass it along.
 }
 
 
-} } // namespace ofx::JSONRPC
+} } // namespace ofx::HTTP

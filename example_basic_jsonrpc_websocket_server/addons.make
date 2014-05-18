@@ -3,4 +3,3 @@ ofxJSON
 ofxJSONRPC
 ofxMediaType
 ofxSSLManager
-ofxXmlSettings

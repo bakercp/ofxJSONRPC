@@ -27,6 +27,7 @@
 
 
 #include <string>
+#include "ofx/JSONRPC/Utils.h"
 
 
 namespace ofx {
@@ -34,6 +35,9 @@ namespace JSONRPC {
 
 
 /// \brief A contain all arguments for an JSONRPC method call.
+///
+/// Arguments include the Request parameters and either Results or an Error to
+/// be set if required.
 class MethodArgs
 {
 public:
@@ -47,14 +51,31 @@ public:
     {
     }
 
+    /// \brief The JSON contents of the JSONRPC request params.
     const Json::Value params;
-        ///< \brief The JSON contents of the JSONRPC request params.
 
+    /// \brief The result to be returned, if required.
     Json::Value result;
-        ///< \brief The result to be returned, if required.
 
+    /// \brief The error to be returned, if required.
     Json::Value error;
-        ///< \brief The error to be returned, if required.
+
+    /// \brief Get the MethodArgs as a string.
+    /// \param styled true if the output string should be pretty-print.
+    /// \returns a raw json string of this MethodArgs
+    std::string toString(bool styled = false) const
+    {
+        std::stringstream ss;
+
+        ss << "Params:" << std::endl;
+        ss << Utils::toString(params, styled) << std::endl;
+        ss << "Results:" << std::endl;
+        ss << Utils::toString(result, styled) << std::endl;
+        ss << "Error:" << std::endl;
+        ss << Utils::toString(error, styled) << std::endl;
+
+        return ss.str();
+    }
 
 };
 

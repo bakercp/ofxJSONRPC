@@ -74,15 +74,21 @@ Request::~Request()
 }
 
 
-std::string Request::getMethod() const
+const std::string& Request::getMethod() const
 {
     return _method;
 }
 
 
-Json::Value Request::getParameters() const
+const Json::Value& Request::getParameters() const
 {
     return _parameters;
+}
+
+
+bool Request::isNotification() const
+{
+    return !hasID();
 }
 
 

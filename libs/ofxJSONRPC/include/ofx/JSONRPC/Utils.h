@@ -45,7 +45,7 @@ public:
     /// \param json The JSON value to convert.
     /// \param styled if true, the raw string will be indented
     ///        with returns and thus easier to read (aka pretty print).
-    /// \returns A raw string representation of the JSON.
+    /// \returns A std::string representation of the JSON.
     static std::string toString(const Json::Value& json, bool styled = false);
 
 };

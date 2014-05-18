@@ -208,35 +208,33 @@ public:
     }
 
 protected:
+    /// \brief A shared pointer typedef for methods;
     typedef std::shared_ptr<Method> SharedMethodPtr;
-        ///< \brief A shared pointer typedef for methods to
-        ///<        simplify pointer memory management.
 
+    /// \brief A shared pointer typedef for no argument methods;
     typedef std::shared_ptr<NoArgMethod> SharedNoArgMethodPtr;
-        ///< \brief A shared pointer typedef for no argument methods to
-        ///<        simplify pointer memory management.
 
+    /// \brief A method map.
     typedef std::map<std::string, SharedMethodPtr> MethodMap;
-        ///< \brief A method map.
 
+    /// \brief A void no argument method map.
     typedef std::map<std::string, SharedNoArgMethodPtr> NoArgMethodMap;
-        ///< \brief A void no argument method map.
 
+    /// \brief A method map iterator.
     typedef MethodMap::iterator MethodMapIter;
-        ///< \brief A method map iterator.
 
+    /// \brief A no argument method map iterator.
     typedef NoArgMethodMap::iterator NoArgMethodMapIter;
-        ///< \brief A no argument method map iterator.
 
+    /// \brief Maps method names to their method pointers.
     MethodMap _methodMap;
-        ///< \brief Maps method names to their method pointers.
 
+    /// \brief Maps no argument method names to their method pointers.
     NoArgMethodMap _noArgMethodMap;
-        ///< \brief Maps no argument method names to their method pointers.
 
+    /// \brief A mutext to ensure method map validity.
     mutable Poco::FastMutex _mutex;
-        ///< \brief A mutext to ensure method map validity.
-    
+
 };
 
 

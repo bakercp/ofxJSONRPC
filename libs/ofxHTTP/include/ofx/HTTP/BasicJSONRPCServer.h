@@ -28,51 +28,57 @@
 
 #include "ofTypes.h"
 #include "ofxHTTP.h"
-#include "ofx/HTTP/Server/BasicServer.h"
-#include "ofx/HTTP/Server/PostRouteSettings.h"
-#include "ofx/HTTP/Server/SessionCache.h"
-#include "ofx/HTTP/WebSocket/WebSocketRouteSettings.h"
+#include "ofx/HTTP/BasicServer.h"
+#include "ofx/HTTP/PostRouteSettings.h"
+#include "ofx/HTTP/SessionCache.h"
+#include "ofx/HTTP/WebSocketRouteSettings.h"
 #include "ofx/JSONRPC/MethodRegistry.h"
 
 
 namespace ofx {
-namespace JSONRPC {
+namespace HTTP {
 
 
 class BasicJSONRPCServerSettings:
-    public ofx::HTTP::BasicServerSettings,
-    public ofx::HTTP::PostRouteSettings,
-    public ofx::HTTP::WebSocketRouteSettings
+    public BasicServerSettings,
+    public PostRouteSettings,
+    public WebSocketRouteSettings
 {
 };
 
 
-class BasicJSONRPCServer: public ofx::HTTP::BasicServer, public MethodRegistry
+/// \brief A BasicJSONRPCServer.
+///
+/// This server can process JSONRPC calls submitted via WebSockets or
+/// POST requests.
+class BasicJSONRPCServer: public BasicServer, public JSONRPC::MethodRegistry
 {
 public:
     typedef std::shared_ptr<BasicJSONRPCServer> SharedPtr;
-    typedef std::weak_ptr<BasicJSONRPCServer> WeakPtr;
     typedef BasicJSONRPCServerSettings Settings;
 
     BasicJSONRPCServer(const Settings& settings = Settings());
-    
+
+    /// \brief Destroy the BasicJSONRPCServer.
     virtual ~BasicJSONRPCServer();
 
+    /// \brief Get the PostRoute.
     /// \returns the PostRoute attached to this server.
-    ofx::HTTP::PostRoute::SharedPtr getPostRoute();
+    PostRoute::SharedPtr getPostRoute();
 
+    /// \brief Get the WebSocketRoute.
     /// \returns the WebSocketRoute attached to this server.
-    ofx::HTTP::WebSocketRoute::SharedPtr getWebSocketRoute();
+    WebSocketRoute::SharedPtr getWebSocketRoute();
 
-    bool onWebSocketOpenEvent(ofx::HTTP::WebSocketEventArgs& evt);
-    bool onWebSocketCloseEvent(ofx::HTTP::WebSocketEventArgs& evt);
-    bool onWebSocketFrameReceivedEvent(ofx::HTTP::WebSocketFrameEventArgs& evt);
-    bool onWebSocketFrameSentEvent(ofx::HTTP::WebSocketFrameEventArgs& evt);
-    bool onWebSocketErrorEvent(ofx::HTTP::WebSocketEventArgs& evt);
+    bool onWebSocketOpenEvent(WebSocketEventArgs& evt);
+    bool onWebSocketCloseEvent(WebSocketEventArgs& evt);
+    bool onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt);
+    bool onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt);
+    bool onWebSocketErrorEvent(WebSocketEventArgs& evt);
 
-    bool onHTTPPostEvent(ofx::HTTP::PostEventArgs& evt);
-    bool onHTTPFormEvent(ofx::HTTP::PostFormEventArgs& evt);
-    bool onHTTPUploadEvent(ofx::HTTP::PostUploadEventArgs& evt);
+    bool onHTTPPostEvent(PostEventArgs& evt);
+    bool onHTTPFormEvent(PostFormEventArgs& evt);
+    bool onHTTPUploadEvent(PostUploadEventArgs& evt);
 
     /// \returns a new Shared instance of a BasicJSONRPCServer
     static SharedPtr makeShared(const Settings& settings = Settings())
@@ -81,16 +87,16 @@ public:
     }
 
 protected:
-    ofx::HTTP::SessionCache::SharedPtr _sessionCache;
-        ///< \brief A session cache for this server.
+    /// \brief A session cache for this server.
+    SessionCache::SharedPtr _sessionCache;
 
-    ofx::HTTP::PostRoute::SharedPtr _postRoute;
-        ///< \brief The PostRoute attached to this server.
+    /// \brief The PostRoute attached to this server.
+    PostRoute::SharedPtr _postRoute;
 
-    ofx::HTTP::WebSocketRoute::SharedPtr _webSocketRoute;
-        ///< \brief The WebSocketRoute attached to this server.
+    /// \brief The WebSocketRoute attached to this server.
+    WebSocketRoute::SharedPtr _webSocketRoute;
 
 };
 
 
-} } // namespace ofx::JSONRPC
+} } // namespace ofx::HTTP

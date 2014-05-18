@@ -39,15 +39,16 @@ namespace JSONRPC {
 
 
 /// \brief A JSONRPC 2.0 Response.
-/// An Response has the following format:
 ///
-/// \code{.json}
+/// A Response has the following format:
+///
+/// ~~~{.json}
 /// {
 ///     "jsonrpc": "2.0",
 ///     "result": 19,
 ///     "id": 1
 /// }
-/// \endcode
+/// ~~~
 ///
 /// \sa http://www.jsonrpc.org/specification
 class Response: public BaseMessage
@@ -58,31 +59,37 @@ public:
 
     /// \brief Create a Response.
     /// \param id The id of the original remote call.
-    /// \param result The results of the function call.
+    /// \param result The results of the function call as JSON.
     Response(const Json::Value& id, const Json::Value& result);
 
     /// \brief Create a Response.
     /// \param id The id of the original remote call.
-    /// \param error is the Error response. The Error MUST
+    /// \param error The Error response. The Error MUST
     ///        contain a valid error code.
     Response(const Json::Value& id, const Error& error);
 
     /// \brief Destroy the Response.
     virtual ~Response();
 
-    /// \returns result JSON data.
+    /// \brief Get the Result JSON if available.
+    /// \returns result JSON data if available.
     /// \note The JSON data will be empty if there is an error.
-    Json::Value getResult() const;
+    const Json::Value& getResult() const;
 
-    /// \returns the Error.
-    /// \note The Error will be empty the response if the call was successful.
-    Error getError() const;
+    /// \brief Get the Error if available.
+    ///
+    /// The Error code will be NO_ERROR if the call was successful.
+    ///
+    /// \returns the Error if available.
+    const Error& getError() const;
 
+    /// \brief Query if the Response is an error response.
     /// \returns true iff an error code is present.
     bool isErrorResponse() const;
 
-    /// \returns a raw json string of this Response.
-    /// \param styled True if the output string should be pretty-print.
+    /// \brief Get the JSON Response as a string.
+    /// \param styled true if the output string should be pretty-print.
+    /// \returns a raw json string of this Response
     std::string toString(bool styled = false) const;
 
     /// \brief Serialize the Response object to JSON.
@@ -97,17 +104,17 @@ public:
     static Response fromJSON(const Json::Value& json);
 
 protected:
+    /// \brief The result of the remote call.
     Json::Value _result;
-        ///< \brief The result of the remote call.
 
+    /// \brief An Error object.  Will be empty if there is no error.
     Error _error;
-        ///< \brief An Error object.  Will be empty if there is no error.
 
+    /// \brief Error tag.
     static const std::string ERROR_TAG;
-        ///< \brief Error tag.
 
+    /// \brief Result tag.
     static const std::string RESULT_TAG;
-        ///< \brief Result tag.
 
 };
 

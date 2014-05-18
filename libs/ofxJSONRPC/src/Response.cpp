@@ -64,13 +64,13 @@ Response::~Response()
 }
 
 
-Json::Value Response::getResult() const
+const Json::Value& Response::getResult() const
 {
     return _result;
 }
 
 
-Error Response::getError() const
+const Error& Response::getError() const
 {
     return _error;
 }

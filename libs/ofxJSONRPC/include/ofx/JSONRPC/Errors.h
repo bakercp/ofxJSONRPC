@@ -48,12 +48,23 @@ public:
     ///        "unknown error" will be returned.
     static std::string getErrorMessage(int code);
 
-    static const int RPC_ERROR_NONE;                ///< \brief No Error
-    static const int RPC_ERROR_PARSE;               ///< \brief Parse Error
-    static const int RPC_ERROR_INVALID_REQUEST;     ///< \brief Invalid Request
-    static const int RPC_ERROR_METHOD_NOT_FOUND;    ///< \brief Method Not Found
-    static const int RPC_ERROR_INVALID_PARAMETERS;  ///< \brief Invalid Parameters
-    static const int RPC_ERROR_INTERNAL_ERROR;      ///< \brief Internal Error
+    /// \brief No Error.
+    static const int RPC_ERROR_NONE;
+
+    /// \brief Parse Error.
+    static const int RPC_ERROR_PARSE;
+
+    /// \brief Invalid Request.
+    static const int RPC_ERROR_INVALID_REQUEST;
+
+    /// \brief Method Not Found.
+    static const int RPC_ERROR_METHOD_NOT_FOUND;
+
+    /// \brief Invalid Parameters.
+    static const int RPC_ERROR_INVALID_PARAMETERS;
+
+    /// \brief Internal Error.
+    static const int RPC_ERROR_INTERNAL_ERROR;
 
 };
 
