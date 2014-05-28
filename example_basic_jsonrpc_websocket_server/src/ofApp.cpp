@@ -30,49 +30,104 @@ void ofApp::setup()
 {
     ofSetFrameRate(30);
 
-    HTTP::BasicWebSocketServerSettings settings;
-    server = HTTP::BasicWebSocketServer::makeShared(settings);
+    ofSetLogLevel(OF_LOG_VERBOSE);
 
-    server->getWebSocketRoute()->registerWebSocketEvents(&wsMethodRegistry);
-    server->start();
+    ipsum = ofBufferFromFile("media/ipsum.txt").getText();
+
+    pingPlayer.loadSound("media/ping.wav");
+    pongPlayer.loadSound("media/pong.wav");
+
+    ofx::HTTP::BasicJSONRPCServerSettings settings;
+
+    server.setup(settings);
+
+    server.registerMethod("get-text",
+                          "Returns a random chunk of text to the client.",
+                          this,
+                          &ofApp::getText);
+
+    server.registerMethod("set-text",
+                          "Sets text from the user.",
+                          this,
+                          &ofApp::setText);
+
+    server.registerMethod("ping",
+                          "Send a JSONRPC Ping Notification",
+                          this,
+                          &ofApp::ping);
+
+    server.registerMethod("pong",
+                          "Send a JSONRPC Pong Notification",
+                          this,
+                          &ofApp::pong);
+
+    server.start();
 
     // Launch a browser with the address of the server.
-    ofLaunchBrowser(server->getURL());
-
-    wsMethodRegistry.registerMethod(this,
-                                    &ofApp::generateRandomNumber,
-                                    "get-random-number");
-
-
-    wsMethodRegistry.registerMethod(this,
-                                    &ofApp::setRandomNumber,
-                                    "set-random-number");
-
-}
-
-void ofApp::update()
-{
+    ofLaunchBrowser(server.getURL());
 }
 
 
 void ofApp::draw()
 {
-    ofBackground(bgColor);
-    ofSetColor(255);
+    ofBackground(255);
+    ofDrawBitmapStringHighlight(userText, ofPoint(14, 18));
 }
 
 
-bool ofApp::generateRandomNumber(JSONRPC::MethodArgs& args)
+void ofApp::ping()
 {
-    args.result = ofRandom(1);
-    return true;
+    pingPlayer.play();
 }
 
-bool ofApp::setRandomNumber(JSONRPC::MethodArgs& args)
+
+void ofApp::pong()
 {
-    double d = args.params.isDouble() ? args.params.asDouble() : 0;
-    bgColor = ofColor(d * 255);
-    return true;
+    pongPlayer.play();
 }
 
+
+void ofApp::getText(ofx::JSONRPC::MethodArgs& args)
+{
+    // Set the result equal to the substring.
+    args.result = getRandomText();
+}
+
+
+void ofApp::setText(ofx::JSONRPC::MethodArgs& args)
+{
+    // Set the user text.
+    setUserText(args.params.asString());
+}
+
+
+std::string ofApp::getRandomText() const
+{
+    static const std::size_t LENGTH = 140;
+
+    ofScopedLock lock(mutex);
+
+   // Generate a random start index.
+    std::size_t startIndex = (std::size_t)ofRandom(ipsum.length());
+
+    // Ensure that the length is valid.
+    std::size_t length = (startIndex + LENGTH) < ipsum.length() ? LENGTH : string::npos;
+
+    // return the result equal to the substring.
+    return ipsum.substr(startIndex, length);
+}
+
+
+std::string ofApp::getUserText() const
+{
+    ofScopedLock lock(mutex);
+    return userText;
+}
+
+
+void ofApp::setUserText(const std::string& text)
+{
+    ofScopedLock lock(mutex);
+    userText = text;
+}
 

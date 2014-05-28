@@ -58,7 +58,7 @@ Error::Error(int code):
 }
 
     
-Error::Error(int code, std::string message):
+Error::Error(int code, const std::string& message):
     _code(code),
     _message(message),
     _data(Json::Value())
@@ -75,7 +75,7 @@ Error::Error(int code, const Json::Value& data):
 }
 
 
-Error::Error(int code, std::string message, const Json::Value& data):
+Error::Error(int code, const std::string& message, const Json::Value& data):
     _code(code),
     _message(message),
     _data(data)

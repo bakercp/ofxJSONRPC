@@ -127,7 +127,7 @@ function ofClamp(val,max,min)
 //--------------------------------------------------------------------------
 // make sure that the appropriate websocket scheme is used
 // i.e. ws:// or wss:// for secure connections
-function getWebSocketURL() 
+function getDefaultWebSocketURL() 
 {
     var scheme;
     var url = document.URL;
@@ -149,4 +149,10 @@ function getWebSocketURL()
     url = url.split('/');
 
     return scheme + url[0];
+}
+
+//--------------------------------------------------------------------------
+function getDefaultPostURL() 
+{
+    return document.URL + "post";
 }

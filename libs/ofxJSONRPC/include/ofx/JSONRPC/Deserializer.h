@@ -26,59 +26,8 @@
 #pragma once
 
 
-#include <map>
-#include <string>
-#include <json/json.h>
-#include "ofxHTTP.h"
-#include "ofx/JSONRPC/Utils.h"
-#include "ofx/JSONRPC/MethodRegistry.h"
-
-
 namespace ofx {
+namespace JSONRPC {
 
 
-class ClientInfo
-{
-public:
-    ClientInfo(HTTP::WebSocketConnection* connection):
-        connection(connection),
-        nextUpdate(0)
-    {
-    }
-
-
-    virtual ~ClientInfo()
-    {
-    }
-
-
-    void update()
-    {
-    }
-
-    HTTP::WebSocketConnection* connection;
-    unsigned long long nextUpdate;
-
-};
-
-
-class WebSocketMethodRegistry: public JSONRPC::MethodRegistry
-{
-public:
-    WebSocketMethodRegistry();
-    virtual ~WebSocketMethodRegistry();
-
-    void onWebSocketOpenEvent(HTTP::WebSocketEventArgs& evt);
-    void onWebSocketCloseEvent(HTTP::WebSocketEventArgs& evt);
-    void onWebSocketFrameReceivedEvent(HTTP::WebSocketFrameEventArgs& evt);
-    void onWebSocketFrameSentEvent(HTTP::WebSocketFrameEventArgs& evt);
-    void onWebSocketErrorEvent(HTTP::WebSocketEventArgs& evt);
-
-    bool setRandomNumberStream(JSONRPC::MethodArgs& args);
-
-    std::map<const HTTP::WebSocketConnection*, ClientInfo> clients;
-
-};
-
-
-} // namespace ofx
+} } // namespace ofx::JSONRPC

@@ -42,53 +42,125 @@ MethodRegistry::~MethodRegistry()
 
 void MethodRegistry::unregisterMethod(const std::string& method)
 {
-    Poco::Mutex::ScopedLock lock(_mutex);
-    MethodMapIter iter = _methodMap.find(method);
-    if (iter != _methodMap.end())
+    Poco::FastMutex::ScopedLock lock(_mutex);
+    
+    MethodMapIter methodIter = _methodMap.find(method);
+    if (methodIter != _methodMap.end())
     {
-        _methodMap.erase(iter);
+        _methodMap.erase(methodIter);
+        return;
+    }
+
+    NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
+    if (noArgMethodIter != _noArgMethodMap.end())
+    {
+        _noArgMethodMap.erase(noArgMethodIter);
+        return;
     }
 }
 
 
-Response MethodRegistry::processCall(const Request& request)
+Response MethodRegistry::processCall(const void* pSender, const Request& request)
 {
-    Poco::Mutex::ScopedLock lock(_mutex);
-    MethodMapIter iter = _methodMap.find(request.getMethod());
-    if (iter != _methodMap.end())
+    Poco::FastMutex::ScopedLock lock(_mutex);
+
+    const std::string& method = request.getMethod();
+
+    NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
+
+    MethodMapIter methodIter = _methodMap.find(method);
+
+    // Notifications do not have an ID because they do not return results.
+    bool isNotification = request.getID().isNull();
+
+    if (methodIter != _methodMap.end())
     {
-        SharedMethodPtr pMethod = (*iter).second;
-
         MethodArgs args(request.getParameters());
+        // Argument result is filled in the event notification callback.
+        ofNotifyEvent((*methodIter).second->event, args, pSender);
 
-        if (pMethod->invoke(args))
+        return Response(request.getID(), args.result);
+    }
+    if (noArgMethodIter != _noArgMethodMap.end())
+    {
+        if (request.getParameters().isNull())
         {
-            return Response(request.getID(), args.result);
+            ofNotifyEvent((*noArgMethodIter).second->event, pSender);
+            return Response(request.getID(), Json::Value::null);
         }
         else
         {
             return Response(request.getID(),
                             Error(Errors::RPC_ERROR_INVALID_REQUEST,
-                                  args.error));
+                                  "This method does not support parameters.",
+                                  Request::toJSON(request)));
         }
     }
     else
     {
-        return Response(request.getID(), // if there is one
-                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND));
+        return Response(request.getID(),
+                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+                              Request::toJSON(request)));
     }
+
+
+
+    if (isNotification)
+    {
+        ofNotifyEvent((*noArgMethodIter).second->event, pSender);
+
+        // No args to args to return, because it is a no-arg method
+        return Response(request.getID(), Json::Value::null);
+
+
+        std::cout << "THIS IS A NOTIFICATION: " << method << std::endl;
+
+
+    }
+    else
+    {
+        std::cout << "THIS IS NOT A NOTIFICATION: " << method << std::endl;
+    }
+
+
+
+
+//    if (methodIter != _methodMap.end())
+//    {
+//    }
+//    else
+//    {
+//        return Response(request.getID(),
+//                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+//                              Request::toJSON(request)));
+//    }
+//
+//        if (noArgMethodIter != _noArgMethodMap.end())
+//        {
+//            ofNotifyEvent((*noArgMethodIter).second->event, pSender);
+//
+//            // no args to args to return, because it is a no-arg method
+//            return Response(request.getID(), Json::Value::null);
+//        }
+//        else
+//        {
+//            return Response(request.getID(),
+//                            Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+//                                  Request::toJSON(request)));
+//        }
 }
 
 
-void MethodRegistry::processNotification(const Request& request)
+void MethodRegistry::processNotification(const void* pSender,
+                                         const Request& request)
 {
-    processCall(request); // return nothing
+    processCall(pSender, request); // return nothing
 }
 
 
 bool MethodRegistry::hasMethod(const std::string& method) const
 {
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     return _methodMap.find(method) != _methodMap.end();
 }
 
@@ -96,7 +168,7 @@ bool MethodRegistry::hasMethod(const std::string& method) const
 MethodRegistry::MethodDescriptionMap MethodRegistry::getMethods() const
 {
     MethodRegistry::MethodDescriptionMap methods;
-    Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::FastMutex::ScopedLock lock(_mutex);
     MethodMap::const_iterator iter = _methodMap.begin();
     while (iter != _methodMap.end())
     {

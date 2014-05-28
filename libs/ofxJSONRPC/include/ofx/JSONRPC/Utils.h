@@ -37,16 +37,16 @@ namespace ofx {
 namespace JSONRPC {
 
 
+/// \brief A collection of utilities for JSONRPC.
 class Utils
-    /// \brief A collection of utilities for JSONRPC.
 {
 public:
+    /// \brief Convert JSON values to a raw string representation.
+    /// \param json The JSON value to convert.
+    /// \param styled if true, the raw string will be indented
+    ///        with returns and thus easier to read (aka pretty print).
+    /// \returns A std::string representation of the JSON.
     static std::string toString(const Json::Value& json, bool styled = false);
-        ///< \brief Convert JSON values to a raw string representation.
-        ///< \param json The JSON value to convert.
-        ///< \param styled if true, the raw string will be indented
-        ///<        with returns and thus easier to read.
-        ///< \returns A raw string representation of the JSON.
 
 };
 

@@ -26,17 +26,17 @@
 #pragma once
 
 
+/// \namespace ofx
+/// \brief openFrameworks Extended
+/// \sa http://openframeworks.cc
+/// \sa http://ofxaddons.com
 namespace ofx
-    /// \namespace ofx
-    /// \brief openFrameworks Extended
-    /// \sa http://openframeworks.cc
-    /// \sa http://ofxaddons.com
 {
-namespace JSONRPC
     // \namespace JSONRPC
     // \brief JSONRPC is a stateless light-weight remote procedure call protocol.
     // \sa http://www.jsonrpc.org/specification
-{
+    namespace JSONRPC
+    {
 
 
 } } // namespace ofx::JSONRPC

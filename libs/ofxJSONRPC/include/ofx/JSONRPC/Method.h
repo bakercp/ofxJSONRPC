@@ -28,99 +28,76 @@
 
 #include <json/json.h>
 #include "Poco/Exception.h"
-#include "ofx/JSONRPC/AbstractTypes.h"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/MethodArgs.h"
 
 
 namespace ofx {
 namespace JSONRPC {
-        
 
-template<class MethodClass>
-class Method: public AbstractMethod
-    /// \brief A method callback class for registering JSONRPC methods.
+
+/// \brief A method callback class for registering JSONRPC methods.
+template<typename EventType>
+class Method_
 {
 public:
-    typedef bool (MethodClass::*MethodPtr)(MethodArgs& args);
-        ///< \brief A typedef for a method signature.
-        ///< \details Methods of this type receieve a request.  Upon successful
-        ///<        completion of the call, the response object should be filled
-        ///<        and the method should return true.  Upon failure, the error
-        ///<        object should be filled and the the method shoudl return
-        ///<        false.
+    /// \brief Create a Method Callback
+    /// \param name The method's name.
+    /// \param description A description of the method's functionality.
+    Method_(const std::string& name,
+            const Json::Value& description = Json::Value::null);
 
-    Method(MethodClass* pObject,
-           MethodPtr pMethod,
-           const std::string& name,
-           const Json::Value& description = Json::Value::null);
-        ///< \brief Create a Method Callback
-        ///< \param pObject A pointer to the class instance.
-        ///< \param pMethod A pointer to the class instance method with the
-        ///<        MethodPtr method signature..
-        ///< \param name The method's name.
-        ///< \param description A description of the method's functionality.
+    /// \brief Destory the Method.
+    virtual ~Method_();
 
-    virtual ~Method();
-        ///< \brief Destory the Method.
+    /// \brief Get the method name.
+    /// \returns the name of the method.
+    std::string getName() const;
 
-    virtual bool invoke(MethodArgs& args);
+    /// \brief Get the method's description.
+    /// \returns the name of the method.
+    Json::Value getDescription() const;
 
-    virtual std::string getName() const;
-
-    virtual Json::Value getDescription() const;
-
+    /// \brief The public event available for subscription.
+    EventType event;
 private:
-    MethodClass* _pObject;
-        ///< \brief A pointer to the class instance.
-
-    MethodPtr _pMethod;
-        ///< \brief A pointer to the class instance method.
-
+    /// \brief The method's name.
     std::string _name;
-        ///< \brief The method's name.
 
+    /// \brief A description of the method's functionality.
     Json::Value _description;
-        ///< \brief A description of the method's functionality.
 
 };
 
 
-template<class MethodClass>
-Method<MethodClass>::Method(MethodClass* pObject,
-                            MethodPtr pMethod,
-                            const std::string& name,
-                            const Json::Value& description):
-    _pObject(pObject),
-    _pMethod(pMethod),
+typedef Method_<ofEvent<MethodArgs> > Method;
+typedef Method_<ofEvent<void> > NoArgMethod;
+
+
+template<typename ArgType>
+Method_<ArgType>::Method_(const std::string& name,
+                          const Json::Value& description):
     _name(name),
     _description(description)
 {
 }
 
 
-template<class MethodClass>
-Method<MethodClass>::~Method()
+template<typename ArgType>
+inline Method_<ArgType>::~Method_<ArgType>()
 {
 }
 
 
-template<class MethodClass>
-bool Method<MethodClass>::invoke(MethodArgs& args)
-{
-    return (_pObject->*_pMethod)(args);
-}
-
-
-template<class MethodClass>
-std::string Method<MethodClass>::getName() const
+template<typename ArgType>
+inline std::string Method_<ArgType>::getName() const
 {
     return _name;
 }
 
 
-template<class MethodClass>
-Json::Value Method<MethodClass>::getDescription() const
+template<typename ArgType>
+inline Json::Value Method_<ArgType>::getDescription() const
 {
     return _description;
 }

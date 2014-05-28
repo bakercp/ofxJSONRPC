@@ -26,30 +26,57 @@
 #pragma once
 
 
-#include <map>
 #include "ofMain.h"
-#include "ofxHTTP.h"
 #include "ofxJSONRPC.h"
-#include "WebSocketMethodRegistry.h"
-
-
-using namespace ofx;
 
 
 class ofApp: public ofBaseApp
 {
 public:
     void setup();
-    void update();
     void draw();
 
-    bool generateRandomNumber(JSONRPC::MethodArgs& args);
+    // Registered methods.
+    void getText(ofx::JSONRPC::MethodArgs& args);
+    void setText(ofx::JSONRPC::MethodArgs& args);
 
-    bool setRandomNumber(JSONRPC::MethodArgs& args);
+    // Register a no argument notification method.
+    void ping();
 
-    ofColor bgColor;
+    // Register a no argument notification method.
+    void pong();
 
-    HTTP::BasicWebSocketServer::SharedPtr server;
-    WebSocketMethodRegistry wsMethodRegistry;
+    /// \todo is ofSoundPlayer thread-safe?
+    ofSoundPlayer pingPlayer;
+    ofSoundPlayer pongPlayer;
+
+    /// \brief The server that handles the JSONRPC requests.
+    ofx::HTTP::BasicJSONRPCServer server;
+
+    /// \brief Get a snippet of random text in a thread-safe way.
+    /// \returns The snippet of random text.
+    std::string getRandomText() const;
+
+    /// \brief Get the user text in a thread-safe way.
+    /// \returns The user text.
+    std::string getUserText() const;
+
+    /// \brief Set the user text in a thread-safe way.
+    /// \param text the user text to set.
+    void setUserText(const std::string& text);
+
+private:
+    // This piece of text might be modified by multiple client threads.
+    // Thus we must use a mutex to protect it during multi-threaded access.
+    std::string ipsum;
+
+    // This piece of text might be modified by multiple client threads.
+    // Thus we must use a mutex to protect it during multi-threaded access.
+    std::string userText;
+
+    // We use a mutex to protect any variables that can be
+    // modified by multiple clients.  In our case, userText must be protected.
+    // We mark the mutex as mutable so that it can be used in const functions.
+    mutable ofMutex mutex;
 
 };

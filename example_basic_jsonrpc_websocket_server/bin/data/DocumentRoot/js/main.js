@@ -26,12 +26,13 @@ var JSONRPCClient; ///< The core JSONRPC WebSocket client.
 
 function addError(error)
 {
-
+    console.log(error);
 }
 
 function onWebSocketOpen(ws) 
 {
     console.log("on open");
+    console.log(ws);
 }
 
 function onWebSocketMessage(evt) 
@@ -52,51 +53,44 @@ function onWebSocketError()
 
 function initializeButtons()
 {
-    $('#get-random-number').on('click', function() {
+    $('#get-text').on('click', function() {
         var $this = $(this);
-        JSONRPCClient.call("get-random-number", 
+        JSONRPCClient.call('get-text', 
             null,
             function(result) {
-                $('#random-number-get').html(result);
+                $('#text-to-recieve').val(result);
             },
             function(error) {
                 addError(error);
             });
     });
 
-    $('#set-random-number').on('click', function() {
-        var $this = $(this);
-        var random = Math.random() * 255;
-        $('#random-number-set').html(random);
-        JSONRPCClient.notify("set-random-number", random);
-    });
 
-    $('#enable-random-text-stream').on('switch-change', function(e, data) {
+    $('#set-text').on('click', function() {
         var $this = $(this);
-        JSONRPCClient.call("get-random-number", 
-            data.value,
+        JSONRPCClient.call('set-text', 
+            $('#text-to-send').val(),
             function(result) {
                 console.log(result);
-
-                $('#random-number').html(result);
-                $this.button('reset');
             },
             function(error) {
-                alert("Failed callback.");
-                $this.button('reset');
+                addError(error);
             });
-        $this.button('loading');
-
-        data.value
-
-
-        var $element = $(data.el), value = data.value;
-        console.log(e, $element, value);
-
-
     });
 
 
+    $('#ping').on('click', function() {
+        console.log("pinging");
+        var $this = $(this);
+        JSONRPCClient.notify('ping');
+    });
+
+
+    $('#pong').on('click', function() {
+        console.log("poinging");
+        var $this = $(this);
+        JSONRPCClient.notify('pong');
+    });
 }
 
 $(document).ready( function()
@@ -104,16 +98,14 @@ $(document).ready( function()
     // Initialize our JSONRPCClient
     JSONRPCClient = new $.JsonRpcClient(
         { 
-            socketUrl: getWebSocketURL(), // get a websocket for the localhost
+            ajaxUrl: getDefaultPostURL(),
+            socketUrl: getDefaultWebSocketURL(), // get a websocket for the localhost
             onmessage: onWebSocketMessage,
             onopen: onWebSocketOpen,
             onclose: onWebSocketClose,
             onerror: onWebSocketError
         }
     );
-
-    // Initialize all switches
-    $('input[type="checkbox"],[type="radio"]').not('#create-switch').bootstrapSwitch();
 
     initializeButtons();
 

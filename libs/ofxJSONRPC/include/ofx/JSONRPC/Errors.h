@@ -35,25 +35,36 @@ namespace ofx {
 namespace JSONRPC {
 
 
+/// \brief JSONRPC 2.0 errors and exceptions.
+/// \sa http://www.jsonrpc.org/specification
 class Errors
-    /// \brief JSONRPC 2.0 errors and exceptions.
-    /// \sa http://www.jsonrpc.org/specification
 {
 public:
+    /// \brief Get the error message for the given error code.
+    /// \param code is the error code to search for.
+    /// \returns a string containing the error string.  If the error code
+    ///        is unknown, but in the range -32000 to -32099,
+    ///        "undefined server error" will be returned.  Otherwise,
+    ///        "unknown error" will be returned.
     static std::string getErrorMessage(int code);
-        ///< \brief Get the error message for the given error code.
-        ///< \param code is the error code to search for.
-        ///< \returns a string containing the error string.  If the error code
-        ///<        is unknown, but in the range -32000 to -32099,
-        ///<        "undefined server error" will be returned.  Otherwise,
-        ///<        "unknown error" will be returned.
 
-    static const int RPC_ERROR_NONE;                ///< \brief No Error
-    static const int RPC_ERROR_PARSE;               ///< \brief Parse Error
-    static const int RPC_ERROR_INVALID_REQUEST;     ///< \brief Invalid Request
-    static const int RPC_ERROR_METHOD_NOT_FOUND;    ///< \brief Method Not Found
-    static const int RPC_ERROR_INVALID_PARAMETERS;  ///< \brief Invalid Parameters
-    static const int RPC_ERROR_INTERNAL_ERROR;      ///< \brief Internal Error
+    /// \brief No Error.
+    static const int RPC_ERROR_NONE;
+
+    /// \brief Parse Error.
+    static const int RPC_ERROR_PARSE;
+
+    /// \brief Invalid Request.
+    static const int RPC_ERROR_INVALID_REQUEST;
+
+    /// \brief Method Not Found.
+    static const int RPC_ERROR_METHOD_NOT_FOUND;
+
+    /// \brief Invalid Parameters.
+    static const int RPC_ERROR_INVALID_PARAMETERS;
+
+    /// \brief Internal Error.
+    static const int RPC_ERROR_INTERNAL_ERROR;
 
 };
 

@@ -37,74 +37,91 @@ namespace ofx {
 namespace JSONRPC {
 
 
+/// \brief A JSONRPC 2.0 Request.
+///
+/// A Request has the following format:
+///
+/// ~~~{.json}
+/// {
+///     "jsonrpc": "2.0",
+///     "method": "subtract",
+///     "params": {
+///         "subtrahend": 23,
+///         "minuend": 42
+///     },
+///     "id": 3
+/// }
+/// ~~~
+///
+/// \sa http://www.jsonrpc.org/specification
 class Request: public BaseMessage
-    /// \brief A JSONRPC 2.0 request.
-    /// \details An Request has the following format:
-    ///
-    /// \code{.json}
-    /// {
-    ///     "jsonrpc": "2.0",
-    ///     "method": "subtract",
-    ///     "params": {
-    ///         "subtrahend": 23,
-    ///         "minuend": 42
-    ///     },
-    ///     "id": 3
-    /// }
-    /// \endcode
-    ///
-    /// \sa http://www.jsonrpc.org/specification
 {
 public:
+    /// \brief Create a notification Request.
+    /// \param method The method's name.
     Request(const std::string& method);
-        ///< \brief Create a notification Request.
 
+    /// \brief Create a notification Request.
+    /// \param method The method's name.
+    /// \param parameters The parameters to pass to the method.
     Request(const std::string& method, const Json::Value& parameters);
-        ///< \brief Create a notification Request.
 
+    /// \brief Create a Request.
+    /// \param id The transatction identification number.
+    /// \param method The method's name.
     Request(const Json::Value& id, const std::string& method);
-        ///< \brief Create a Request.
 
+    /// \brief Create a Request.
+    /// \param id The transatction identification number.
+    /// \param method The method's name.
+    /// \param parameters The parameters to pass to the method.
     Request(const Json::Value& id,
             const std::string& method,
             const Json::Value& parameters);
-        ///< \brief Create a Request.
 
+    /// \brief Destroy the ErrorResponse.
     virtual ~Request();
-        ///< \brief Destroy the ErrorResponse.
 
-    std::string getMethod() const;
-        ///< \returns the method.
+    /// \brief Get the request method.
+    /// \returns the request method.
+    const std::string& getMethod() const;
 
-    Json::Value getParameters() const;
-        ///< \returns the method parameters.
+    /// \brief Get the request parameters.
+    /// \returns the request method parameters.
+    const Json::Value& getParameters() const;
 
+    /// \brief Query whether this Request is a notification.
+    /// \returns true iff the id is null.
+    bool isNotification() const;
+
+    /// \brief Get the JSON Request as a string.
+    /// \param styled true if the output string should be pretty-print.
+    /// \returns a raw json string of this Request
     std::string toString(bool styled = false) const;
-        ///< \returns a raw json string of this Request
 
+    /// \brief Serialize the Request object to JSON.
+    /// \param request the Request object to serialize.
+    /// \returns JSONRPC compatible JSON.
     static Json::Value toJSON(const Request& request);
-        ///< \brief Serialize the Request object to JSON.
-        ///< \param request the Request object to serialize.
-        ///< \returns JSONRPC compatible JSON.
 
+    /// \brief Deserialize the JSON to a Request object.
+    /// \param json JSONRPC compatible JSON to deserialize.
+    /// \returns deserialized Request.
+    /// \throws Poco::Exception if the json is not valid.
     static Request fromJSON(const Json::Value& json);
-        ///< \brief Deserialize the JSON to a Request object.
-        ///< \param json JSONRPC compatible JSON to deserialize.
-        ///< \returns deserialized Request.
-        ///< \throws Poco::Exception if the json is not valid.
 
 protected:
+    /// \brief The method name.
     std::string _method;
-        ///< \brief The method name.
 
+    /// \brief The method parameters.
     Json::Value _parameters;
-        ///< \brief The method parameters.
 
+    /// \brief Method tag.
     static const std::string METHOD_TAG;
-        ///< \brief Method tag.
 
+    /// \brief Parameters tag.
     static const std::string PARAMS_TAG;
-        ///< \brief Parameters tag.
 
 };
 

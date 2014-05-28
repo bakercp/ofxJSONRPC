@@ -23,10 +23,12 @@
    *
    * @param options An object stating the backends:
    *                ajaxUrl    A url (relative or absolute) to a http(s) backend.
+   *                headers    An object that will be passed along to $.ajax in options.headers
    *                socketUrl  A url (relative of absolute) to a ws(s) backend.
    *                onmessage  A socket message handler for other messages (non-responses).
    *                onopen     A socket onopen handler. (Not used for custom getSocket.)
    *                onclose    A socket onclose handler. (Not used for custom getSocket.)
+   *                onerror    A socket onerror handler. (Not used for custom getSocket.)
    *                getSocket  A function returning a WebSocket or null.
    *                           It must take an onmessage_cb and bind it to the onmessage event
    *                           (or chain it before/after some other onmessage handler).
@@ -36,18 +38,24 @@
    */
   $.JsonRpcClient = function(options) {
     var self = this;
+    var noop = function(){};
     this.options = $.extend({
       ajaxUrl     : null,
+      headers     : {},   ///< Optional additional headers to send in $.ajax request.
       socketUrl   : null, ///< WebSocket URL. (Not used if a custom getSocket is supplied.)
-      onmessage   : null, ///< Optional onmessage-handler for WebSocket.
-      onopen      : null, ///< Optional onopen-handler for WebSocket.
-      onclose     : null, ///< Optional onclose-handler for WebSocket.
+      onmessage   : noop, ///< Optional onmessage-handler for WebSocket.
+      onopen      : noop, ///< Optional onopen-handler for WebSocket.
+      onclose     : noop, ///< Optional onclose-handler for WebSocket.
+      onerror     : noop, ///< Optional onerror-handler for WebSocket.
       /// Custom socket supplier for using an already existing socket
       getSocket   : function (onmessage_cb) { return self._getSocket(onmessage_cb); }
     }, options);
 
     // Declare an instance version of the onmessage callback to wrap 'this'.
     this.wsOnMessage = function(event) { self._wsOnMessage(event); };
+
+    //queue for ws request sent *before* ws is open.
+    this._ws_request_queue = [];
   };
 
   /// Holding the WebSocket on default getsocket.
@@ -67,8 +75,13 @@
    * @param params     The params; an array or object.
    * @param success_cb A callback for successful request.
    * @param error_cb   A callback for error.
+   *
+   * @return {object} Returns the deferred object that $.ajax returns or {null} if websockets are used
    */
   $.JsonRpcClient.prototype.call = function(method, params, success_cb, error_cb) {
+    success_cb = typeof success_cb === 'function' ? success_cb : function(){};
+    error_cb   = typeof error_cb   === 'function' ? error_cb   : function(){};
+
     // Construct the JSON-RPC 2.0 request.
     var request = {
       jsonrpc : '2.0',
@@ -81,7 +94,7 @@
     var socket = this.options.getSocket(this.wsOnMessage);
     if (socket !== null) {
       this._wsCall(socket, request, success_cb, error_cb);
-      return;
+      return null;
     }
 
     // No WebSocket, and no HTTP backend?  This won't work.
@@ -89,16 +102,22 @@
       throw "$.JsonRpcClient.call used with no websocket and no http endpoint.";
     }
 
-    $.ajax({
-      type     : 'POST',
-      url      : this.options.ajaxUrl,
-      data     : $.toJSON(request),
-      dataType : 'json',
-      cache    : false,
+    var deferred = $.ajax({
+      type       : 'POST',
+      url        : this.options.ajaxUrl,
+      contentType: "application/json",
+      data       : $.toJSON(request),
+      dataType   : 'json',
+      cache      : false,
+      headers  : this.options.headers,
 
       success  : function(data) {
-        if ('error' in data) error_cb(data.error);
-        else success_cb(data.result);
+        if ('error' in data) {
+          error_cb(data.error);
+        }
+        else {
+          success_cb(data.result);
+        }
       },
 
       // JSON-RPC Server could return non-200 on error
@@ -106,6 +125,7 @@
         try {
           var response = $.parseJSON(jqXHR.responseText);
           if ('console' in window) console.log(response);
+
           error_cb(response.error);
         }
         catch (err) {
@@ -114,6 +134,8 @@
         }
       }
     });
+
+    return deferred;
   };
 
   /**
@@ -127,6 +149,8 @@
    *
    * @param method     The method to run on JSON-RPC server.
    * @param params     The params; an array or object.
+   *
+   * @return {object} Returns the deferred object that $.ajax returns or {null} if websockets are used
    */
   $.JsonRpcClient.prototype.notify = function(method, params) {
     // Construct the JSON-RPC 2.0 request.
@@ -140,7 +164,7 @@
     var socket = this.options.getSocket(this.wsOnMessage);
     if (socket !== null) {
       this._wsCall(socket, request);
-      return;
+      return null;
     }
 
     // No WebSocket, and no HTTP backend?  This won't work.
@@ -148,13 +172,17 @@
       throw "$.JsonRpcClient.notify used with no websocket and no http endpoint.";
     }
 
-    $.ajax({
-      type     : 'POST',
-      url      : this.options.ajaxUrl,
-      data     : $.toJSON(request),
-      dataType : 'json',
-      cache    : false
+    var deferred = $.ajax({
+      type       : 'POST',
+      url        : this.options.ajaxUrl,
+      contentType: "application/json",
+      data       : $.toJSON(request),
+      dataType   : 'json',
+      cache      : false,
+      headers  : this.options.headers
     });
+
+    return deferred;
   };
 
   /**
@@ -200,9 +228,10 @@
       this._ws_socket.onmessage = onmessage_cb;
 
       // Set up onclose handler.
-      if (typeof this.options.onclose === "function") {
-        this._ws_socket.onclose = this.options.onclose;
-      }
+      this._ws_socket.onclose = this.options.onclose;
+
+      // Set up onerror handler.
+      this._ws_socket.onerror = this.options.onerror;
     }
 
     return this._ws_socket;
@@ -218,18 +247,26 @@
     var request_json = $.toJSON(request);
 
     if (socket.readyState < 1) {
-      // The websocket is not open yet; we have to set sending of the message in onopen.
-      self = this; // In closure below, this is set to the WebSocket.  Use self instead.
 
-      // Set up sending of message for when the socket is open.
-      socket.onopen = function(event) {
-        // Hook for extra onopen callback
-        if (typeof self.options.onopen === "function") {
+      //queue request
+      this._ws_request_queue.push(request_json);
+
+      if (!socket.onopen) {
+        // The websocket is not open yet; we have to set sending of the message in onopen.
+        var self = this; // In closure below, this is set to the WebSocket.  Use self instead.
+
+        // Set up sending of message for when the socket is open.
+        socket.onopen = function(event) {
+          // Hook for extra onopen callback
           self.options.onopen(event);
-        }
-        // Send the request.
-        socket.send(request_json);
-      };
+
+          // Send queued requests.
+          for (var i=0; i<self._ws_request_queue.length; i++) {
+            socket.send(self._ws_request_queue[i]);
+          }
+          self._ws_request_queue = [];
+        };
+      }
     }
     else {
       // We have a socket and it should be ready to send on.
@@ -250,55 +287,51 @@
    * @param event The websocket onmessage-event.
    */
   $.JsonRpcClient.prototype._wsOnMessage = function(event) {
+
     // Check if this could be a JSON RPC message.
+    var response;
     try {
-      var response = $.parseJSON(event.data);
+      response = $.parseJSON(event.data);
+    } catch (err){
+      this.options.onmessage(event);
+      return;
+    }
 
-      /// @todo Make using the jsonrcp 2.0 check optional, to use this on JSON-RPC 1 backends.
+    /// @todo Make using the jsonrcp 2.0 check optional, to use this on JSON-RPC 1 backends.
+    if (typeof response === 'object'
+        && response.jsonrpc === '2.0') {
 
-      if (typeof response === 'object'
-          && 'jsonrpc' in response
-          && response.jsonrpc === '2.0') {
+      /// @todo Handle bad response (without id).
 
-        /// @todo Handle bad response (without id).
+      // If this is an object with result, it is a response.
+      if ('result' in response && this._ws_callbacks[response.id]) {
+        // Get the success callback.
+        var success_cb = this._ws_callbacks[response.id].success_cb;
 
-        // If this is an object with result, it is a response.
-        if ('result' in response && this._ws_callbacks[response.id]) {
-          // Get the success callback.
-          var success_cb = this._ws_callbacks[response.id].success_cb;
+        // Delete the callback from the storage.
+        delete this._ws_callbacks[response.id];
 
-          // Delete the callback from the storage.
-          delete this._ws_callbacks[response.id];
+        // Run callback with result as parameter.
+        success_cb(response.result);
+        return;
+      }
 
-          // Run callback with result as parameter.
-          success_cb(response.result);
-          return;
-        }
+      // If this is an object with error, it is an error response.
+      else if ('error' in response && this._ws_callbacks[response.id]) {
+        // Get the error callback.
+        var error_cb = this._ws_callbacks[response.id].error_cb;
 
-        // If this is an object with error, it is an error response.
-        else if ('error' in response && this._ws_callbacks[response.id]) {
-          // Get the error callback.
-          var error_cb = this._ws_callbacks[response.id].error_cb;
+        // Delete the callback from the storage.
+        delete this._ws_callbacks[response.id];
 
-          // Delete the callback from the storage.
-          delete this._ws_callbacks[response.id];
-
-          // Run callback with the error object as parameter.
-          error_cb(response.error);
-          return;
-        }
+        // Run callback with the error object as parameter.
+        error_cb(response.error);
+        return;
       }
     }
-    catch (err) {
-      // Probably an error while parsing a non json-string as json.  All real JSON-RPC cases are
-      // handled above, and the fallback method is called below.
-      console.log(err);
-    }
 
-    // This is not a JSON-RPC response.  Call the fallback message handler, if given.
-    if (typeof this.options.onmessage === 'function') {
-      this.options.onmessage(event);
-    }
+    //If we get here its not a valid JSON-RPC response, pass it along to the fallback message handler.
+    this.options.onmessage(event);
   };
 
 
@@ -316,8 +349,7 @@
 
     this.jsonrpcclient = jsonrpcclient;
     this.all_done_cb = all_done_cb;
-    this.error_cb    = typeof error_cb === 'function' ? error_cb : function() {};
-
+    this.error_cb    = typeof error_cb    === 'function' ? error_cb : function(){};
   };
 
   /**
@@ -351,63 +383,114 @@
 
   /**
    * Executes the batched up calls.
+   * 
+   * @return {object} Returns the deferred object that $.ajax returns or {null} if websockets are used
    */
   $.JsonRpcClient._batchObject.prototype._execute = function() {
     var self = this;
-
+    var deferred = null; // used to store and return the deffered that $.ajax returns
+ 
     if (this._requests.length === 0) return; // All done :P
 
     // Collect all request data and sort handlers by request id.
     var batch_request = [];
-    var handlers = {};
+
 
     // If we have a WebSocket, just send the requests individually like normal calls.
     var socket = self.jsonrpcclient.options.getSocket(self.jsonrpcclient.wsOnMessage);
+
     if (socket !== null) {
+      //we need to keep track of results for the all done callback
+      var expected_nr_of_cb = 0;
+      var cb_results = [];
+
+      var wrap_cb = function(cb) {
+        if (!self.all_done_cb) { //no all done callback? no need to keep track
+          return cb;
+        }
+
+        return function(data) {
+          cb(data);
+          cb_results.push(data);
+          expected_nr_of_cb--;
+          if (expected_nr_of_cb <= 0) {
+            //change order so that it maps to request order
+            var i;
+            var resultMap = {};
+            for (i=0;i<cb_results.length;i++) {
+              resultMap[cb_results[i].id] = cb_results[i];
+            }
+            var results = [];
+            for (i=0; i<self._requests.length; i++) {
+              if (resultMap[self._requests[i].id]) {
+                results.push(resultMap[self._requests[i].id]);
+              }
+            }
+            //call all done!
+            self.all_done_cb(results);
+          }
+        };
+      };
+
+
       for (var i = 0; i < this._requests.length; i++) {
         var call = this._requests[i];
-        var success_cb = ('success_cb' in call) ? call.success_cb : undefined;
-        var error_cb   = ('error_cb'   in call) ? call.error_cb   : undefined;
-        self.jsonrpcclient._wsCall(socket, call.request, success_cb, error_cb);
+
+        if ('id' in call.request) {
+          //we expect an answer
+          expected_nr_of_cb++;
+        }
+
+        self.jsonrpcclient._wsCall(socket, call.request, wrap_cb(call.success_cb), wrap_cb(call.error_cb));
       }
-      if (typeof all_done_cb === 'function') all_done_cb(result);
-      return;
-    }
 
-    for (var i = 0; i < this._requests.length; i++) {
-      var call = this._requests[i];
-      batch_request.push(call.request);
+      return null;
 
-      // If the request has an id, it should handle returns (otherwise it's a notify).
-      if ('id' in call.request) {
-        handlers[call.request.id] = {
-          success_cb : call.success_cb,
-          error_cb   : call.error_cb
-        };
+    } else {
+      //no websocket, let's use ajax
+      var handlers = {};
+
+      for (var i = 0; i < this._requests.length; i++) {
+        var call = this._requests[i];
+        batch_request.push(call.request);
+
+        // If the request has an id, it should handle returns (otherwise it's a notify).
+        if ('id' in call.request) {
+          handlers[call.request.id] = {
+            success_cb : call.success_cb,
+            error_cb   : call.error_cb
+          };
+        }
       }
+
+      var success_cb = function(data) { self._batchCb(data, handlers, self.all_done_cb); };
+
+      // No WebSocket, and no HTTP backend?  This won't work.
+      if (self.jsonrpcclient.options.ajaxUrl === null) {
+        throw "$.JsonRpcClient.batch used with no websocket and no http endpoint.";
+      }
+
+      // Send request
+      deferred = $.ajax({
+        url        : self.jsonrpcclient.options.ajaxUrl,
+        contentType: "application/json",
+        data       : $.toJSON(batch_request),
+        dataType   : 'json',
+        cache      : false,
+        type       : 'POST',
+        headers  : self.jsonrpcclient.options.headers,
+
+        // Batch-requests should always return 200
+        error    : function(jqXHR, textStatus, errorThrown) {
+          self.error_cb(jqXHR, textStatus, errorThrown);
+        },
+        success  : success_cb
+      });
+
+      return deferred;
+
     }
 
-    var success_cb = function(data) { self._batchCb(data, handlers, self.all_done_cb); };
-
-    // No WebSocket, and no HTTP backend?  This won't work.
-    if (self.jsonrpcclient.options.ajaxUrl === null) {
-      throw "$.JsonRpcClient.batch used with no websocket and no http endpoint.";
-    }
-
-    // Send request
-    $.ajax({
-      url      : self.jsonrpcclient.options.ajaxUrl,
-      data     : $.toJSON(batch_request),
-      dataType : 'json',
-      cache    : false,
-      type     : 'POST',
-
-      // Batch-requests should always return 200
-      error    : function(jqXHR, textStatus, errorThrown) {
-        self.error_cb(jqXHR, textStatus, errorThrown);
-      },
-      success  : success_cb
-    });
   };
 
   /**
@@ -437,5 +520,21 @@
 
     if (typeof all_done_cb === 'function') all_done_cb(result);
   };
+
+
+  //handles matching of calls to responses, triggering all donecallback
+  //if necessary
+  $.JsonRpcClient._batchObject.prototype._ws_on_cb_wrapper = function(callback){
+    return function(data){
+      //call the actual callback
+      callback(data);
+
+      //check for all done
+
+    };
+  };
+
+
+
 
 })(jQuery);
