@@ -37,7 +37,7 @@ void ofApp::setup()
     pingPlayer.loadSound("media/ping.wav");
     pongPlayer.loadSound("media/pong.wav");
 
-    HTTP::BasicJSONRPCServerSettings settings;
+    ofx::HTTP::BasicJSONRPCServerSettings settings;
 
     server.setup(settings);
 
@@ -87,14 +87,14 @@ void ofApp::pong()
 }
 
 
-void ofApp::getText(JSONRPC::MethodArgs& args)
+void ofApp::getText(ofx::JSONRPC::MethodArgs& args)
 {
     // Set the result equal to the substring.
     args.result = getRandomText();
 }
 
 
-void ofApp::setText(JSONRPC::MethodArgs& args)
+void ofApp::setText(ofx::JSONRPC::MethodArgs& args)
 {
     // Set the user text.
     setUserText(args.params.asString());

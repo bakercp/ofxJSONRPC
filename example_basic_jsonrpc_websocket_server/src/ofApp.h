@@ -30,9 +30,6 @@
 #include "ofxJSONRPC.h"
 
 
-using namespace ofx;
-
-
 class ofApp: public ofBaseApp
 {
 public:
@@ -40,8 +37,8 @@ public:
     void draw();
 
     // Registered methods.
-    void getText(JSONRPC::MethodArgs& args);
-    void setText(JSONRPC::MethodArgs& args);
+    void getText(ofx::JSONRPC::MethodArgs& args);
+    void setText(ofx::JSONRPC::MethodArgs& args);
 
     // Register a no argument notification method.
     void ping();
@@ -54,7 +51,7 @@ public:
     ofSoundPlayer pongPlayer;
 
     /// \brief The server that handles the JSONRPC requests.
-    HTTP::BasicJSONRPCServer server;
+    ofx::HTTP::BasicJSONRPCServer server;
 
     /// \brief Get a snippet of random text in a thread-safe way.
     /// \returns The snippet of random text.
