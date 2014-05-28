@@ -51,7 +51,7 @@ public:
     ofSoundPlayer pongPlayer;
 
     /// \brief The server that handles the JSONRPC requests.
-    ofx::HTTP::BasicJSONRPCServer server;
+    ofx::HTTP::BasicJSONRPCServer::SharedPtr server;
 
     /// \brief Get a snippet of random text in a thread-safe way.
     /// \returns The snippet of random text.

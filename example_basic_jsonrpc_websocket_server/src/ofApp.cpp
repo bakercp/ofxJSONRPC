@@ -39,32 +39,32 @@ void ofApp::setup()
 
     ofx::HTTP::BasicJSONRPCServerSettings settings;
 
-    server.setup(settings);
+    server = ofx::HTTP::BasicJSONRPCServer::makeShared(settings);
 
-    server.registerMethod("get-text",
-                          "Returns a random chunk of text to the client.",
-                          this,
-                          &ofApp::getText);
+    server->registerMethod("get-text",
+                           "Returns a random chunk of text to the client.",
+                           this,
+                           &ofApp::getText);
 
-    server.registerMethod("set-text",
-                          "Sets text from the user.",
-                          this,
-                          &ofApp::setText);
+    server->registerMethod("set-text",
+                           "Sets text from the user.",
+                           this,
+                           &ofApp::setText);
 
-    server.registerMethod("ping",
-                          "Send a JSONRPC Ping Notification",
-                          this,
-                          &ofApp::ping);
+    server->registerMethod("ping",
+                           "Send a JSONRPC Ping Notification",
+                           this,
+                           &ofApp::ping);
 
-    server.registerMethod("pong",
-                          "Send a JSONRPC Pong Notification",
-                          this,
-                          &ofApp::pong);
+    server->registerMethod("pong",
+                           "Send a JSONRPC Pong Notification",
+                           this,
+                           &ofApp::pong);
 
-    server.start();
+    server->start();
 
     // Launch a browser with the address of the server.
-    ofLaunchBrowser(server.getURL());
+    ofLaunchBrowser(server->getURL());
 }
 
 
