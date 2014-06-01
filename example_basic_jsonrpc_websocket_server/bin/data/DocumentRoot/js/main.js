@@ -24,38 +24,32 @@
 
 var JSONRPCClient; ///< The core JSONRPC WebSocket client.
 
-function addError(error)
-{
+function addError(error) {
     console.log(error);
 }
 
-function onWebSocketOpen(ws) 
-{
+function onWebSocketOpen(ws) {
     console.log("on open");
     console.log(ws);
 }
 
-function onWebSocketMessage(evt) 
-{
+function onWebSocketMessage(evt) {
     console.log("on message:");
-    constle.log(evt.data);
+    console.log(evt.data);
 }
 
-function onWebSocketClose()
-{
+function onWebSocketClose() {
     console.log("on close");
 }
 
-function onWebSocketError()
-{
+function onWebSocketError() {
     console.log("on error");
 }
 
-function initializeButtons()
-{
+function initializeButtons() {
     $('#get-text').on('click', function() {
         var $this = $(this);
-        JSONRPCClient.call('get-text', 
+        JSONRPCClient.call('get-text',
             null,
             function(result) {
                 $('#text-to-recieve').val(result);
@@ -68,11 +62,9 @@ function initializeButtons()
 
     $('#set-text').on('click', function() {
         var $this = $(this);
-        JSONRPCClient.call('set-text', 
+        JSONRPCClient.call('set-text',
             $('#text-to-send').val(),
-            function(result) {
-                console.log(result);
-            },
+            function(result) {},
             function(error) {
                 addError(error);
             });
@@ -93,19 +85,16 @@ function initializeButtons()
     });
 }
 
-$(document).ready( function()
-{
+$(document).ready(function() {
     // Initialize our JSONRPCClient
-    JSONRPCClient = new $.JsonRpcClient(
-        { 
-            ajaxUrl: getDefaultPostURL(),
-            socketUrl: getDefaultWebSocketURL(), // get a websocket for the localhost
-            onmessage: onWebSocketMessage,
-            onopen: onWebSocketOpen,
-            onclose: onWebSocketClose,
-            onerror: onWebSocketError
-        }
-    );
+    JSONRPCClient = new $.JsonRpcClient({
+        ajaxUrl: getDefaultPostURL(),
+        socketUrl: getDefaultWebSocketURL(), // get a websocket for the localhost
+        onmessage: onWebSocketMessage,
+        onopen: onWebSocketOpen,
+        onclose: onWebSocketClose,
+        onerror: onWebSocketError
+    });
 
     initializeButtons();
 
