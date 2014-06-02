@@ -26,21 +26,37 @@
 #include "ofApp.h"
 
 
+
+
 void ofApp::setup()
 {
     ofSetFrameRate(30);
 
     ofSetLogLevel(OF_LOG_VERBOSE);
 
+    // Load test text.
     ipsum = ofBufferFromFile("media/ipsum.txt").getText();
 
+    // Load test media.
     pingPlayer.loadSound("media/ping.wav");
     pongPlayer.loadSound("media/pong.wav");
 
     ofx::HTTP::BasicJSONRPCServerSettings settings;
+    // settings.setPort(9999);
 
+    // Initialize the server.
     server = ofx::HTTP::BasicJSONRPCServer::makeShared(settings);
 
+    // Create a new logger channel.
+    loggerChannel = WebSocketLoggerChannel::makeShared();
+
+    // Attach the websocket route.
+    loggerChannel->setWebSocketRoute(server->getWebSocketRoute());
+
+    // Set the logger channel as active.
+    ofSetLoggerChannel(loggerChannel);
+
+    // Register RPC methods.
     server->registerMethod("get-text",
                            "Returns a random chunk of text to the client.",
                            this,
@@ -61,12 +77,12 @@ void ofApp::setup()
                            this,
                            &ofApp::pong);
 
+    // Start the server.
     server->start();
 
     // Launch a browser with the address of the server.
     ofLaunchBrowser(server->getURL());
 }
-
 
 void ofApp::draw()
 {
@@ -75,15 +91,25 @@ void ofApp::draw()
 }
 
 
+void ofApp::exit()
+{
+    // Set the logger back to the default to make sure any
+    // remaining messages are logged correctly.
+    ofLogToConsole();
+}
+
+
 void ofApp::ping()
 {
     pingPlayer.play();
+    ofLogVerbose("ofApp::ping") << "Ping'd";
 }
 
 
 void ofApp::pong()
 {
     pongPlayer.play();
+    ofLogVerbose("ofApp::pong") << "Pong'd";
 }
 
 
@@ -91,6 +117,7 @@ void ofApp::getText(ofx::JSONRPC::MethodArgs& args)
 {
     // Set the result equal to the substring.
     args.result = getRandomText();
+    ofLogVerbose("ofApp::getText") << args.result;
 }
 
 
@@ -98,6 +125,7 @@ void ofApp::setText(ofx::JSONRPC::MethodArgs& args)
 {
     // Set the user text.
     setUserText(args.params.asString());
+    ofLogVerbose("ofApp::setText") << args.params.asString();
 }
 
 
