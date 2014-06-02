@@ -70,11 +70,11 @@ public:
     /// \returns the WebSocketRoute attached to this server.
     WebSocketRoute::SharedPtr getWebSocketRoute();
 
-    bool onWebSocketOpenEvent(WebSocketEventArgs& evt);
-    bool onWebSocketCloseEvent(WebSocketEventArgs& evt);
+    bool onWebSocketOpenEvent(WebSocketOpenEventArgs& evt);
+    bool onWebSocketCloseEvent(WebSocketCloseEventArgs& evt);
     bool onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt);
     bool onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt);
-    bool onWebSocketErrorEvent(WebSocketEventArgs& evt);
+    bool onWebSocketErrorEvent(WebSocketErrorEventArgs& evt);
 
     bool onHTTPPostEvent(PostEventArgs& evt);
     bool onHTTPFormEvent(PostFormEventArgs& evt);
