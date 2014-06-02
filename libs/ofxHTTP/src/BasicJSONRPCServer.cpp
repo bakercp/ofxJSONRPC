@@ -70,13 +70,13 @@ WebSocketRoute::SharedPtr BasicJSONRPCServer::getWebSocketRoute()
 }
 
 
-bool BasicJSONRPCServer::onWebSocketOpenEvent(WebSocketEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketOpenEvent(WebSocketOpenEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onWebSocketCloseEvent(WebSocketEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketCloseEvent(WebSocketCloseEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
@@ -124,7 +124,7 @@ bool BasicJSONRPCServer::onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt)
 }
 
 
-bool BasicJSONRPCServer::onWebSocketErrorEvent(WebSocketEventArgs& evt)
+bool BasicJSONRPCServer::onWebSocketErrorEvent(WebSocketErrorEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
