@@ -111,15 +111,9 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
 
         // No args to args to return, because it is a no-arg method
         return Response(request.getID(), Json::Value::null);
-
-
-        std::cout << "THIS IS A NOTIFICATION: " << method << std::endl;
-
-
     }
     else
     {
-        std::cout << "THIS IS NOT A NOTIFICATION: " << method << std::endl;
     }
 
 
