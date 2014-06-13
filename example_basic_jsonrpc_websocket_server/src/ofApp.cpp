@@ -42,7 +42,7 @@ void ofApp::setup()
     pongPlayer.loadSound("media/pong.wav");
 
     ofx::HTTP::BasicJSONRPCServerSettings settings;
-    // settings.setPort(9999);
+    settings.setPort(8197);
 
     // Initialize the server.
     server = ofx::HTTP::BasicJSONRPCServer::makeShared(settings);
