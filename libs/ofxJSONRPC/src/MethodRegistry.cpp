@@ -70,9 +70,6 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
 
     MethodMapIter methodIter = _methodMap.find(method);
 
-    // Notifications do not have an ID because they do not return results.
-    bool isNotification = request.getID().isNull();
-
     if (methodIter != _methodMap.end())
     {
         MethodArgs args(request.getParameters());
@@ -102,46 +99,6 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
                         Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
                               Request::toJSON(request)));
     }
-
-
-
-    if (isNotification)
-    {
-        ofNotifyEvent((*noArgMethodIter).second->event, pSender);
-
-        // No args to args to return, because it is a no-arg method
-        return Response(request.getID(), Json::Value::null);
-    }
-    else
-    {
-    }
-
-
-
-
-//    if (methodIter != _methodMap.end())
-//    {
-//    }
-//    else
-//    {
-//        return Response(request.getID(),
-//                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
-//                              Request::toJSON(request)));
-//    }
-//
-//        if (noArgMethodIter != _noArgMethodMap.end())
-//        {
-//            ofNotifyEvent((*noArgMethodIter).second->event, pSender);
-//
-//            // no args to args to return, because it is a no-arg method
-//            return Response(request.getID(), Json::Value::null);
-//        }
-//        else
-//        {
-//            return Response(request.getID(),
-//                            Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
-//                                  Request::toJSON(request)));
-//        }
 }
 
 
