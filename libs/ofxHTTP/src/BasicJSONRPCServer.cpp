@@ -192,14 +192,6 @@ bool BasicJSONRPCServer::onHTTPUploadEvent(PostUploadEventArgs& args)
             break;
     }
 
-    ofLogNotice("ofApp::onHTTPUploadEvent") << "==============================";
-    ofLogNotice("ofApp::onHTTPUploadEvent") << "         state: " << stateString;
-    ofLogNotice("ofApp::onHTTPUploadEvent") << " formFieldName: " << args.getFormFieldName();
-    ofLogNotice("ofApp::onHTTPUploadEvent") << "orig. filename: " << args.getOriginalFilename();
-    ofLogNotice("ofApp::onHTTPUploadEvent") <<  "      filename: " << args.getFilename();
-    ofLogNotice("ofApp::onHTTPUploadEvent") <<  "      fileType: " << args.getFileType().toString();
-    ofLogNotice("ofApp::onHTTPUploadEvent") << "# bytes xfer'd: " << args.getNumBytesTransferred();
-
     return false;  // We did not attend to this event, so pass it along.
 }
 
