@@ -44,7 +44,7 @@ public:
     /// \brief Create a MethodArgs with the given parameters.
     /// \param params The JSON contents of the JSONRPC request params.
     ///        If there are no arguments provided, the params are null.
-    MethodArgs(const Json::Value& params = Json::Value::null):
+    MethodArgs(const Json::Value& params):
         params(params),
         result(Json::Value::null),
         error(Json::Value::null)
