@@ -93,24 +93,6 @@ public:
     /// \throws Poco::Exception if the JSON is not valid.
     static Error fromJSON(const Json::Value& json);
 
-    /// \brief No Error
-    static const Error NO_ERROR;
-
-    /// \brief Parse Error
-    static const Error PARSE_ERROR;
-
-    /// \brief Invalid Request
-    static const Error INVALID_REQUEST;
-
-    /// \brief Method Not Found
-    static const Error METHOD_NOT_FOUND;
-
-    /// \brief Invalid Parameters
-    static const Error INVALID_PARAMETERS;
-
-    /// \brief Internal Error
-    static const Error INTERNAL_ERROR;
-
 protected:
     /// \brief A Number that indicates the error type that occurred.
     /// \details This code MUST be an integer.

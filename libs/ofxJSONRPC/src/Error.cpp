@@ -30,13 +30,6 @@ namespace ofx {
 namespace JSONRPC {
 
 
-const Error Error::NO_ERROR = Error(Errors::RPC_ERROR_NONE);
-const Error Error::PARSE_ERROR = Error(Errors::RPC_ERROR_PARSE);
-const Error Error::INVALID_REQUEST = Error(Errors::RPC_ERROR_INVALID_REQUEST);
-const Error Error::METHOD_NOT_FOUND = Error(Errors::RPC_ERROR_METHOD_NOT_FOUND);
-const Error Error::INVALID_PARAMETERS = Error(Errors::RPC_ERROR_INVALID_PARAMETERS);
-const Error Error::INTERNAL_ERROR = Error(Errors::RPC_ERROR_INTERNAL_ERROR);
-
 const std::string Error::ERROR_CODE_TAG = "code";
 const std::string Error::ERROR_MESSAGE_TAG = "message";
 const std::string Error::ERROR_DATA_TAG = "data";
@@ -152,7 +145,7 @@ Error Error::fromJSON(const Json::Value& json)
     }
     else
     {
-        return PARSE_ERROR;
+        return Error(Errors::RPC_ERROR_PARSE);
     }
 }
 

@@ -102,7 +102,7 @@ bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& 
         catch (Poco::Exception& exc)
         {
             JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
-                                       JSONRPC::Error::METHOD_NOT_FOUND);
+                                       JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
 
             evt.getConnectionRef().sendFrame(response.toString());
         }
@@ -159,7 +159,7 @@ bool BasicJSONRPCServer::onHTTPPostEvent(PostEventArgs& args)
         catch (Poco::Exception& exc)
         {
             JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
-                                       JSONRPC::Error::METHOD_NOT_FOUND);
+                                       JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
             std::string buffer = response.toString();
             args.response.sendBuffer(buffer.c_str(), buffer.length());
         }
