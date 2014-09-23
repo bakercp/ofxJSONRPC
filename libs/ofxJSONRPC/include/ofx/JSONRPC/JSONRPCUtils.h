@@ -38,7 +38,7 @@ namespace JSONRPC {
 
 
 /// \brief A collection of utilities for JSONRPC.
-class Utils
+class JSONRPCUtils
 {
 public:
     /// \brief Convert JSON values to a raw string representation.

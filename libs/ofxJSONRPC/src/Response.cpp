@@ -24,7 +24,7 @@
 
 
 #include "ofx/JSONRPC/Response.h"
-#include "ofx/JSONRPC/Utils.h"
+#include "ofx/JSONRPC/JSONRPCUtils.h"
 
 
 namespace ofx {
@@ -84,7 +84,7 @@ bool Response::isErrorResponse() const
 
 std::string Response::toString(bool styled) const
 {
-    return Utils::toString(toJSON(*this), styled);
+    return JSONRPCUtils::toString(toJSON(*this), styled);
 }
 
 

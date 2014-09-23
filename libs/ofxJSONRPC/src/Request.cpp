@@ -24,7 +24,7 @@
 
 
 #include "ofx/JSONRPC/Request.h"
-#include "ofx/JSONRPC/Utils.h"
+#include "ofx/JSONRPC/JSONRPCUtils.h"
 
 
 namespace ofx {
@@ -94,7 +94,7 @@ bool Request::isNotification() const
 
 std::string Request::toString(bool styled) const
 {
-    return Utils::toString(toJSON(*this), styled);
+    return JSONRPCUtils::toString(toJSON(*this), styled);
 }
 
 

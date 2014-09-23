@@ -27,7 +27,7 @@
 
 
 #include <string>
-#include "ofx/JSONRPC/Utils.h"
+#include "ofx/JSONRPC/JSONRPCUtils.h"
 
 
 namespace ofx {
@@ -68,11 +68,11 @@ public:
         std::stringstream ss;
 
         ss << "Params:" << std::endl;
-        ss << Utils::toString(params, styled) << std::endl;
+        ss << JSONRPCUtils::toString(params, styled) << std::endl;
         ss << "Results:" << std::endl;
-        ss << Utils::toString(result, styled) << std::endl;
+        ss << JSONRPCUtils::toString(result, styled) << std::endl;
         ss << "Error:" << std::endl;
-        ss << Utils::toString(error, styled) << std::endl;
+        ss << JSONRPCUtils::toString(error, styled) << std::endl;
 
         return ss.str();
     }

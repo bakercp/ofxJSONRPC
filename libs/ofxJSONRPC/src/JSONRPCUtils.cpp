@@ -23,14 +23,14 @@
 // =============================================================================
 
 
-#include "ofx/JSONRPC/Utils.h"
+#include "ofx/JSONRPC/JSONRPCUtils.h"
 
 
 namespace ofx {
 namespace JSONRPC {
 
 
-std::string Utils::toString(const Json::Value& json, bool styled)
+std::string JSONRPCUtils::toString(const Json::Value& json, bool styled)
 {
     std::string raw;
 
