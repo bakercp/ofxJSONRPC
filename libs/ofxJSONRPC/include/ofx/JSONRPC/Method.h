@@ -84,7 +84,7 @@ Method_<ArgType>::Method_(const std::string& name,
 
 
 template<typename ArgType>
-inline Method_<ArgType>::~Method_<ArgType>()
+inline Method_<ArgType>::~Method_()
 {
 }
 
