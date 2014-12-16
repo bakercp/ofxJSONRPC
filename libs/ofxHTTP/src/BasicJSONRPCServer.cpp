@@ -132,7 +132,7 @@ bool BasicJSONRPCServer::onWebSocketErrorEvent(WebSocketErrorEventArgs& evt)
 
 bool BasicJSONRPCServer::onHTTPFormEvent(PostFormEventArgs& args)
 {
-    ofLogNotice("ofApp::onHTTPFormEvent") << "";
+    ofLogNotice("BasicJSONRPCServer::onHTTPFormEvent") << "";
     HTTP::HTTPUtils::dumpNameValueCollection(args.getForm(), ofGetLogLevel());
     return false;  // We did not attend to this event, so pass it along.
 }
