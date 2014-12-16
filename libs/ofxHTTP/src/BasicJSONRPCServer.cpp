@@ -91,12 +91,12 @@ bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& 
     {
         try
         {
-            JSONRPC::Response response = processCall(&evt.getConnectionRef(),
+            JSONRPC::Response response = processCall(&evt.getConnection(),
                                                      JSONRPC::Request::fromJSON(json));
 
             if (response.hasID())
             {
-                evt.getConnectionRef().sendFrame(response.toString());
+                evt.getConnection().sendFrame(response.toString());
             }
         }
         catch (Poco::Exception& exc)
@@ -104,7 +104,7 @@ bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& 
             JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
 
-            evt.getConnectionRef().sendFrame(response.toString());
+            evt.getConnection().sendFrame(response.toString());
         }
 
         return true;  // We attended to the event, so consume it.
