@@ -60,6 +60,7 @@ public:
 
     /// \brief The public event available for subscription.
     EventType event;
+
 private:
     /// \brief The method's name.
     std::string _name;

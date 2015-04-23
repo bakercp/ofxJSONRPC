@@ -29,44 +29,71 @@
 namespace ofx {
 namespace HTTP {
 
+//    public BaseServer_<JSONRPCServerSettings>,
+//    public JSONRPC::MethodRegistry
 
 
-BasicJSONRPCServer::BasicJSONRPCServer(const BasicJSONRPCServer::Settings& settings):
-    BasicServer(settings),
-    _sessionCache(SessionCache::makeShared()),
-    _postRoute(PostRoute::makeShared(settings)),
-    _webSocketRoute(WebSocketRoute::makeShared(settings))
+BasicJSONRPCServer::BasicJSONRPCServer(const Settings& settings):
+    BaseServer_<JSONRPCServerSettings>(settings),
+    _fileSystemRoute(settings.fileSystemRouteSettings),
+    _postRoute(settings.postRouteSettings),
+    _webSocketRoute(settings.webSocketRouteSettings)
+//    _sessionCache(SessionCache::makeShared())
 {
-    addRoute(_postRoute); // #2 for test
-    addRoute(_webSocketRoute); // #1 for test
+    addRoute(&_fileSystemRoute); // #3 to test.
+    addRoute(&_postRoute);       // #2 to test.
+    addRoute(&_webSocketRoute);  // #1 to test.
 
-    _postRoute->setSessionCache(_sessionCache);
-    _webSocketRoute->setSessionCache(_sessionCache);
+//    _fileSystemRoute.setSessionCache(_sessionCache);
+//    _postRoute.setSessionCache(_sessionCache);
+//    _webSocketRoute.setSessionCache(_sessionCache);
 
-    _postRoute->registerPostEvents(this);
-    _webSocketRoute->registerWebSocketEvents(this);
+    _postRoute.registerPostEvents(this);
+    _webSocketRoute.registerWebSocketEvents(this);
 }
 
 
 BasicJSONRPCServer::~BasicJSONRPCServer()
 {
-    _webSocketRoute->unregisterWebSocketEvents(this);
-    _postRoute->unregisterPostEvents(this);
+    _webSocketRoute.unregisterWebSocketEvents(this);
+    _postRoute.unregisterPostEvents(this);
 
-    removeRoute(_webSocketRoute);
-    removeRoute(_postRoute);
+    removeRoute(&_webSocketRoute);
+    removeRoute(&_postRoute);
+    removeRoute(&_fileSystemRoute);
 }
 
 
-PostRoute::SharedPtr BasicJSONRPCServer::getPostRoute()
+void BasicJSONRPCServer::setup(const Settings& settings)
+{
+    BaseServer_<JSONRPCServerSettings>::setup(settings);
+    _fileSystemRoute.setup(settings.fileSystemRouteSettings);
+    _postRoute.setup(settings.postRouteSettings);
+    _webSocketRoute.setup(settings.webSocketRouteSettings);
+}
+
+
+FileSystemRoute& BasicJSONRPCServer::getFileSystemRoute()
+{
+    return _fileSystemRoute;
+}
+
+
+PostRoute& BasicJSONRPCServer::getPostRoute()
 {
     return _postRoute;
 }
 
 
-WebSocketRoute::SharedPtr BasicJSONRPCServer::getWebSocketRoute()
+WebSocketRoute& BasicJSONRPCServer::getWebSocketRoute()
 {
     return _webSocketRoute;
+}
+
+
+SessionCache::SharedPtr BasicJSONRPCServer::getSessionCache()
+{
+    return _sessionCache;
 }
 
 

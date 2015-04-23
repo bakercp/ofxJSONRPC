@@ -45,6 +45,7 @@ void MethodRegistry::unregisterMethod(const std::string& method)
     Poco::FastMutex::ScopedLock lock(_mutex);
     
     MethodMapIter methodIter = _methodMap.find(method);
+
     if (methodIter != _methodMap.end())
     {
         _methodMap.erase(methodIter);
@@ -52,9 +53,11 @@ void MethodRegistry::unregisterMethod(const std::string& method)
     }
 
     NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
+    
     if (noArgMethodIter != _noArgMethodMap.end())
     {
         _noArgMethodMap.erase(noArgMethodIter);
+
         return;
     }
 }
@@ -62,41 +65,51 @@ void MethodRegistry::unregisterMethod(const std::string& method)
 
 Response MethodRegistry::processCall(const void* pSender, const Request& request)
 {
-    Poco::FastMutex::ScopedLock lock(_mutex);
-
-    const std::string& method = request.getMethod();
-
-    NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
-
-    MethodMapIter methodIter = _methodMap.find(method);
-
-    if (methodIter != _methodMap.end())
+    try
     {
-        MethodArgs args(request.getParameters());
-        // Argument result is filled in the event notification callback.
-        ofNotifyEvent((*methodIter).second->event, args, pSender);
+        Poco::FastMutex::ScopedLock lock(_mutex);
 
-        return Response(request.getID(), args.result);
-    }
-    if (noArgMethodIter != _noArgMethodMap.end())
-    {
-        if (request.getParameters().isNull())
+        const std::string& method = request.getMethod();
+
+        NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
+
+        MethodMapIter methodIter = _methodMap.find(method);
+
+        if (methodIter != _methodMap.end())
         {
-            ofNotifyEvent((*noArgMethodIter).second->event, pSender);
-            return Response(request.getID(), Json::Value::null);
+            MethodArgs args(request.getParameters());
+            // Argument result is filled in the event notification callback.
+            ofNotifyEvent((*methodIter).second->event, args, pSender);
+
+            return Response(request.getID(), args.result);
+        }
+        if (noArgMethodIter != _noArgMethodMap.end())
+        {
+            if (request.getParameters().isNull())
+            {
+                ofNotifyEvent((*noArgMethodIter).second->event, pSender);
+                return Response(request.getID(), Json::Value::null);
+            }
+            else
+            {
+                return Response(request.getID(),
+                                Error(Errors::RPC_ERROR_INVALID_REQUEST,
+                                      "This method does not support parameters.",
+                                      Request::toJSON(request)));
+            }
         }
         else
         {
             return Response(request.getID(),
-                            Error(Errors::RPC_ERROR_INVALID_REQUEST,
-                                  "This method does not support parameters.",
+                            Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
                                   Request::toJSON(request)));
         }
     }
-    else
+    catch(const Poco::Exception& exc)
     {
         return Response(request.getID(),
-                        Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
+                        Error(Errors::RPC_ERROR_INVALID_REQUEST,
+                              exc.displayText(),
                               Request::toJSON(request)));
     }
 }
