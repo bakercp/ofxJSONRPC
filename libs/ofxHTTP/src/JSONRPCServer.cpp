@@ -23,37 +23,29 @@
 // =============================================================================
 
 
-#include "ofx/HTTP/BasicJSONRPCServer.h"
+#include "ofx/HTTP/JSONRPCServer.h"
 
 
 namespace ofx {
 namespace HTTP {
 
-//    public BaseServer_<JSONRPCServerSettings>,
-//    public JSONRPC::MethodRegistry
 
-
-BasicJSONRPCServer::BasicJSONRPCServer(const Settings& settings):
+JSONRPCServer::JSONRPCServer(const Settings& settings):
     BaseServer_<JSONRPCServerSettings>(settings),
     _fileSystemRoute(settings.fileSystemRouteSettings),
     _postRoute(settings.postRouteSettings),
     _webSocketRoute(settings.webSocketRouteSettings)
-//    _sessionCache(SessionCache::makeShared())
 {
     addRoute(&_fileSystemRoute); // #3 to test.
     addRoute(&_postRoute);       // #2 to test.
     addRoute(&_webSocketRoute);  // #1 to test.
-
-//    _fileSystemRoute.setSessionCache(_sessionCache);
-//    _postRoute.setSessionCache(_sessionCache);
-//    _webSocketRoute.setSessionCache(_sessionCache);
 
     _postRoute.registerPostEvents(this);
     _webSocketRoute.registerWebSocketEvents(this);
 }
 
 
-BasicJSONRPCServer::~BasicJSONRPCServer()
+JSONRPCServer::~JSONRPCServer()
 {
     _webSocketRoute.unregisterWebSocketEvents(this);
     _postRoute.unregisterPostEvents(this);
@@ -64,7 +56,7 @@ BasicJSONRPCServer::~BasicJSONRPCServer()
 }
 
 
-void BasicJSONRPCServer::setup(const Settings& settings)
+void JSONRPCServer::setup(const Settings& settings)
 {
     BaseServer_<JSONRPCServerSettings>::setup(settings);
     _fileSystemRoute.setup(settings.fileSystemRouteSettings);
@@ -73,63 +65,64 @@ void BasicJSONRPCServer::setup(const Settings& settings)
 }
 
 
-FileSystemRoute& BasicJSONRPCServer::getFileSystemRoute()
+FileSystemRoute& JSONRPCServer::getFileSystemRoute()
 {
     return _fileSystemRoute;
 }
 
 
-PostRoute& BasicJSONRPCServer::getPostRoute()
+PostRoute& JSONRPCServer::getPostRoute()
 {
     return _postRoute;
 }
 
 
-WebSocketRoute& BasicJSONRPCServer::getWebSocketRoute()
+WebSocketRoute& JSONRPCServer::getWebSocketRoute()
 {
     return _webSocketRoute;
 }
 
 
-SessionCache::SharedPtr BasicJSONRPCServer::getSessionCache()
-{
-    return _sessionCache;
-}
-
-
-bool BasicJSONRPCServer::onWebSocketOpenEvent(WebSocketOpenEventArgs& evt)
+bool JSONRPCServer::onWebSocketOpenEvent(WebSocketOpenEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onWebSocketCloseEvent(WebSocketCloseEventArgs& evt)
+bool JSONRPCServer::onWebSocketCloseEvent(WebSocketCloseEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt)
+bool JSONRPCServer::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt)
 {
     Json::Value json;
     Json::Reader reader;
 
-    if (reader.parse(evt.getFrameRef().getText(), json))
+    if (reader.parse(evt.getFrame().getText(), json))
     {
         try
         {
-            JSONRPC::Response response = processCall(&evt.getConnection(),
+            JSONRPC::Response response = processCall(&evt,
                                                      JSONRPC::Request::fromJSON(json));
 
-            if (response.hasID())
+            if (response.hasId())
             {
                 evt.getConnection().sendFrame(response.toString());
             }
         }
-        catch (Poco::Exception& exc)
+        catch (const Poco::InvalidArgumentException& exc)
         {
             JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
-                                       JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
+                                       JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_INVALID_PARAMETERS));
+
+            evt.getConnection().sendFrame(response.toString());
+        }
+        catch (const Poco::Exception& exc)
+        {
+            JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
+                                       JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_INTERNAL_ERROR));
 
             evt.getConnection().sendFrame(response.toString());
         }
@@ -138,34 +131,34 @@ bool BasicJSONRPCServer::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& 
     }
     else
     {
-        ofLogNotice("BasicJSONRPCServer::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
-        ofLogNotice("BasicJSONRPCServer::onWebSocketFrameReceivedEvent") << evt.getFrameRef().getText();
+        ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
+        ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << evt.getFrame().getText();
         return false;  // We did not attend to this event, so pass it along.
     }
 }
 
 
-bool BasicJSONRPCServer::onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt)
+bool JSONRPCServer::onWebSocketFrameSentEvent(WebSocketFrameEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onWebSocketErrorEvent(WebSocketErrorEventArgs& evt)
+bool JSONRPCServer::onWebSocketErrorEvent(WebSocketErrorEventArgs& evt)
 {
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onHTTPFormEvent(PostFormEventArgs& args)
+bool JSONRPCServer::onHTTPFormEvent(PostFormEventArgs& args)
 {
-    ofLogNotice("BasicJSONRPCServer::onHTTPFormEvent") << "";
+    ofLogVerbose("JSONRPCServer::onHTTPFormEvent") << "";
     HTTP::HTTPUtils::dumpNameValueCollection(args.getForm(), ofGetLogLevel());
     return false;  // We did not attend to this event, so pass it along.
 }
 
 
-bool BasicJSONRPCServer::onHTTPPostEvent(PostEventArgs& args)
+bool JSONRPCServer::onHTTPPostEvent(PostEventArgs& args)
 {
     Json::Value json;
     Json::Reader reader;
@@ -174,10 +167,10 @@ bool BasicJSONRPCServer::onHTTPPostEvent(PostEventArgs& args)
     {
         try
         {
-            JSONRPC::Response response = processCall(0, // TODO: pass session data
+            JSONRPC::Response response = processCall(&args,
                                                      JSONRPC::Request::fromJSON(json));
 
-            if (response.hasID())
+            if (response.hasId())
             {
                 std::string buffer = response.toString();
                 args.response.sendBuffer(buffer.c_str(), buffer.length());
@@ -185,7 +178,7 @@ bool BasicJSONRPCServer::onHTTPPostEvent(PostEventArgs& args)
         }
         catch (Poco::Exception& exc)
         {
-            JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions
+            JSONRPC::Response response(Json::Value::null, // null value is required when parse exceptions.
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
             std::string buffer = response.toString();
             args.response.sendBuffer(buffer.c_str(), buffer.length());
@@ -195,14 +188,14 @@ bool BasicJSONRPCServer::onHTTPPostEvent(PostEventArgs& args)
     }
     else
     {
-        ofLogNotice("BasicJSONRPCServer::onHTTPPostEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
+        ofLogVerbose("JSONRPCServer::onHTTPPostEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
 
         return false;  // We did not attend to this event, so pass it along.
     }
 }
 
 
-bool BasicJSONRPCServer::onHTTPUploadEvent(PostUploadEventArgs& args)
+bool JSONRPCServer::onHTTPUploadEvent(PostUploadEventArgs& args)
 {
     std::string stateString = "";
 

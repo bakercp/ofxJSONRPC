@@ -94,7 +94,7 @@ Json::Value Response::toJSON(const Response& response)
 
     result[PROTOCOL_VERSION_TAG] = PROTOCOL_VERSION;
 
-    result["id"] = response.getID();
+    result["id"] = response.getId();
 
     if (response.isErrorResponse())
     {

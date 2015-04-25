@@ -34,7 +34,7 @@ std::string JSONRPCUtils::toString(const Json::Value& json, bool styled)
 {
     std::string raw;
 
-    if(styled)
+    if (styled)
     {
         Json::StyledWriter writer;
         raw = writer.write(json);

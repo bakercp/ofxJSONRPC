@@ -88,7 +88,12 @@ const Json::Value& Request::getParameters() const
 
 bool Request::isNotification() const
 {
-    return !hasID();
+    return !hasId();
+}
+
+Poco::UUID Request::getSessionId() const
+{
+    return _sessionId;
 }
 
 
@@ -104,7 +109,7 @@ Json::Value Request::toJSON(const Request& request)
 
     result[PROTOCOL_VERSION_TAG] = PROTOCOL_VERSION;
 
-    result[ID_TAG] = request.getID();
+    result[ID_TAG] = request.getId();
     result[METHOD_TAG] = request.getMethod();
 
     if (!request.getParameters().isNull())
@@ -156,12 +161,12 @@ Request Request::fromJSON(const Json::Value& json)
         }
         else
         {
-            throw Poco::Exception("Invalid JSONRPC: No Method", Errors::RPC_ERROR_PARSE);
+            throw Poco::InvalidArgumentException("Invalid JSONRPC: No Method", Errors::RPC_ERROR_PARSE);
         }
     }
     else
     {
-        throw Poco::Exception("Invalid JSONRPC: No Version String", Errors::RPC_ERROR_PARSE);
+        throw Poco::InvalidArgumentException("Invalid JSONRPC: No Version String", Errors::RPC_ERROR_PARSE);
     }
 }
 

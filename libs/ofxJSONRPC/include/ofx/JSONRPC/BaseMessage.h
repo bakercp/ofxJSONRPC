@@ -45,10 +45,10 @@ public:
     virtual ~BaseMessage();
 
     /// \returns the message ID.
-    Json::Value getID() const;
+    Json::Value getId() const;
 
     /// \return true iff the ID is not empty.
-    bool hasID() const;
+    bool hasId() const;
 
 protected:
     /// \brief The id of the remote call.

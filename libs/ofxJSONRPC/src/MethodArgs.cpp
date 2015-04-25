@@ -23,38 +23,38 @@
 // =============================================================================
 
 
-#include "ofx/JSONRPC/BaseMessage.h"
+#include "ofx/JSONRPC/MethodArgs.h"
 
 
 namespace ofx {
 namespace JSONRPC {
 
 
-const std::string BaseMessage::PROTOCOL_VERSION_TAG = "jsonrpc";
-const std::string BaseMessage::PROTOCOL_VERSION     = "2.0";
-const std::string BaseMessage::ID_TAG               = "id";
-
-
-BaseMessage::BaseMessage(const Json::Value& id):
-    _id(id)
+MethodArgs::MethodArgs(const Json::Value& params):
+    params(params),
+    result(Json::Value::null),
+    error(Json::Value::null)
 {
 }
 
 
-BaseMessage::~BaseMessage()
+MethodArgs::~MethodArgs()
 {
 }
 
 
-Json::Value BaseMessage::getId() const
+std::string MethodArgs::toString(bool styled) const
 {
-    return _id;
-}
+    std::stringstream ss;
 
+    ss << "Params:" << std::endl;
+    ss << JSONRPCUtils::toString(params, styled) << std::endl;
+    ss << "Results:" << std::endl;
+    ss << JSONRPCUtils::toString(result, styled) << std::endl;
+    ss << "Error:" << std::endl;
+    ss << JSONRPCUtils::toString(error, styled) << std::endl;
 
-bool BaseMessage::hasId() const
-{
-    return !_id.empty();
+    return ss.str();
 }
 
 

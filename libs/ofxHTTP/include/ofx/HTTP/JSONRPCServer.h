@@ -31,7 +31,6 @@
 #include "ofx/HTTP/FileSystemRoute.h"
 #include "ofx/HTTP/PostRouteSettings.h"
 #include "ofx/HTTP/PostRoute.h"
-#include "ofx/HTTP/SessionCache.h"
 #include "ofx/HTTP/WebSocketConnection.h"
 #include "ofx/HTTP/WebSocketRoute.h"
 #include "ofx/HTTP/WebSocketRouteSettings.h"
@@ -51,22 +50,28 @@ public:
 };
 
 
-/// \brief A BasicJSONRPCServer.
+/// \brief A simple JSONRPCServer.
 ///
 /// This server can process JSONRPC calls submitted via WebSockets or
 /// POST requests.
-class BasicJSONRPCServer:
+class JSONRPCServer:
     public BaseServer_<JSONRPCServerSettings>,
     public JSONRPC::MethodRegistry
 {
 public:
     typedef JSONRPCServerSettings Settings;
 
-    BasicJSONRPCServer(const Settings& settings = Settings());
+    /// \brief Create a JSONRPCServer with settings.
+    /// \param settings configure the JSONRPCServer with the given settings.
+    JSONRPCServer(const Settings& settings = Settings());
 
-    /// \brief Destroy the BasicJSONRPCServer.
-    virtual ~BasicJSONRPCServer();
+    /// \brief Destroy the JSONRPCServer.
+    virtual ~JSONRPCServer();
 
+    /// \brief Set up the JSONRPCServer with the given settings.
+    ///
+    /// Settings will be applied on next server startup.
+    /// \param settings configure the JSONRPCServer with the given settings.
     virtual void setup(const Settings& settings);
 
     /// \brief Get the PostRoute.
@@ -81,8 +86,6 @@ public:
     /// \returns the WebSocketRoute attached to this server.
     WebSocketRoute& getWebSocketRoute();
 
-    SessionCache::SharedPtr getSessionCache();
-
     bool onWebSocketOpenEvent(WebSocketOpenEventArgs& evt);
     bool onWebSocketCloseEvent(WebSocketCloseEventArgs& evt);
     bool onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt);
@@ -94,9 +97,6 @@ public:
     bool onHTTPUploadEvent(PostUploadEventArgs& evt);
 
 protected:
-    /// \brief A session cache for this server.
-    SessionCache::SharedPtr _sessionCache;
-
     /// \brief The FileSystemRoute attached to this server.
     FileSystemRoute _fileSystemRoute;
 

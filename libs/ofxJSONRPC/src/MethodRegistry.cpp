@@ -78,21 +78,23 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
         if (methodIter != _methodMap.end())
         {
             MethodArgs args(request.getParameters());
+
             // Argument result is filled in the event notification callback.
             ofNotifyEvent((*methodIter).second->event, args, pSender);
 
-            return Response(request.getID(), args.result);
+            return Response(request.getId(), args.result);
         }
-        if (noArgMethodIter != _noArgMethodMap.end())
+        else if (noArgMethodIter != _noArgMethodMap.end())
         {
             if (request.getParameters().isNull())
             {
                 ofNotifyEvent((*noArgMethodIter).second->event, pSender);
-                return Response(request.getID(), Json::Value::null);
+
+                return Response(request.getId(), Json::Value::null);
             }
             else
             {
-                return Response(request.getID(),
+                return Response(request.getId(),
                                 Error(Errors::RPC_ERROR_INVALID_REQUEST,
                                       "This method does not support parameters.",
                                       Request::toJSON(request)));
@@ -100,15 +102,21 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
         }
         else
         {
-            return Response(request.getID(),
+            return Response(request.getId(),
                             Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
                                   Request::toJSON(request)));
         }
     }
-    catch(const Poco::Exception& exc)
+    catch (const Poco::InvalidArgumentException& exc)
     {
-        return Response(request.getID(),
-                        Error(Errors::RPC_ERROR_INVALID_REQUEST,
+        return Response(request.getId(),
+                        Error(Errors::RPC_ERROR_INVALID_PARAMETERS,
+                              Request::toJSON(request)));
+    }
+    catch (const Poco::Exception& exc)
+    {
+        return Response(request.getId(),
+                        Error(Errors::RPC_ERROR_INTERNAL_ERROR,
                               exc.displayText(),
                               Request::toJSON(request)));
     }
@@ -139,7 +147,6 @@ MethodRegistry::MethodDescriptionMap MethodRegistry::getMethods() const
         methods[(*iter).first] = (*iter).second->getDescription();
         ++iter;
     }
-
     return methods;
 }
 

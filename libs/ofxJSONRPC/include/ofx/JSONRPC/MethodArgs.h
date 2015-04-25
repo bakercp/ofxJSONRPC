@@ -44,12 +44,10 @@ public:
     /// \brief Create a MethodArgs with the given parameters.
     /// \param params The JSON contents of the JSONRPC request params.
     ///        If there are no arguments provided, the params are null.
-    MethodArgs(const Json::Value& params):
-        params(params),
-        result(Json::Value::null),
-        error(Json::Value::null)
-    {
-    }
+    MethodArgs(const Json::Value& params);
+
+    /// \brief Destroy the MethodArgs.
+    virtual ~MethodArgs();
 
     /// \brief The JSON contents of the JSONRPC request params.
     const Json::Value params;
@@ -63,19 +61,7 @@ public:
     /// \brief Get the MethodArgs as a string.
     /// \param styled true if the output string should be pretty-print.
     /// \returns a raw json string of this MethodArgs
-    std::string toString(bool styled = false) const
-    {
-        std::stringstream ss;
-
-        ss << "Params:" << std::endl;
-        ss << JSONRPCUtils::toString(params, styled) << std::endl;
-        ss << "Results:" << std::endl;
-        ss << JSONRPCUtils::toString(result, styled) << std::endl;
-        ss << "Error:" << std::endl;
-        ss << JSONRPCUtils::toString(error, styled) << std::endl;
-
-        return ss.str();
-    }
+    std::string toString(bool styled = false) const;
 
 };
 
