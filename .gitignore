@@ -1,6 +1,11 @@
 docs/html
 docs/tagfile.xml
 
+raw
+*.plist
+*.xcconfig
+*.xcodeproj
+
 *.mode1v3
 
 # xcode
