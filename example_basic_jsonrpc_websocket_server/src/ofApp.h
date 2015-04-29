@@ -28,7 +28,6 @@
 
 #include "ofMain.h"
 #include "ofxJSONRPC.h"
-#include "WebSocketLoggerChannel.h"
 
 
 class ofApp: public ofBaseApp
@@ -53,7 +52,7 @@ public:
     ofSoundPlayer pongPlayer;
 
     /// \brief The server that handles the JSONRPC requests.
-    ofx::HTTP::BasicJSONRPCServer::SharedPtr server;
+    ofx::HTTP::JSONRPCServer server;
 
     /// \brief Get a snippet of random text in a thread-safe way.
     /// \returns The snippet of random text.
@@ -69,7 +68,7 @@ public:
 
 private:
     // A custom logging channel to mirror all log messages to the web clients.
-    WebSocketLoggerChannel::SharedPtr loggerChannel;
+//    WebSocketLoggerChannel::SharedPtr loggerChannel;
 
     // This piece of text might be modified by multiple client threads.
     // Thus we must use a mutex to protect it during multi-threaded access.
