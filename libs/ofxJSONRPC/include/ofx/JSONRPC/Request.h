@@ -55,7 +55,7 @@ namespace JSONRPC {
 /// ~~~
 ///
 /// \sa http://www.jsonrpc.org/specification
-class Request: public BaseMessage, public HTTP::AbstractSessionId
+class Request: public BaseMessage, public HTTP::AbstractHasSessionId
 {
 public:
     /// \brief Create a notification Request.
