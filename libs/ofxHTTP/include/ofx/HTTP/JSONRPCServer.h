@@ -29,11 +29,9 @@
 #include "ofTypes.h"
 #include "ofx/HTTP/BaseServer.h"
 #include "ofx/HTTP/FileSystemRoute.h"
-#include "ofx/HTTP/PostRouteSettings.h"
 #include "ofx/HTTP/PostRoute.h"
 #include "ofx/HTTP/WebSocketConnection.h"
 #include "ofx/HTTP/WebSocketRoute.h"
-#include "ofx/HTTP/WebSocketRouteSettings.h"
 #include "ofx/JSONRPC/MethodRegistry.h"
 
 
