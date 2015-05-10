@@ -70,6 +70,11 @@ std::string Errors::getErrorMessage(int code)
 }
 
 
+POCO_IMPLEMENT_EXCEPTION(JSONRPCException,
+                         Poco::Exception,
+                         "RPC_ERROR_INTERNAL_ERROR")
+
+
 POCO_IMPLEMENT_EXCEPTION(InvalidRequestException,
                          JSONRPCException,
                          "RPC_ERROR_INVALID_REQUEST")

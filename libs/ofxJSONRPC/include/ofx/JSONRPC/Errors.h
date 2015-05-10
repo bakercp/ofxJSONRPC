@@ -74,7 +74,6 @@ POCO_DECLARE_EXCEPTION_CODE(,
                             Poco::Exception,
                             Errors::RPC_ERROR_INTERNAL_ERROR)
 
-
 POCO_DECLARE_EXCEPTION_CODE(,
                             InvalidRequestException,
                             JSONRPCException,
