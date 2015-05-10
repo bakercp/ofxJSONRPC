@@ -49,4 +49,30 @@ std::string JSONRPCUtils::toString(const Json::Value& json, bool styled)
 }
 
 
+bool JSONRPCUtils::hasMemberOfType(const Json::Value& json,
+                                   const std::string& name,
+                                   Json::ValueType type)
+{
+    return json.isMember(name) && json[name].isConvertibleTo(type);
+}
+
+
+bool JSONRPCUtils::hasString(const Json::Value& json,
+                             const std::string& name,
+                             bool requireNonEmpty)
+{
+    cout << hasMemberOfType(json, name, Json::stringValue) << endl;
+
+
+    if (requireNonEmpty)
+    {
+        return hasMemberOfType(json, name, Json::stringValue) && !json[name].asString().empty();
+    }
+    else
+    {
+        return hasMemberOfType(json, name, Json::stringValue);
+    }
+}
+
+
 } } // namespace ofx::JSONRPC
