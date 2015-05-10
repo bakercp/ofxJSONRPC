@@ -249,7 +249,6 @@ template <typename SessionStoreType>
 bool JSONRPCServer_<SessionStoreType>::onHTTPFormEvent(PostFormEventArgs& args)
 {
     ofLogVerbose("JSONRPCServer::onHTTPFormEvent") << "";
-    HTTP::HTTPUtils::dumpNameValueCollection(args.getForm(), ofGetLogLevel());
     return false;  // We did not attend to this event, so pass it along.
 }
 
@@ -257,8 +256,6 @@ bool JSONRPCServer_<SessionStoreType>::onHTTPFormEvent(PostFormEventArgs& args)
 template <typename SessionStoreType>
 bool JSONRPCServer_<SessionStoreType>::onHTTPPostEvent(PostEventArgs& args)
 {
-    std::cout << "in here" << endl;
-
     Json::Value json;
     Json::Reader reader;
 
@@ -280,6 +277,7 @@ bool JSONRPCServer_<SessionStoreType>::onHTTPPostEvent(PostEventArgs& args)
             JSONRPC::Response response(args,
                                        Json::Value::null, // null value is required when parse exceptions.
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
+
             std::string buffer = response.toString();
             args.getResponse().sendBuffer(buffer.c_str(), buffer.length());
         }
