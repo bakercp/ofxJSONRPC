@@ -28,6 +28,7 @@
 
 #include <string>
 #include <json/json.h>
+#include "Poco/Exception.h"
 
 
 namespace ofx {
@@ -50,9 +51,6 @@ public:
     /// \brief No Error.
     static const int RPC_ERROR_NONE;
 
-    /// \brief Parse Error.
-    static const int RPC_ERROR_PARSE;
-
     /// \brief Invalid Request.
     static const int RPC_ERROR_INVALID_REQUEST;
 
@@ -65,7 +63,42 @@ public:
     /// \brief Internal Error.
     static const int RPC_ERROR_INTERNAL_ERROR;
 
+    /// \brief Parse Error.
+    static const int RPC_ERROR_PARSE;
+
 };
 
+
+POCO_DECLARE_EXCEPTION_CODE(,
+                            JSONRPCException,
+                            Poco::Exception,
+                            Errors::RPC_ERROR_INTERNAL_ERROR)
+
+
+POCO_DECLARE_EXCEPTION_CODE(,
+                            InvalidRequestException,
+                            JSONRPCException,
+                            Errors::RPC_ERROR_INVALID_REQUEST)
+
+POCO_DECLARE_EXCEPTION_CODE(,
+                            MethodNotFoundException,
+                            JSONRPCException,
+                            Errors::RPC_ERROR_METHOD_NOT_FOUND)
+
+POCO_DECLARE_EXCEPTION_CODE(,
+                            InvalidParametersException,
+                            JSONRPCException,
+                            Errors::RPC_ERROR_INVALID_PARAMETERS)
+
+POCO_DECLARE_EXCEPTION_CODE(,
+                            InternalErrorException,
+                            JSONRPCException,
+                            Errors::RPC_ERROR_INTERNAL_ERROR)
+
+POCO_DECLARE_EXCEPTION_CODE(,
+                            ParseException,
+                            JSONRPCException,
+                            Errors::RPC_ERROR_PARSE)
+    
 
 } } // namespace ofx::JSONRPC

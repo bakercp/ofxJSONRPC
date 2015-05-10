@@ -43,6 +43,12 @@ namespace JSONRPC {
 /// If the Error object is set to an error code other than RPC_ERROR_NONE, the
 /// Json::Value results will be ignored and the error will be returned to the
 /// caller.
+///
+/// Usually, upon error, the user will throw one of the convenient
+/// child classes of JSONRPCException, which will be caught and an error
+/// response will be returned to the caller. But, in cases where data should
+/// be returned with the error response, the user must manually set the
+/// error message and return immediately.
 class MethodArgs: public HTTP::ServerEventArgs
 {
 public:

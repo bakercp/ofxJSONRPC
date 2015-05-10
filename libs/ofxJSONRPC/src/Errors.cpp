@@ -24,6 +24,7 @@
 
 
 #include "ofx/JSONRPC/Errors.h"
+#include <typeinfo>
 
 
 namespace ofx {
@@ -58,7 +59,7 @@ std::string Errors::getErrorMessage(int code)
         {
             if (code >= -32099 && code <= -32000)
             {
-                return "Undefined Server Error";
+                return "undefined server error";
             }
             else
             {
@@ -67,6 +68,27 @@ std::string Errors::getErrorMessage(int code)
         }
     }
 }
+
+
+POCO_IMPLEMENT_EXCEPTION(InvalidRequestException,
+                         JSONRPCException,
+                         "RPC_ERROR_INVALID_REQUEST")
+
+POCO_IMPLEMENT_EXCEPTION(MethodNotFoundException,
+                         JSONRPCException,
+                         "RPC_ERROR_METHOD_NOT_FOUND")
+
+POCO_IMPLEMENT_EXCEPTION(InvalidParametersException,
+                         JSONRPCException,
+                         "RPC_ERROR_INVALID_PARAMETERS")
+
+POCO_IMPLEMENT_EXCEPTION(InternalErrorException,
+                         JSONRPCException,
+                         "RPC_ERROR_INTERNAL_ERROR")
+
+POCO_IMPLEMENT_EXCEPTION(ParseException,
+                         JSONRPCException,
+                         "RPC_ERROR_PARSE")
 
 
 } } // namespace ofx::JSONRPC

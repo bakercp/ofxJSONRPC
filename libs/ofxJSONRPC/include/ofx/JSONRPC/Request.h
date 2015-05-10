@@ -115,7 +115,7 @@ public:
     /// \brief Deserialize the JSON to a Request object.
     /// \param json JSONRPC compatible JSON to deserialize.
     /// \returns deserialized Request.
-    /// \throws Poco::Exception if the json is not valid.
+    /// \throws ParseException if the json is not valid.
     static Request fromJSON(HTTP::ServerEventArgs& evt,
                             const Json::Value& json);
 

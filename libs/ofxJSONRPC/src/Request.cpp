@@ -167,12 +167,12 @@ Request Request::fromJSON(HTTP::ServerEventArgs& evt,
         }
         else
         {
-            throw Poco::InvalidArgumentException("Invalid JSONRPC: No Method", Errors::RPC_ERROR_PARSE);
+            throw ParseException("No method.");
         }
     }
     else
     {
-        throw Poco::InvalidArgumentException("Invalid JSONRPC: No Version String", Errors::RPC_ERROR_PARSE);
+        throw ParseException("No version string.");
     }
 }
 

@@ -91,6 +91,7 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
             }
             else
             {
+                // Return the error.
                 return Response(request,
                                 request.getId(),
                                 args.error);
@@ -122,6 +123,13 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
                             Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
                                   Request::toJSON(request)));
         }
+    }
+    catch (const JSONRPCException& exc)
+    {
+        return Response(request,
+                        request.getId(),
+                        Error(exc.code(),
+                              exc.message()));
     }
     catch (const Poco::InvalidArgumentException& exc)
     {
