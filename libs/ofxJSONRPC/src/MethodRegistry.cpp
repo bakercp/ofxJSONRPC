@@ -57,7 +57,6 @@ void MethodRegistry::unregisterMethod(const std::string& method)
     if (noArgMethodIter != _noArgMethodMap.end())
     {
         _noArgMethodMap.erase(noArgMethodIter);
-
         return;
     }
 }

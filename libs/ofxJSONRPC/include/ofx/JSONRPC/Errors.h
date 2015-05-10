@@ -28,7 +28,6 @@
 
 #include <string>
 #include <json/json.h>
-#include "Poco/Exception.h"
 
 
 namespace ofx {

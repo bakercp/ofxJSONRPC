@@ -56,7 +56,6 @@ Error::Error(int code, const std::string& message):
     _message(message),
     _data(Json::Value())
 {
-
 }
 
 
