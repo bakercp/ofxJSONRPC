@@ -35,34 +35,40 @@ const std::string Request::METHOD_TAG = "method";
 const std::string Request::PARAMS_TAG = "params";
 
 
-Request::Request(const std::string& method):
-    BaseMessage(Json::Value::null),
+Request::Request(HTTP::ServerEventArgs& evt, const std::string& method):
+    BaseMessage(evt, Json::Value::null),
     _method(method),
     _parameters(Json::Value())
 {
 }
 
 
-Request::Request(const std::string& method, const Json::Value& parameters):
-    BaseMessage(Json::Value::null),
+Request::Request(HTTP::ServerEventArgs& evt,
+                 const std::string& method,
+                 const Json::Value& parameters):
+    BaseMessage(evt, Json::Value::null),
     _method(method),
     _parameters(parameters)
 {
 }
 
 
-Request::Request(const Json::Value& id, const std::string& method):
-    BaseMessage(id),
+Request::Request(HTTP::ServerEventArgs& evt,
+                 const Json::Value& id,
+                 const std::string& method):
+    BaseMessage(evt, id),
     _method(method),
     _parameters(Json::Value::null)
 {
 }
 
 
-Request::Request(const Json::Value& id,
+Request::Request(HTTP::ServerEventArgs& evt,
+                 const Json::Value& id,
                  const std::string& method,
                  const Json::Value& parameters):
-    BaseMessage(id),
+    
+    BaseMessage(evt, id),
     _method(method),
     _parameters(parameters)
 {
@@ -91,11 +97,6 @@ bool Request::isNotification() const
     return !hasId();
 }
 
-Poco::UUID Request::getSessionId() const
-{
-    return _sessionId;
-}
-
 
 std::string Request::toString(bool styled) const
 {
@@ -121,7 +122,8 @@ Json::Value Request::toJSON(const Request& request)
 }
 
 
-Request Request::fromJSON(const Json::Value& json)
+Request Request::fromJSON(HTTP::ServerEventArgs& evt,
+                          const Json::Value& json)
 {
     if (json.isMember(PROTOCOL_VERSION_TAG) &&
         json[PROTOCOL_VERSION_TAG].isString() && // require string
@@ -134,14 +136,16 @@ Request Request::fromJSON(const Json::Value& json)
             {
                 if (json.isMember(PARAMS_TAG))
                 {
-                    return Request(json[ID_TAG],
+                    return Request(evt,
+                                   json[ID_TAG],
                                    json[METHOD_TAG].asString(), // checked above
                                    json[PARAMS_TAG]);
 
                 }
                 else
                 {
-                    return Request(json[ID_TAG],
+                    return Request(evt,
+                                   json[ID_TAG],
                                    json[METHOD_TAG].asString()); // checked above
                 }
             }
@@ -149,13 +153,15 @@ Request Request::fromJSON(const Json::Value& json)
             {
                 if (json.isMember(PARAMS_TAG))
                 {
-                    return Request(json[METHOD_TAG].asString(), // checked above
+                    return Request(evt,
+                                   json[METHOD_TAG].asString(), // checked above
                                    json[PARAMS_TAG]);
 
                 }
                 else
                 {
-                    return Request(json[METHOD_TAG].asString()); // checked above
+                    return Request(evt,
+                                   json[METHOD_TAG].asString()); // checked above
                 }
             }
         }

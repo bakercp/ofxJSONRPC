@@ -55,18 +55,22 @@ class Response: public BaseMessage
 {
 public:
     /// \brief Create a default Error Response.
-    Response();
+    Response(HTTP::ServerEventArgs& evt);
 
-    /// \brief Create a Response.
+    /// \brief Create a successful Response.
     /// \param id The id of the original remote call.
     /// \param result The results of the function call as JSON.
-    Response(const Json::Value& id, const Json::Value& result);
+    Response(HTTP::ServerEventArgs& evt,
+             const Json::Value& id,
+             const Json::Value& result);
 
-    /// \brief Create a Response.
+    /// \brief Create an Error Response.
     /// \param id The id of the original remote call.
     /// \param error The Error response. The Error MUST
     ///        contain a valid error code.
-    Response(const Json::Value& id, const Error& error);
+    Response(HTTP::ServerEventArgs& evt,
+             const Json::Value& id,
+             const Error& error);
 
     /// \brief Destroy the Response.
     virtual ~Response();
@@ -101,7 +105,7 @@ public:
     /// \param json JSONRPC compatible JSON to deserialize.
     /// \returns the deserialized Response.
     /// \throws Poco::Exception if the JSON is not valid.
-    static Response fromJSON(const Json::Value& json);
+    static Response fromJSON(HTTP::ServerEventArgs& evt, const Json::Value& json);
 
 protected:
     /// \brief The result of the remote call.

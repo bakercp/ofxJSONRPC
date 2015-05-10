@@ -177,7 +177,7 @@ public:
     ///        corresponding method callback.
     /// \param request The incoming Request from a client.
     /// \returns A success or error Response.
-    Response processCall(const void* pSender, const Request& request);
+    Response processCall(const void* pSender, Request& request);
 
     /// \brief Process a Request.
     /// \param pSender A pointer to the sender.  This might be a pointer
@@ -188,7 +188,7 @@ public:
     ///        responsible for using this sender information in
     ///        corresponding method callback.
     /// \param request The incoming Request from a client.
-    void processNotification(const void* pSender, const Request& request);
+    void processNotification(const void* pSender, Request& request);
 
     /// \brief Query the registry for the given method.
     /// \param method the name of the method to find.

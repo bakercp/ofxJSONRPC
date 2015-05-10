@@ -62,7 +62,7 @@ void MethodRegistry::unregisterMethod(const std::string& method)
 }
 
 
-Response MethodRegistry::processCall(const void* pSender, const Request& request)
+Response MethodRegistry::processCall(const void* pSender, Request& request)
 {
     try
     {
@@ -76,12 +76,25 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
 
         if (methodIter != _methodMap.end())
         {
-            MethodArgs args(request.getParameters());
+            MethodArgs args(request, request.getParameters());
 
             // Argument result is filled in the event notification callback.
             ofNotifyEvent((*methodIter).second->event, args, pSender);
 
-            return Response(request.getId(), args.result);
+            // If an error is present, then ignore any args.results
+            // and return the error response.
+            if (Errors::RPC_ERROR_NONE == args.error.getCode())
+            {
+                return Response(request,
+                                request.getId(),
+                                args.result);
+            }
+            else
+            {
+                return Response(request,
+                                request.getId(),
+                                args.error);
+            }
         }
         else if (noArgMethodIter != _noArgMethodMap.end())
         {
@@ -89,11 +102,14 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
             {
                 ofNotifyEvent((*noArgMethodIter).second->event, pSender);
 
-                return Response(request.getId(), Json::Value::null);
+                return Response(request,
+                                request.getId(),
+                                Json::Value::null);
             }
             else
             {
-                return Response(request.getId(),
+                return Response(request,
+                                request.getId(),
                                 Error(Errors::RPC_ERROR_INVALID_REQUEST,
                                       "This method does not support parameters.",
                                       Request::toJSON(request)));
@@ -101,29 +117,47 @@ Response MethodRegistry::processCall(const void* pSender, const Request& request
         }
         else
         {
-            return Response(request.getId(),
+            return Response(request,
+                            request.getId(),
                             Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
                                   Request::toJSON(request)));
         }
     }
     catch (const Poco::InvalidArgumentException& exc)
     {
-        return Response(request.getId(),
+        return Response(request,
+                        request.getId(),
                         Error(Errors::RPC_ERROR_INVALID_PARAMETERS,
                               Request::toJSON(request)));
     }
     catch (const Poco::Exception& exc)
     {
-        return Response(request.getId(),
+        return Response(request,
+                        request.getId(),
                         Error(Errors::RPC_ERROR_INTERNAL_ERROR,
                               exc.displayText(),
+                              Request::toJSON(request)));
+    }
+    catch (const std::exception& exc)
+    {
+        return Response(request,
+                        request.getId(),
+                        Error(Errors::RPC_ERROR_INTERNAL_ERROR,
+                              exc.what(),
+                              Request::toJSON(request)));
+    }
+    catch ( ... )
+    {
+        return Response(request,
+                        request.getId(),
+                        Error(Errors::RPC_ERROR_INTERNAL_ERROR,
+                              "Unknown Exception",
                               Request::toJSON(request)));
     }
 }
 
 
-void MethodRegistry::processNotification(const void* pSender,
-                                         const Request& request)
+void MethodRegistry::processNotification(const void* pSender, Request& request)
 {
     processCall(pSender, request); // return nothing
 }

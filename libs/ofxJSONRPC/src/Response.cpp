@@ -35,24 +35,28 @@ const std::string Response::ERROR_TAG = "error";
 const std::string Response::RESULT_TAG = "result";
 
 
-Response::Response():
-    BaseMessage(Json::Value::null),
+Response::Response(HTTP::ServerEventArgs& evt):
+    BaseMessage(evt, Json::Value::null),
     _result(Json::Value::null),
     _error(Error(Errors::RPC_ERROR_INTERNAL_ERROR))
 {
 }
 
 
-Response::Response(const Json::Value& id, const Json::Value& result):
-    BaseMessage(id),
+Response::Response(HTTP::ServerEventArgs& evt,
+                   const Json::Value& id,
+                   const Json::Value& result):
+    BaseMessage(evt, id),
     _result(result),
     _error(Error())
 {
 }
 
 
-Response::Response(const Json::Value& id, const Error& error):
-    BaseMessage(id),
+Response::Response(HTTP::ServerEventArgs& evt,
+                   const Json::Value& id,
+                   const Error& error):
+    BaseMessage(evt, id),
     _result(Json::Value()),
     _error(error)
 {
@@ -78,7 +82,7 @@ const Error& Response::getError() const
 
 bool Response::isErrorResponse() const
 {
-    return getError().getCode() != Errors::RPC_ERROR_NONE;
+    return Errors::RPC_ERROR_NONE != getError().getCode();
 }
 
 
@@ -109,7 +113,7 @@ Json::Value Response::toJSON(const Response& response)
 }
 
 
-Response Response::fromJSON(const Json::Value& json)
+Response Response::fromJSON(HTTP::ServerEventArgs& evt, const Json::Value& json)
 {
     if (json.isMember(PROTOCOL_VERSION_TAG) &&
         json[PROTOCOL_VERSION_TAG].isString() && // require string
@@ -119,11 +123,11 @@ Response Response::fromJSON(const Json::Value& json)
         {
             if (json.isMember(RESULT_TAG))
             {
-                return Response(json[ID_TAG], json[RESULT_TAG]);
+                return Response(evt, json[ID_TAG], json[RESULT_TAG]);
             }
             else if(json.isMember(ERROR_TAG))
             {
-                return Response(json[ID_TAG], Error::fromJSON(json[ERROR_TAG]));
+                return Response(evt, json[ID_TAG], Error::fromJSON(json[ERROR_TAG]));
             }
             else
             {

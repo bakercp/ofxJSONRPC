@@ -29,7 +29,6 @@
 #include <string>
 #include <map>
 #include <json/json.h>
-#include "ofx/HTTP/AbstractServerTypes.h"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/BaseMessage.h"
 
@@ -55,28 +54,36 @@ namespace JSONRPC {
 /// ~~~
 ///
 /// \sa http://www.jsonrpc.org/specification
-class Request: public BaseMessage, public HTTP::AbstractHasSessionId
+class Request: public BaseMessage
 {
 public:
     /// \brief Create a notification Request.
+    /// \param evt The originating server event.
     /// \param method The method's name.
-    Request(const std::string& method);
+    Request(HTTP::ServerEventArgs& evt,
+            const std::string& method);
 
     /// \brief Create a notification Request.
+    /// \param evt The originating server event.
     /// \param method The method's name.
     /// \param parameters The parameters to pass to the method.
-    Request(const std::string& method, const Json::Value& parameters);
+    Request(HTTP::ServerEventArgs& evt,
+            const std::string& method, const Json::Value& parameters);
 
     /// \brief Create a Request.
+    /// \param evt The originating server event.
     /// \param id The transatction identification number.
     /// \param method The method's name.
-    Request(const Json::Value& id, const std::string& method);
+    Request(HTTP::ServerEventArgs& evt,
+            const Json::Value& id, const std::string& method);
 
     /// \brief Create a Request.
+    /// \param evt The originating server event.
     /// \param id The transatction identification number.
     /// \param method The method's name.
     /// \param parameters The parameters to pass to the method.
-    Request(const Json::Value& id,
+    Request(HTTP::ServerEventArgs& evt,
+            const Json::Value& id,
             const std::string& method,
             const Json::Value& parameters);
 
@@ -95,15 +102,6 @@ public:
     /// \returns true iff the id is null.
     bool isNotification() const;
 
-    /// \brief Get the session id for the Request.
-    ///
-    /// The session id identifies the client session. This is not the same as
-    /// the request id, which identifies a unique request sent by a client
-    /// during a session.
-    ///
-    /// \returns the session id for the request.
-    Poco::UUID getSessionId() const;
-
     /// \brief Get the JSON Request as a string.
     /// \param styled true if the output string should be pretty-print.
     /// \returns a raw json string of this Request
@@ -118,12 +116,10 @@ public:
     /// \param json JSONRPC compatible JSON to deserialize.
     /// \returns deserialized Request.
     /// \throws Poco::Exception if the json is not valid.
-    static Request fromJSON(const Json::Value& json);
+    static Request fromJSON(HTTP::ServerEventArgs& evt,
+                            const Json::Value& json);
 
 protected:
-    /// \brief The session id for request.
-    Poco::UUID _sessionId;
-
     /// \brief The method name.
     std::string _method;
 

@@ -43,26 +43,26 @@ std::string Errors::getErrorMessage(int code)
     switch (code)
     {
         case Errors::RPC_ERROR_NONE:
-            return "none";
+            return "RPC_ERROR_NONE";
         case Errors::RPC_ERROR_INVALID_REQUEST:
-            return "invalid request";
+            return "RPC_ERROR_INVALID_REQUEST";
         case Errors::RPC_ERROR_METHOD_NOT_FOUND:
-            return "method not found";
+            return "RPC_ERROR_METHOD_NOT_FOUND";
         case Errors::RPC_ERROR_INVALID_PARAMETERS:
-            return "invalid parameters";
+            return "RPC_ERROR_INVALID_PARAMETERS";
         case Errors::RPC_ERROR_INTERNAL_ERROR:
-            return "internal error";
+            return "RPC_ERROR_INTERNAL_ERROR";
         case Errors::RPC_ERROR_PARSE:
-            return "parse error";
+            return "RPC_ERROR_PARSE";
         default:
         {
             if (code >= -32099 && code <= -32000)
             {
-                return "undefined server error";
+                return "Undefined Server Error";
             }
             else
             {
-                return "unknown error";
+                return "Unknown Error";
             }
         }
     }

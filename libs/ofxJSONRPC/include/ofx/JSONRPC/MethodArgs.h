@@ -27,6 +27,7 @@
 
 
 #include <string>
+#include "ofx/HTTP/ServerEvents.h"
 #include "ofx/JSONRPC/JSONRPCUtils.h"
 
 
@@ -38,13 +39,18 @@ namespace JSONRPC {
 ///
 /// Arguments include the Request parameters and either Results or an Error to
 /// be set if required.
-class MethodArgs
+///
+/// If the Error object is set to an error code other than RPC_ERROR_NONE, the
+/// Json::Value results will be ignored and the error will be returned to the
+/// caller.
+class MethodArgs: public HTTP::ServerEventArgs
 {
 public:
     /// \brief Create a MethodArgs with the given parameters.
     /// \param params The JSON contents of the JSONRPC request params.
     ///        If there are no arguments provided, the params are null.
-    MethodArgs(const Json::Value& params);
+    MethodArgs(HTTP::ServerEventArgs&,
+               const Json::Value& params);
 
     /// \brief Destroy the MethodArgs.
     virtual ~MethodArgs();
@@ -56,7 +62,14 @@ public:
     Json::Value result;
 
     /// \brief The error to be returned, if required.
-    Json::Value error;
+    ///
+    /// If the Error object is set to an error code other than RPC_ERROR_NONE,
+    /// the Json::Value results will be ignored and the error will be returned
+    /// to the caller.
+    ///
+    /// This can be used as an alternative to throwing an exception in the
+    /// remote method.
+    Error error;
 
     /// \brief Get the MethodArgs as a string.
     /// \param styled true if the output string should be pretty-print.
