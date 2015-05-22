@@ -47,15 +47,6 @@ void ofApp::setup()
     // Initialize the server.
     server = ofx::HTTP::BasicJSONRPCServer::makeShared(settings);
 
-    // Create a new logger channel.
-    loggerChannel = WebSocketLoggerChannel::makeShared();
-
-    // Attach the websocket route.
-    loggerChannel->setWebSocketRoute(server->getWebSocketRoute());
-
-    // Set the logger channel as active.
-    ofSetLoggerChannel(loggerChannel);
-
     // Register RPC methods.
     server->registerMethod("get-text",
                            "Returns a random chunk of text to the client.",
