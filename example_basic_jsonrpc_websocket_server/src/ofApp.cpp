@@ -125,7 +125,7 @@ std::string ofApp::getRandomText() const
 {
     static const std::size_t LENGTH = 140;
 
-    ofScopedLock lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
 
     // Generate a random start index.
     std::size_t startIndex = (std::size_t)ofRandom(ipsum.length());
@@ -140,14 +140,14 @@ std::string ofApp::getRandomText() const
 
 std::string ofApp::getUserText() const
 {
-    ofScopedLock lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
     return userText;
 }
 
 
 void ofApp::setUserText(const std::string& text)
 {
-    ofScopedLock lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
     userText = text;
 }
 

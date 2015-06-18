@@ -81,6 +81,6 @@ private:
     // We use a mutex to protect any variables that can be
     // modified by multiple clients.  In our case, userText must be protected.
     // We mark the mutex as mutable so that it can be used in const functions.
-    mutable ofMutex mutex;
+    mutable std::mutex mutex;
 
 };
