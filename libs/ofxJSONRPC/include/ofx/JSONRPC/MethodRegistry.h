@@ -48,9 +48,6 @@ namespace JSONRPC {
 class MethodRegistry
 {
 public:
-    /// \brief A typedef for a shared pointer.
-    typedef std::shared_ptr<MethodRegistry> SharedPtr;
-
     /// \brief A typedef mapping method names to method descriptions.
     typedef std::map<std::string, Json::Value> MethodDescriptionMap;
 
@@ -197,13 +194,6 @@ public:
     /// \returns a MethodDescriptionMap containting a map of the
     ///        method names and the method descriptions.
     MethodDescriptionMap getMethods() const;
-
-    /// \brief Make a shared pointer.
-    /// \returns a SharedPtr to a MethodRegistry.
-    static SharedPtr makeShared()
-    {
-        return SharedPtr(new MethodRegistry());
-    }
 
 protected:
     /// \brief A shared pointer typedef for methods;
