@@ -26,7 +26,7 @@
 #pragma once
 
 
-#include <json/json.h>
+#include "json/json.h"
 #include "Poco/Exception.h"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/MethodArgs.h"

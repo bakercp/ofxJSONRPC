@@ -28,7 +28,7 @@
 
 #include <map>
 #include <string>
-#include <json/json.h>
+#include "json/json.h"
 #include "ofEvents.h"
 #include "ofLog.h"
 #include "ofx/JSONRPC/Method.h"

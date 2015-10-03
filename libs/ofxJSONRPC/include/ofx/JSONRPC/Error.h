@@ -28,7 +28,7 @@
 
 #include <string>
 #include <map>
-#include <json/json.h>
+#include "json/json.h"
 #include "ofx/JSONRPC/Errors.h"
 
 

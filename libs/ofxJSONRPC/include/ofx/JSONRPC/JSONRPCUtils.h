@@ -27,7 +27,7 @@
 
 
 #include <string>
-#include <json/json.h>
+#include "json/json.h"
 #include "Poco/UUID.h"
 #include "ofx/JSONRPC/Errors.h"
 #include "ofx/JSONRPC/Response.h"
