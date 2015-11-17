@@ -36,8 +36,8 @@ void ofApp::setup()
     ipsum = ofBufferFromFile("media/ipsum.txt").getText();
 
     // Load test media.
-    pingPlayer.loadSound("media/ping.wav");
-    pongPlayer.loadSound("media/pong.wav");
+    pingPlayer.load("media/ping.wav");
+    pongPlayer.load("media/pong.wav");
 
     ofx::HTTP::JSONRPCServerSettings settings;
     settings.setPort(8197);
