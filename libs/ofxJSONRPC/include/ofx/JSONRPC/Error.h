@@ -28,7 +28,7 @@
 
 #include <string>
 #include <map>
-#include <json/json.h>
+#include "json/json.h"
 #include "ofx/JSONRPC/Errors.h"
 
 
@@ -49,27 +49,20 @@ public:
     /// \param code is the error code.
     /// \note The error message will be queried based on the code.
     /// \note The data field will be left blank.
-    Error(int code);
+    explicit Error(int code);
 
-    /// \brief Create an Error.
-    /// \param code is the error code.
-    /// \param message the error message.
-    /// \note The data field will be left blank.
-    Error(int code, const std::string& message);
+	/// \brief Create an Error.
+	/// \param code is the error code.
+	/// \param message the error message.
+	explicit Error(int code, const Json::Value& data);
 
-    /// \brief Create an Error.
-    /// \param code is the error code.
-    /// \param data the error data.
-    /// \note The error message will be queried based on the code.
-    Error(int code, const Json::Value& data);
+	/// \brief Create an Error.
+	/// \param code is the error code.
+	/// \param message the error message.
+	/// \param data the error data.
+	explicit Error(int code, const std::string& message, const Json::Value& data);
 
-    /// \brief Create an ErrorResponse.
-    /// \param code is the error code.
-    /// \param message the error message.
-    /// \param data the error data.
-    Error(int code, const std::string& message, const Json::Value& data);
-
-    /// \brief Destroy the ErrorResponse.
+    /// \brief Destroy the Error.
     virtual ~Error();
 
     /// \returns the error code.

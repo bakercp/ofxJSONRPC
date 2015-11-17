@@ -35,34 +35,40 @@ const std::string Request::METHOD_TAG = "method";
 const std::string Request::PARAMS_TAG = "params";
 
 
-Request::Request(const std::string& method):
-    BaseMessage(Json::Value::null),
+Request::Request(HTTP::ServerEventArgs& evt, const std::string& method):
+    BaseMessage(evt, Json::Value::null),
     _method(method),
     _parameters(Json::Value())
 {
 }
 
 
-Request::Request(const std::string& method, const Json::Value& parameters):
-    BaseMessage(Json::Value::null),
+Request::Request(HTTP::ServerEventArgs& evt,
+                 const std::string& method,
+                 const Json::Value& parameters):
+    BaseMessage(evt, Json::Value::null),
     _method(method),
     _parameters(parameters)
 {
 }
 
 
-Request::Request(const Json::Value& id, const std::string& method):
-    BaseMessage(id),
+Request::Request(HTTP::ServerEventArgs& evt,
+                 const Json::Value& id,
+                 const std::string& method):
+    BaseMessage(evt, id),
     _method(method),
     _parameters(Json::Value::null)
 {
 }
 
 
-Request::Request(const Json::Value& id,
+Request::Request(HTTP::ServerEventArgs& evt,
+                 const Json::Value& id,
                  const std::string& method,
                  const Json::Value& parameters):
-    BaseMessage(id),
+    
+    BaseMessage(evt, id),
     _method(method),
     _parameters(parameters)
 {
@@ -88,7 +94,7 @@ const Json::Value& Request::getParameters() const
 
 bool Request::isNotification() const
 {
-    return !hasID();
+    return !hasId();
 }
 
 
@@ -104,7 +110,7 @@ Json::Value Request::toJSON(const Request& request)
 
     result[PROTOCOL_VERSION_TAG] = PROTOCOL_VERSION;
 
-    result[ID_TAG] = request.getID();
+    result[ID_TAG] = request.getId();
     result[METHOD_TAG] = request.getMethod();
 
     if (!request.getParameters().isNull())
@@ -116,7 +122,8 @@ Json::Value Request::toJSON(const Request& request)
 }
 
 
-Request Request::fromJSON(const Json::Value& json)
+Request Request::fromJSON(HTTP::ServerEventArgs& evt,
+                          const Json::Value& json)
 {
     if (json.isMember(PROTOCOL_VERSION_TAG) &&
         json[PROTOCOL_VERSION_TAG].isString() && // require string
@@ -129,14 +136,16 @@ Request Request::fromJSON(const Json::Value& json)
             {
                 if (json.isMember(PARAMS_TAG))
                 {
-                    return Request(json[ID_TAG],
+                    return Request(evt,
+                                   json[ID_TAG],
                                    json[METHOD_TAG].asString(), // checked above
                                    json[PARAMS_TAG]);
 
                 }
                 else
                 {
-                    return Request(json[ID_TAG],
+                    return Request(evt,
+                                   json[ID_TAG],
                                    json[METHOD_TAG].asString()); // checked above
                 }
             }
@@ -144,24 +153,26 @@ Request Request::fromJSON(const Json::Value& json)
             {
                 if (json.isMember(PARAMS_TAG))
                 {
-                    return Request(json[METHOD_TAG].asString(), // checked above
+                    return Request(evt,
+                                   json[METHOD_TAG].asString(), // checked above
                                    json[PARAMS_TAG]);
 
                 }
                 else
                 {
-                    return Request(json[METHOD_TAG].asString()); // checked above
+                    return Request(evt,
+                                   json[METHOD_TAG].asString()); // checked above
                 }
             }
         }
         else
         {
-            throw Poco::Exception("Invalid JSONRPC: No Method", Errors::RPC_ERROR_PARSE);
+            throw ParseException("No method.");
         }
     }
     else
     {
-        throw Poco::Exception("Invalid JSONRPC: No Version String", Errors::RPC_ERROR_PARSE);
+        throw ParseException("No version string.");
     }
 }
 

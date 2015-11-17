@@ -26,7 +26,7 @@
 #pragma once
 
 
-#include <json/json.h>
+#include "json/json.h"
 #include "Poco/Exception.h"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/MethodArgs.h"
@@ -60,6 +60,7 @@ public:
 
     /// \brief The public event available for subscription.
     EventType event;
+
 private:
     /// \brief The method's name.
     std::string _name;

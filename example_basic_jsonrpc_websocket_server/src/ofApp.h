@@ -52,7 +52,7 @@ public:
     ofSoundPlayer pongPlayer;
 
     /// \brief The server that handles the JSONRPC requests.
-    ofx::HTTP::BasicJSONRPCServer::SharedPtr server;
+    ofx::HTTP::JSONRPCServer server;
 
     /// \brief Get a snippet of random text in a thread-safe way.
     /// \returns The snippet of random text.
@@ -67,6 +67,9 @@ public:
     void setUserText(const std::string& text);
 
 private:
+    // A custom logging channel to mirror all log messages to the web clients.
+//    WebSocketLoggerChannel::SharedPtr loggerChannel;
+
     // This piece of text might be modified by multiple client threads.
     // Thus we must use a mutex to protect it during multi-threaded access.
     std::string ipsum;
@@ -78,6 +81,6 @@ private:
     // We use a mutex to protect any variables that can be
     // modified by multiple clients.  In our case, userText must be protected.
     // We mark the mutex as mutable so that it can be used in const functions.
-    mutable ofMutex mutex;
+    mutable std::mutex mutex;
 
 };

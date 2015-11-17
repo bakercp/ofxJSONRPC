@@ -24,6 +24,7 @@
 
 
 #include "ofx/JSONRPC/Errors.h"
+#include <typeinfo>
 
 
 namespace ofx {
@@ -43,17 +44,17 @@ std::string Errors::getErrorMessage(int code)
     switch (code)
     {
         case Errors::RPC_ERROR_NONE:
-            return "none";
+            return "RPC_ERROR_NONE";
         case Errors::RPC_ERROR_INVALID_REQUEST:
-            return "invalid request";
+            return "RPC_ERROR_INVALID_REQUEST";
         case Errors::RPC_ERROR_METHOD_NOT_FOUND:
-            return "method not found";
+            return "RPC_ERROR_METHOD_NOT_FOUND";
         case Errors::RPC_ERROR_INVALID_PARAMETERS:
-            return "invalid parameters";
+            return "RPC_ERROR_INVALID_PARAMETERS";
         case Errors::RPC_ERROR_INTERNAL_ERROR:
-            return "internal error";
+            return "RPC_ERROR_INTERNAL_ERROR";
         case Errors::RPC_ERROR_PARSE:
-            return "parse error";
+            return "RPC_ERROR_PARSE";
         default:
         {
             if (code >= -32099 && code <= -32000)
@@ -62,11 +63,37 @@ std::string Errors::getErrorMessage(int code)
             }
             else
             {
-                return "unknown error";
+                return "Unknown Error";
             }
         }
     }
 }
+
+
+POCO_IMPLEMENT_EXCEPTION(JSONRPCException,
+                         Poco::Exception,
+                         "RPC_ERROR_INTERNAL_ERROR")
+
+
+POCO_IMPLEMENT_EXCEPTION(InvalidRequestException,
+                         JSONRPCException,
+                         "RPC_ERROR_INVALID_REQUEST")
+
+POCO_IMPLEMENT_EXCEPTION(MethodNotFoundException,
+                         JSONRPCException,
+                         "RPC_ERROR_METHOD_NOT_FOUND")
+
+POCO_IMPLEMENT_EXCEPTION(InvalidParametersException,
+                         JSONRPCException,
+                         "RPC_ERROR_INVALID_PARAMETERS")
+
+POCO_IMPLEMENT_EXCEPTION(InternalErrorException,
+                         JSONRPCException,
+                         "RPC_ERROR_INTERNAL_ERROR")
+
+POCO_IMPLEMENT_EXCEPTION(ParseException,
+                         JSONRPCException,
+                         "RPC_ERROR_PARSE")
 
 
 } } // namespace ofx::JSONRPC

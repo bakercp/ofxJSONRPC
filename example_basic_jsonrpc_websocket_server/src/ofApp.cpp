@@ -41,38 +41,39 @@ void ofApp::setup()
     pingPlayer.loadSound("media/ping.wav");
     pongPlayer.loadSound("media/pong.wav");
 
-    ofx::HTTP::BasicJSONRPCServerSettings settings;
+    ofx::HTTP::JSONRPCServerSettings settings;
     settings.setPort(8197);
 
     // Initialize the server.
-    server = ofx::HTTP::BasicJSONRPCServer::makeShared(settings);
+    server.setup(settings);
+
 
     // Register RPC methods.
-    server->registerMethod("get-text",
-                           "Returns a random chunk of text to the client.",
-                           this,
-                           &ofApp::getText);
+    server.registerMethod("get-text",
+                          "Returns a random chunk of text to the client.",
+                          this,
+                          &ofApp::getText);
 
-    server->registerMethod("set-text",
-                           "Sets text from the user.",
-                           this,
-                           &ofApp::setText);
+    server.registerMethod("set-text",
+                          "Sets text from the user.",
+                          this,
+                          &ofApp::setText);
 
-    server->registerMethod("ping",
-                           "Send a JSONRPC Ping Notification",
-                           this,
-                           &ofApp::ping);
+    server.registerMethod("ping",
+                          "Send a JSONRPC Ping Notification",
+                          this,
+                          &ofApp::ping);
 
-    server->registerMethod("pong",
-                           "Send a JSONRPC Pong Notification",
-                           this,
-                           &ofApp::pong);
+    server.registerMethod("pong",
+                          "Send a JSONRPC Pong Notification",
+                          this,
+                          &ofApp::pong);
 
     // Start the server.
-    server->start();
+    server.start();
 
     // Launch a browser with the address of the server.
-    ofLaunchBrowser(server->getURL());
+    ofLaunchBrowser(server.getURL());
 }
 
 void ofApp::draw()
@@ -124,9 +125,9 @@ std::string ofApp::getRandomText() const
 {
     static const std::size_t LENGTH = 140;
 
-    ofScopedLock lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
 
-   // Generate a random start index.
+    // Generate a random start index.
     std::size_t startIndex = (std::size_t)ofRandom(ipsum.length());
 
     // Ensure that the length is valid.
@@ -139,14 +140,14 @@ std::string ofApp::getRandomText() const
 
 std::string ofApp::getUserText() const
 {
-    ofScopedLock lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
     return userText;
 }
 
 
 void ofApp::setUserText(const std::string& text)
 {
-    ofScopedLock lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
     userText = text;
 }
 

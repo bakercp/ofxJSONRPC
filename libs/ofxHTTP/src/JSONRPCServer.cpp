@@ -23,11 +23,11 @@
 // =============================================================================
 
 
-#pragma once
+#include "ofx/HTTP/JSONRPCServer.h"
 
 
 namespace ofx {
-namespace JSONRPC {
+namespace HTTP {
 
 
-} } // namespace ofx::JSONRPC
+} } // namespace ofx::HTTP

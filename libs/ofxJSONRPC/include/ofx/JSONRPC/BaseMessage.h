@@ -27,7 +27,8 @@
 
 
 #include <string>
-#include <json/json.h>
+#include "json/json.h"
+#include "ofx/HTTP/ServerEvents.h"
 
 
 namespace ofx {
@@ -35,20 +36,21 @@ namespace JSONRPC {
 
 
 /// \brief A BaseMessage is a base class for both Request and Response objects.
-class BaseMessage
+class BaseMessage: public HTTP::ServerEventArgs
 {
 public:
     /// \brief Create a BaseMessage.
-    BaseMessage(const Json::Value& id);
+    BaseMessage(HTTP::ServerEventArgs& evt,
+                const Json::Value& id);
 
     /// \brief Destroy the BaseMessage.
     virtual ~BaseMessage();
 
     /// \returns the message ID.
-    Json::Value getID() const;
+    Json::Value getId() const;
 
     /// \return true iff the ID is not empty.
-    bool hasID() const;
+    bool hasId() const;
 
 protected:
     /// \brief The id of the remote call.

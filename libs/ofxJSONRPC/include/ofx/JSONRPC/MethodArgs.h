@@ -27,6 +27,7 @@
 
 
 #include <string>
+#include "ofx/HTTP/ServerEvents.h"
 #include "ofx/JSONRPC/JSONRPCUtils.h"
 
 
@@ -38,18 +39,27 @@ namespace JSONRPC {
 ///
 /// Arguments include the Request parameters and either Results or an Error to
 /// be set if required.
-class MethodArgs
+///
+/// If the Error object is set to an error code other than RPC_ERROR_NONE, the
+/// Json::Value results will be ignored and the error will be returned to the
+/// caller.
+///
+/// Usually, upon error, the user will throw one of the convenient
+/// child classes of JSONRPCException, which will be caught and an error
+/// response will be returned to the caller. But, in cases where data should
+/// be returned with the error response, the user must manually set the
+/// error message and return immediately.
+class MethodArgs: public HTTP::ServerEventArgs
 {
 public:
     /// \brief Create a MethodArgs with the given parameters.
     /// \param params The JSON contents of the JSONRPC request params.
     ///        If there are no arguments provided, the params are null.
-    MethodArgs(const Json::Value& params):
-        params(params),
-        result(Json::Value::null),
-        error(Json::Value::null)
-    {
-    }
+    MethodArgs(HTTP::ServerEventArgs&,
+               const Json::Value& params);
+
+    /// \brief Destroy the MethodArgs.
+    virtual ~MethodArgs();
 
     /// \brief The JSON contents of the JSONRPC request params.
     const Json::Value params;
@@ -58,24 +68,19 @@ public:
     Json::Value result;
 
     /// \brief The error to be returned, if required.
-    Json::Value error;
+    ///
+    /// If the Error object is set to an error code other than RPC_ERROR_NONE,
+    /// the Json::Value results will be ignored and the error will be returned
+    /// to the caller.
+    ///
+    /// This can be used as an alternative to throwing an exception in the
+    /// remote method.
+    Error error;
 
     /// \brief Get the MethodArgs as a string.
     /// \param styled true if the output string should be pretty-print.
     /// \returns a raw json string of this MethodArgs
-    std::string toString(bool styled = false) const
-    {
-        std::stringstream ss;
-
-        ss << "Params:" << std::endl;
-        ss << JSONRPCUtils::toString(params, styled) << std::endl;
-        ss << "Results:" << std::endl;
-        ss << JSONRPCUtils::toString(result, styled) << std::endl;
-        ss << "Error:" << std::endl;
-        ss << JSONRPCUtils::toString(error, styled) << std::endl;
-
-        return ss.str();
-    }
+    std::string toString(bool styled = false) const;
 
 };
 

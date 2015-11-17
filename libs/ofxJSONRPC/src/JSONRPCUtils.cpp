@@ -34,7 +34,7 @@ std::string JSONRPCUtils::toString(const Json::Value& json, bool styled)
 {
     std::string raw;
 
-    if(styled)
+    if (styled)
     {
         Json::StyledWriter writer;
         raw = writer.write(json);
@@ -46,6 +46,32 @@ std::string JSONRPCUtils::toString(const Json::Value& json, bool styled)
     }
 
     return raw;
+}
+
+
+bool JSONRPCUtils::hasMemberOfType(const Json::Value& json,
+                                   const std::string& name,
+                                   Json::ValueType type)
+{
+    return json.isMember(name) && json[name].isConvertibleTo(type);
+}
+
+
+bool JSONRPCUtils::hasString(const Json::Value& json,
+                             const std::string& name,
+                             bool requireNonEmpty)
+{
+    cout << hasMemberOfType(json, name, Json::stringValue) << endl;
+
+
+    if (requireNonEmpty)
+    {
+        return hasMemberOfType(json, name, Json::stringValue) && !json[name].asString().empty();
+    }
+    else
+    {
+        return hasMemberOfType(json, name, Json::stringValue);
+    }
 }
 
 

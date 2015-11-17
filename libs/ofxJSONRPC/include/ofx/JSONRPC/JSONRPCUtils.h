@@ -27,7 +27,8 @@
 
 
 #include <string>
-#include <json/json.h>
+#include "json/json.h"
+#include "Poco/UUID.h"
 #include "ofx/JSONRPC/Errors.h"
 #include "ofx/JSONRPC/Response.h"
 #include "ofx/JSONRPC/Request.h"
@@ -43,10 +44,19 @@ class JSONRPCUtils
 public:
     /// \brief Convert JSON values to a raw string representation.
     /// \param json The JSON value to convert.
-    /// \param styled if true, the raw string will be indented
+    /// \param styled If true, the raw string will be indented
     ///        with returns and thus easier to read (aka pretty print).
     /// \returns A std::string representation of the JSON.
     static std::string toString(const Json::Value& json, bool styled = false);
+
+    static bool hasMemberOfType(const Json::Value& json,
+                                const std::string& name,
+                                Json::ValueType type);
+
+    static bool hasString(const Json::Value& json,
+                          const std::string& name,
+                          bool requireNonEmpty = false);
+
 
 };
 

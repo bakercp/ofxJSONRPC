@@ -35,7 +35,9 @@ const std::string BaseMessage::PROTOCOL_VERSION     = "2.0";
 const std::string BaseMessage::ID_TAG               = "id";
 
 
-BaseMessage::BaseMessage(const Json::Value& id):
+BaseMessage::BaseMessage(HTTP::ServerEventArgs& evt,
+                         const Json::Value& id):
+    HTTP::ServerEventArgs(evt),
     _id(id)
 {
 }
@@ -46,13 +48,13 @@ BaseMessage::~BaseMessage()
 }
 
 
-Json::Value BaseMessage::getID() const
+Json::Value BaseMessage::getId() const
 {
     return _id;
 }
 
 
-bool BaseMessage::hasID() const
+bool BaseMessage::hasId() const
 {
     return !_id.empty();
 }

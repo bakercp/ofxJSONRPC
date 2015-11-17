@@ -28,11 +28,9 @@
 
 #include <map>
 #include <string>
-#include <json/json.h>
-#include "Poco/Mutex.h"
+#include "json/json.h"
 #include "ofEvents.h"
 #include "ofLog.h"
-#include "ofTypes.h" // std::shared_ptr
 #include "ofx/JSONRPC/Method.h"
 #include "ofx/JSONRPC/MethodArgs.h"
 #include "ofx/JSONRPC/Response.h"
@@ -50,9 +48,6 @@ namespace JSONRPC {
 class MethodRegistry
 {
 public:
-    /// \brief A typedef for a shared pointer.
-    typedef std::shared_ptr<MethodRegistry> SharedPtr;
-
     /// \brief A typedef mapping method names to method descriptions.
     typedef std::map<std::string, Json::Value> MethodDescriptionMap;
 
@@ -177,7 +172,7 @@ public:
     ///        corresponding method callback.
     /// \param request The incoming Request from a client.
     /// \returns A success or error Response.
-    Response processCall(const void* pSender, const Request& request);
+    Response processCall(const void* pSender, Request& request);
 
     /// \brief Process a Request.
     /// \param pSender A pointer to the sender.  This might be a pointer
@@ -188,7 +183,7 @@ public:
     ///        responsible for using this sender information in
     ///        corresponding method callback.
     /// \param request The incoming Request from a client.
-    void processNotification(const void* pSender, const Request& request);
+    void processNotification(const void* pSender, Request& request);
 
     /// \brief Query the registry for the given method.
     /// \param method the name of the method to find.
@@ -199,13 +194,6 @@ public:
     /// \returns a MethodDescriptionMap containting a map of the
     ///        method names and the method descriptions.
     MethodDescriptionMap getMethods() const;
-
-    /// \brief Make a shared pointer.
-    /// \returns a SharedPtr to a MethodRegistry.
-    static SharedPtr makeShared()
-    {
-        return SharedPtr(new MethodRegistry());
-    }
 
 protected:
     /// \brief A shared pointer typedef for methods;
@@ -233,7 +221,7 @@ protected:
     NoArgMethodMap _noArgMethodMap;
 
     /// \brief A mutext to ensure method map validity.
-    mutable Poco::FastMutex _mutex;
+    mutable std::mutex _mutex;
 
 };
 
@@ -247,11 +235,9 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::FastMutex::ScopedLock lock(_mutex);
+    std::unique_lock<std::mutex> lock(_mutex);
     _methodMap[name] = SharedMethodPtr(new Method(name, description));
-    _methodMap[name]->event += Poco::priorityDelegate(listener,
-                                                      listenerMethod,
-                                                      priority);
+    _methodMap[name]->event.add(listener, listenerMethod, priority);
 }
 
 template <class ListenerClass>
@@ -263,11 +249,9 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::FastMutex::ScopedLock lock(_mutex);
+    std::unique_lock<std::mutex> lock(_mutex);
     _methodMap[name] = SharedMethodPtr(new Method(name, description));
-    _methodMap[name]->event += Poco::priorityDelegate(listener,
-                                                listenerMethod,
-                                                priority);
+    _methodMap[name]->event.add(listener, listenerMethod, priority);
 }
 
 template <class ListenerClass>
@@ -279,12 +263,9 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::FastMutex::ScopedLock lock(_mutex);
-    _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name,
-                                                                 description));
-    _noArgMethodMap[name]->event += Poco::priorityDelegate(listener,
-                                                           listenerMethod,
-                                                           priority);
+    std::unique_lock<std::mutex> lock(_mutex);
+    _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name, description));
+    _noArgMethodMap[name]->event.add(listener, listenerMethod, priority);
 }
 
 template <class ListenerClass>
@@ -296,12 +277,9 @@ void MethodRegistry::registerMethod(const std::string& name,
 {
     unregisterMethod(name);
 
-    Poco::FastMutex::ScopedLock lock(_mutex);
-    _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name,
-                                                                 description));
-    _noArgMethodMap[name]->event += Poco::priorityDelegate(listener,
-                                                           listenerMethod,
-                                                           priority);
+    std::unique_lock<std::mutex> lock(_mutex);
+    _noArgMethodMap[name] = SharedNoArgMethodPtr(new NoArgMethod(name, description));
+    _noArgMethodMap[name]->event.add(listener, listenerMethod, priority);
 }
 
 

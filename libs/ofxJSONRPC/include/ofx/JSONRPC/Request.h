@@ -28,7 +28,7 @@
 
 #include <string>
 #include <map>
-#include <json/json.h>
+#include "json/json.h"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/BaseMessage.h"
 
@@ -58,24 +58,32 @@ class Request: public BaseMessage
 {
 public:
     /// \brief Create a notification Request.
+    /// \param evt The originating server event.
     /// \param method The method's name.
-    Request(const std::string& method);
+    Request(HTTP::ServerEventArgs& evt,
+            const std::string& method);
 
     /// \brief Create a notification Request.
+    /// \param evt The originating server event.
     /// \param method The method's name.
     /// \param parameters The parameters to pass to the method.
-    Request(const std::string& method, const Json::Value& parameters);
+    Request(HTTP::ServerEventArgs& evt,
+            const std::string& method, const Json::Value& parameters);
 
     /// \brief Create a Request.
+    /// \param evt The originating server event.
     /// \param id The transatction identification number.
     /// \param method The method's name.
-    Request(const Json::Value& id, const std::string& method);
+    Request(HTTP::ServerEventArgs& evt,
+            const Json::Value& id, const std::string& method);
 
     /// \brief Create a Request.
+    /// \param evt The originating server event.
     /// \param id The transatction identification number.
     /// \param method The method's name.
     /// \param parameters The parameters to pass to the method.
-    Request(const Json::Value& id,
+    Request(HTTP::ServerEventArgs& evt,
+            const Json::Value& id,
             const std::string& method,
             const Json::Value& parameters);
 
@@ -107,8 +115,9 @@ public:
     /// \brief Deserialize the JSON to a Request object.
     /// \param json JSONRPC compatible JSON to deserialize.
     /// \returns deserialized Request.
-    /// \throws Poco::Exception if the json is not valid.
-    static Request fromJSON(const Json::Value& json);
+    /// \throws ParseException if the json is not valid.
+    static Request fromJSON(HTTP::ServerEventArgs& evt,
+                            const Json::Value& json);
 
 protected:
     /// \brief The method name.
