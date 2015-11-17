@@ -26,8 +26,6 @@
 #include "ofApp.h"
 
 
-
-
 void ofApp::setup()
 {
     ofSetFrameRate(30);
@@ -75,6 +73,7 @@ void ofApp::setup()
     // Launch a browser with the address of the server.
     ofLaunchBrowser(server.getURL());
 }
+
 
 void ofApp::draw()
 {

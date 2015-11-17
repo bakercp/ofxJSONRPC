@@ -41,10 +41,10 @@ public:
     void getText(ofx::JSONRPC::MethodArgs& args);
     void setText(ofx::JSONRPC::MethodArgs& args);
 
-    // Register a no argument notification method.
+    // Register a no-argument notification method.
     void ping();
 
-    // Register a no argument notification method.
+    // Register a no-argument notification method.
     void pong();
 
     /// \todo is ofSoundPlayer thread-safe?
@@ -68,7 +68,7 @@ public:
 
 private:
     // A custom logging channel to mirror all log messages to the web clients.
-//    WebSocketLoggerChannel::SharedPtr loggerChannel;
+    // WebSocketLoggerChannel::SharedPtr loggerChannel;
 
     // This piece of text might be modified by multiple client threads.
     // Thus we must use a mutex to protect it during multi-threaded access.
