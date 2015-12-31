@@ -108,7 +108,7 @@ void ofApp::getText(ofx::JSONRPC::MethodArgs& args)
 {
     // Set the result equal to the substring.
     args.result = getRandomText();
-    ofLogVerbose("ofApp::getText") << args.result;
+    ofLogVerbose("ofApp::getText") << args.result.asString();
 }
 
 
