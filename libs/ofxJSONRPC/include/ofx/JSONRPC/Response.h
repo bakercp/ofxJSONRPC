@@ -33,7 +33,6 @@
 #include "ofx/JSONRPC/BaseMessage.h"
 
 
-
 namespace ofx {
 namespace JSONRPC {
 
