@@ -191,7 +191,7 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFr
     Json::Value json;
     Json::Reader reader;
 
-    if (reader.parse(evt.getFrame().getText(), json))
+    if (reader.parse(evt.frame().getText(), json))
     {
         try
         {
@@ -200,7 +200,7 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFr
 
             if (response.hasId())
             {
-                evt.getConnection().sendFrame(response.toString());
+                evt.connection().sendFrame(response.toString());
             }
         }
         catch (const Poco::InvalidArgumentException& exc)
@@ -209,7 +209,7 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFr
                                        Json::Value::null, // null value is required when parse exceptions
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_INVALID_PARAMETERS));
 
-            evt.getConnection().sendFrame(response.toString());
+            evt.connection().sendFrame(response.toString());
         }
         catch (const Poco::Exception& exc)
         {
@@ -217,7 +217,7 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFr
                                        Json::Value::null, // null value is required when parse exceptions
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_INTERNAL_ERROR));
 
-            evt.getConnection().sendFrame(response.toString());
+            evt.connection().sendFrame(response.toString());
         }
 
         return true;  // We attended to the event, so consume it.
@@ -225,7 +225,7 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFr
     else
     {
         ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
-        ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << evt.getFrame().getText();
+        ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << evt.frame().getText();
         return false;  // We did not attend to this event, so pass it along.
     }
 }
