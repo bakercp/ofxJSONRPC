@@ -76,15 +76,15 @@ public:
 
     /// \brief Get the PostRoute.
     /// \returns the PostRoute attached to this server.
-    FileSystemRoute& getFileSystemRoute();
+    FileSystemRoute& fileSystemRoute();
 
     /// \brief Get the PostRoute.
     /// \returns the PostRoute attached to this server.
-    PostRoute& getPostRoute();
+    PostRoute& postRoute();
 
     /// \brief Get the WebSocketRoute.
     /// \returns the WebSocketRoute attached to this server.
-    WebSocketRoute& getWebSocketRoute();
+    WebSocketRoute& webSocketRoute();
 
     bool onWebSocketOpenEvent(WebSocketOpenEventArgs& evt);
     bool onWebSocketCloseEvent(WebSocketCloseEventArgs& evt);
@@ -151,21 +151,21 @@ void JSONRPCServer_<SessionStoreType>::setup(const Settings& settings)
 
 
 template <typename SessionStoreType>
-FileSystemRoute& JSONRPCServer_<SessionStoreType>::getFileSystemRoute()
+FileSystemRoute& JSONRPCServer_<SessionStoreType>::fileSystemRoute()
 {
     return _fileSystemRoute;
 }
 
 
 template <typename SessionStoreType>
-PostRoute& JSONRPCServer_<SessionStoreType>::getPostRoute()
+PostRoute& JSONRPCServer_<SessionStoreType>::postRoute()
 {
     return _postRoute;
 }
 
 
 template <typename SessionStoreType>
-WebSocketRoute& JSONRPCServer_<SessionStoreType>::getWebSocketRoute()
+WebSocketRoute& JSONRPCServer_<SessionStoreType>::webSocketRoute()
 {
     return _webSocketRoute;
 }
@@ -269,7 +269,7 @@ bool JSONRPCServer_<SessionStoreType>::onHTTPPostEvent(PostEventArgs& args)
             if (response.hasId())
             {
                 std::string buffer = response.toString();
-                args.getResponse().sendBuffer(buffer.c_str(), buffer.length());
+                args.response().sendBuffer(buffer.c_str(), buffer.length());
             }
         }
         catch (Poco::Exception& exc)
@@ -279,7 +279,7 @@ bool JSONRPCServer_<SessionStoreType>::onHTTPPostEvent(PostEventArgs& args)
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
 
             std::string buffer = response.toString();
-            args.getResponse().sendBuffer(buffer.c_str(), buffer.length());
+            args.response().sendBuffer(buffer.c_str(), buffer.length());
         }
 
         return true;  // We attended to the event, so consume it.

@@ -5,4 +5,3 @@ ofxJSONRPC
 ofxMediaType
 ofxNetworkUtils
 ofxSSLManager
-ofxTaskQueue
