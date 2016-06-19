@@ -27,7 +27,7 @@
 
 
 #include <string>
-#include "json/json.h"
+#include "json.hpp"
 #include "ofx/HTTP/ServerEvents.h"
 
 
@@ -41,20 +41,21 @@ class BaseMessage: public HTTP::ServerEventArgs
 public:
     /// \brief Create a BaseMessage.
     BaseMessage(HTTP::ServerEventArgs& evt,
-                const Json::Value& id);
+                const ofJson& id);
 
     /// \brief Destroy the BaseMessage.
     virtual ~BaseMessage();
 
     /// \returns the message ID.
-    Json::Value getId() const;
+    const ofJson& id() const;
+    OF_DEPRECATED_MSG("Use id() instead.", ofJson getId() const);
 
-    /// \return true iff the ID is not empty.
+    /// \return true iff the ID is not null.
     bool hasId() const;
 
 protected:
     /// \brief The id of the remote call.
-    Json::Value _id;
+    ofJson _id;
 
     /// \brief JSONRPC tag.
     static const std::string PROTOCOL_VERSION_TAG;

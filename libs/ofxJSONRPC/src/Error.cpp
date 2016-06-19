@@ -24,6 +24,7 @@
 
 
 #include "ofx/JSONRPC/Error.h"
+#include "ofx/JSONRPC/JSONRPCUtils.h"
 
 
 namespace ofx {
@@ -38,7 +39,7 @@ const std::string Error::ERROR_DATA_TAG = "data";
 Error::Error():
     _code(Errors::RPC_ERROR_NONE),
     _message(Errors::getErrorMessage(_code)),
-    _data(Json::Value())
+    _data(ofJson())
 {
 }
 
@@ -46,12 +47,12 @@ Error::Error():
 Error::Error(int code):
     _code(code),
     _message(Errors::getErrorMessage(code)),
-    _data(Json::Value())
+    _data(ofJson())
 {
 }
 
 
-Error::Error(int code, const Json::Value& data):
+Error::Error(int code, const ofJson& data):
     _code(code),
     _message(Errors::getErrorMessage(_code)),
     _data(data)
@@ -59,7 +60,7 @@ Error::Error(int code, const Json::Value& data):
 }
 
 
-Error::Error(int code, const std::string& message, const Json::Value& data):
+Error::Error(int code, const std::string& message, const ofJson& data):
     _code(code),
     _message(message),
     _data(data)
@@ -72,66 +73,84 @@ Error::~Error()
 }
 
 
-int Error::getCode() const
+int Error::code() const
 {
     return _code;
 }
 
 
-std::string Error::getMessage() const
+int Error::getCode() const
+{
+    return code();
+}
+
+    
+const std::string& Error::message() const
 {
     return _message;
 }
 
 
-Json::Value Error::getData() const
+std::string Error::getMessage() const
+{
+    return message();
+}
+
+
+const ofJson& Error::data() const
 {
     return _data;
 }
 
 
-Json::Value Error::toJSON(const Error& error)
+ofJson Error::getData() const
 {
-    Json::Value result;
+    return data();
+}
 
-    result[ERROR_CODE_TAG] = error.getCode();
 
-    if (!error.getMessage().empty())
+ofJson Error::toJSON(const Error& error)
+{
+    ofJson result;
+
+    result[ERROR_CODE_TAG] = error.code();
+
+    if (!error.message().empty())
     {
-        result[ERROR_MESSAGE_TAG] = error.getMessage();
+        result[ERROR_MESSAGE_TAG] = error.message();
     }
 
-    if (!error.getData().isNull())
+    if (!error.data().is_null())
     {
-        result[ERROR_DATA_TAG] = error.getData();
+        result[ERROR_DATA_TAG] = error.data();
     }
 
     return result;
 }
 
-Error Error::fromJSON(const Json::Value& json)
+Error Error::fromJSON(const ofJson& json)
 {
-    if (json.isMember(ERROR_CODE_TAG) &&
-        json[ERROR_CODE_TAG].isInt())
+    if (JSONRPCUtils::hasIntegerKey(json, ERROR_CODE_TAG))
     {
-        if (json.isMember(ERROR_MESSAGE_TAG) &&
-            json[ERROR_CODE_TAG].isString())
+        int code = json[ERROR_CODE_TAG];
+
+        if (JSONRPCUtils::hasStringKey(json, ERROR_MESSAGE_TAG))
         {
-            if (json.isMember(ERROR_DATA_TAG))
+            std::string message = json[ERROR_MESSAGE_TAG];
+
+            if (JSONRPCUtils::hasKey(json, ERROR_DATA_TAG))
             {
-                return Error(json[ERROR_CODE_TAG].asInt(),
-                             json[ERROR_MESSAGE_TAG].asString(),
-                             json[ERROR_DATA_TAG]);
+                ofJson data = json[ERROR_DATA_TAG];
+                return Error(code, message, data);
             }
             else
             {
-                return Error(json[ERROR_CODE_TAG].asInt(),
-                             json[ERROR_MESSAGE_TAG].asString());
+                return Error(code, message);
             }
         }
         else
         {
-            return Error(json[ERROR_CODE_TAG].asInt());
+            return Error(code);
         }
     }
     else

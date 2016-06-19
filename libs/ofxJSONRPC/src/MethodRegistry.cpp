@@ -68,7 +68,7 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
     {
         std::unique_lock<std::mutex> lock(_mutex);
 
-        const std::string& method = request.getMethod();
+        const std::string& method = request.method();
 
         NoArgMethodMapIter noArgMethodIter = _noArgMethodMap.find(method);
 
@@ -76,41 +76,39 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
 
         if (methodIter != _methodMap.end())
         {
-            MethodArgs args(request, request.getParameters());
+            MethodArgs args(request, request.parameters());
 
             // Argument result is filled in the event notification callback.
             ofNotifyEvent((*methodIter).second->event, args, pSender);
 
             // If an error is present, then ignore any args.results
             // and return the error response.
-            if (Errors::RPC_ERROR_NONE == args.error.getCode())
+            if (Errors::RPC_ERROR_NONE == args.error.code())
             {
                 return Response(request,
-                                request.getId(),
+                                request.id(),
                                 args.result);
             }
             else
             {
                 // Return the error.
                 return Response(request,
-                                request.getId(),
+                                request.id(),
                                 args.error);
             }
         }
         else if (noArgMethodIter != _noArgMethodMap.end())
         {
-            if (request.getParameters().isNull())
+            if (request.parameters().is_null())
             {
                 ofNotifyEvent((*noArgMethodIter).second->event, pSender);
 
-                return Response(request,
-                                request.getId(),
-                                Json::Value::null);
+                return Response(request, request.id(), nullptr);
             }
             else
             {
                 return Response(request,
-                                request.getId(),
+                                request.id(),
                                 Error(Errors::RPC_ERROR_INVALID_REQUEST,
                                       "This method does not support parameters.",
                                       Request::toJSON(request)));
@@ -119,7 +117,7 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
         else
         {
             return Response(request,
-                            request.getId(),
+                            request.id(),
                             Error(Errors::RPC_ERROR_METHOD_NOT_FOUND,
                                   Request::toJSON(request)));
         }
@@ -127,21 +125,21 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
     catch (const JSONRPCException& exc)
     {
         return Response(request,
-                        request.getId(),
+                        request.id(),
                         Error(exc.code(),
                               exc.message()));
     }
     catch (const Poco::InvalidArgumentException& exc)
     {
         return Response(request,
-                        request.getId(),
+                        request.id(),
                         Error(Errors::RPC_ERROR_INVALID_PARAMETERS,
                               Request::toJSON(request)));
     }
     catch (const Poco::Exception& exc)
     {
         return Response(request,
-                        request.getId(),
+                        request.id(),
                         Error(Errors::RPC_ERROR_INTERNAL_ERROR,
                               exc.displayText(),
                               Request::toJSON(request)));
@@ -149,7 +147,7 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
     catch (const std::exception& exc)
     {
         return Response(request,
-                        request.getId(),
+                        request.id(),
                         Error(Errors::RPC_ERROR_INTERNAL_ERROR,
                               exc.what(),
                               Request::toJSON(request)));
@@ -157,7 +155,7 @@ Response MethodRegistry::processCall(const void* pSender, Request& request)
     catch ( ... )
     {
         return Response(request,
-                        request.getId(),
+                        request.id(),
                         Error(Errors::RPC_ERROR_INTERNAL_ERROR,
                               "Unknown Exception",
                               Request::toJSON(request)));
@@ -178,17 +176,23 @@ bool MethodRegistry::hasMethod(const std::string& method) const
 }
 
 
+MethodRegistry::MethodDescriptionMap MethodRegistry::methods() const
+{
+    std::unique_lock<std::mutex> lock(_mutex);
+    MethodRegistry::MethodDescriptionMap methods;
+    
+    for (const auto& method: _methodMap)
+    {
+        methods[method.first] = method.second->description();
+    }
+
+    return methods;
+}
+
+
 MethodRegistry::MethodDescriptionMap MethodRegistry::getMethods() const
 {
-    MethodRegistry::MethodDescriptionMap methods;
-    std::unique_lock<std::mutex> lock(_mutex);
-    MethodMap::const_iterator iter = _methodMap.begin();
-    while (iter != _methodMap.end())
-    {
-        methods[(*iter).first] = (*iter).second->getDescription();
-        ++iter;
-    }
-    return methods;
+    return methods();
 }
 
 

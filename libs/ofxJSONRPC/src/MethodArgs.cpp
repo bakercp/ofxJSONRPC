@@ -31,10 +31,10 @@ namespace JSONRPC {
 
 
 MethodArgs::MethodArgs(HTTP::ServerEventArgs& evt,
-                       const Json::Value& params):
+                       const ofJson& params):
     HTTP::ServerEventArgs(evt),
     params(params),
-    result(Json::Value::null),
+    result(nullptr),
     error(Error())
 {
 }

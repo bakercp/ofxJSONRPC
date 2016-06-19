@@ -28,7 +28,7 @@
 
 #include <map>
 #include <string>
-#include "json/json.h"
+#include "json.hpp"
 #include "ofEvents.h"
 #include "ofLog.h"
 #include "ofx/JSONRPC/Method.h"
@@ -49,10 +49,7 @@ class MethodRegistry
 {
 public:
     /// \brief A typedef mapping method names to method descriptions.
-    typedef std::map<std::string, Json::Value> MethodDescriptionMap;
-
-    /// \brief A typedef for a MethodDescriptionMap iterator.
-    typedef std::map<std::string, Json::Value>::iterator MethodDescriptionMapIter;
+    typedef std::map<std::string, ofJson> MethodDescriptionMap;
 
     /// \brief Create a MethodRegistry.
     MethodRegistry();
@@ -79,7 +76,7 @@ public:
     /// \param priority The priority of the event.
     template <class ListenerClass>
     void registerMethod(const std::string& name,
-                        const Json::Value& description,
+                        const ofJson& description,
                         ListenerClass* listener,
                         void (ListenerClass::*listenerMethod)(const void*, MethodArgs&),
                         int priority = OF_EVENT_ORDER_AFTER_APP);
@@ -103,7 +100,7 @@ public:
     /// \param priority The priority of the event.
     template <class ListenerClass>
     void registerMethod(const std::string& name,
-                        const Json::Value& description,
+                        const ofJson& description,
                         ListenerClass* listener,
                         void (ListenerClass::*listenerMethod)(MethodArgs&),
                         int priority = OF_EVENT_ORDER_AFTER_APP);
@@ -127,7 +124,7 @@ public:
     /// \param priority The priority of the event.
     template <class ListenerClass>
     void registerMethod(const std::string& name,
-                        const Json::Value& description,
+                        const ofJson& description,
                         ListenerClass* listener,
                         void (ListenerClass::*listenerMethod)(const void*),
                         int priority = OF_EVENT_ORDER_AFTER_APP);
@@ -151,7 +148,7 @@ public:
     /// \param priority The priority of the event.
     template <class ListenerClass>
     void registerMethod(const std::string& name,
-                        const Json::Value& description,
+                        const ofJson& description,
                         ListenerClass* listener,
                         void (ListenerClass::*listenerMethod)(void),
                         int priority = OF_EVENT_ORDER_AFTER_APP);
@@ -193,7 +190,8 @@ public:
     /// \brief Get a list of all method names and their descriptions.
     /// \returns a MethodDescriptionMap containting a map of the
     ///        method names and the method descriptions.
-    MethodDescriptionMap getMethods() const;
+    MethodDescriptionMap methods() const;
+    OF_DEPRECATED_MSG("Use methods() instead.", MethodDescriptionMap getMethods() const);
 
 protected:
     /// \brief A shared pointer typedef for methods;
@@ -228,7 +226,7 @@ protected:
 
 template <class ListenerClass>
 void MethodRegistry::registerMethod(const std::string& name,
-                                    const Json::Value& description,
+                                    const ofJson& description,
                                     ListenerClass* listener,
                                     void (ListenerClass::*listenerMethod)(const void*, MethodArgs&),
                                     int priority)
@@ -242,7 +240,7 @@ void MethodRegistry::registerMethod(const std::string& name,
 
 template <class ListenerClass>
 void MethodRegistry::registerMethod(const std::string& name,
-                                    const Json::Value& description,
+                                    const ofJson& description,
                                     ListenerClass* listener,
                                     void (ListenerClass::*listenerMethod)(MethodArgs&),
                                     int priority)
@@ -256,7 +254,7 @@ void MethodRegistry::registerMethod(const std::string& name,
 
 template <class ListenerClass>
 void MethodRegistry::registerMethod(const std::string& name,
-                                    const Json::Value& description,
+                                    const ofJson& description,
                                     ListenerClass* listener,
                                     void (ListenerClass::*listenerMethod)(const void*),
                                     int priority)
@@ -270,7 +268,7 @@ void MethodRegistry::registerMethod(const std::string& name,
 
 template <class ListenerClass>
 void MethodRegistry::registerMethod(const std::string& name,
-                                    const Json::Value& description,
+                                    const ofJson& description,
                                     ListenerClass* listener,
                                     void (ListenerClass::*listenerMethod)(void),
                                     int priority)

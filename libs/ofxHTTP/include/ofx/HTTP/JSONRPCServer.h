@@ -188,11 +188,10 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketCloseEvent(WebSocketCloseEvent
 template <typename SessionStoreType>
 bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFrameEventArgs& evt)
 {
-    Json::Value json;
-    Json::Reader reader;
-
-    if (reader.parse(evt.frame().getText(), json))
+    try
     {
+        ofJson json = ofJson::parse(evt.frame().getText());
+
         try
         {
             JSONRPC::Request request = JSONRPC::Request::fromJSON(evt, json);
@@ -206,7 +205,7 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFr
         catch (const Poco::InvalidArgumentException& exc)
         {
             JSONRPC::Response response(evt,
-                                       Json::Value::null, // null value is required when parse exceptions
+                                       ofJson(nullptr), // null value is required when parse exceptions
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_INVALID_PARAMETERS));
 
             evt.connection().sendFrame(response.toString());
@@ -214,17 +213,18 @@ bool JSONRPCServer_<SessionStoreType>::onWebSocketFrameReceivedEvent(WebSocketFr
         catch (const Poco::Exception& exc)
         {
             JSONRPC::Response response(evt,
-                                       Json::Value::null, // null value is required when parse exceptions
+                                       ofJson(nullptr), // null value is required when parse exceptions
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_INTERNAL_ERROR));
 
             evt.connection().sendFrame(response.toString());
         }
 
         return true;  // We attended to the event, so consume it.
+
     }
-    else
+    catch (const std::invalid_argument& exc)
     {
-        ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
+        ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << "Could not parse as JSON: " << exc.what();
         ofLogVerbose("JSONRPCServer::onWebSocketFrameReceivedEvent") << evt.frame().getText();
         return false;  // We did not attend to this event, so pass it along.
     }
@@ -256,11 +256,10 @@ bool JSONRPCServer_<SessionStoreType>::onHTTPFormEvent(PostFormEventArgs& args)
 template <typename SessionStoreType>
 bool JSONRPCServer_<SessionStoreType>::onHTTPPostEvent(PostEventArgs& args)
 {
-    Json::Value json;
-    Json::Reader reader;
-
-    if (reader.parse(args.getBuffer().getText(), json))
+    try
     {
+        ofJson json = ofJson::parse(args.getBuffer().getText());
+
         try
         {
             JSONRPC::Request request = JSONRPC::Request::fromJSON(args, json);
@@ -275,7 +274,7 @@ bool JSONRPCServer_<SessionStoreType>::onHTTPPostEvent(PostEventArgs& args)
         catch (Poco::Exception& exc)
         {
             JSONRPC::Response response(args,
-                                       Json::Value::null, // null value is required when parse exceptions.
+                                       ofJson(nullptr), // null value is required when parse exceptions.
                                        JSONRPC::Error(JSONRPC::Errors::RPC_ERROR_METHOD_NOT_FOUND));
 
             std::string buffer = response.toString();
@@ -284,10 +283,11 @@ bool JSONRPCServer_<SessionStoreType>::onHTTPPostEvent(PostEventArgs& args)
 
         return true;  // We attended to the event, so consume it.
     }
-    else
+    catch (const std::invalid_argument& exc)
     {
-        ofLogVerbose("JSONRPCServer::onHTTPPostEvent") << "Could not parse as JSON: " << reader.getFormattedErrorMessages();
-        
+        ofLogVerbose("JSONRPCServer::onHTTPPostEvent") << "Could not parse as JSON: " << exc.what();
+        ofLogVerbose("JSONRPCServer::onHTTPPostEvent") << args.getBuffer().getText();
+
         return false;  // We did not attend to this event, so pass it along.
     }
 }

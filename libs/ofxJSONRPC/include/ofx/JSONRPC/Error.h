@@ -28,7 +28,8 @@
 
 #include <string>
 #include <map>
-#include "json/json.h"
+#include "ofConstants.h"
+#include "json.hpp"
 #include "ofx/JSONRPC/Errors.h"
 
 
@@ -54,37 +55,40 @@ public:
 	/// \brief Create an Error.
 	/// \param code is the error code.
 	/// \param message the error message.
-	explicit Error(int code, const Json::Value& data);
+	explicit Error(int code, const ofJson& data);
 
 	/// \brief Create an Error.
 	/// \param code is the error code.
 	/// \param message the error message.
 	/// \param data the error data.
-	explicit Error(int code, const std::string& message, const Json::Value& data);
+	explicit Error(int code, const std::string& message, const ofJson& data);
 
     /// \brief Destroy the Error.
     virtual ~Error();
 
     /// \returns the error code.
-    int getCode() const;
+    int code() const;
+    OF_DEPRECATED_MSG("Use code() instead.", int getCode() const);
 
     /// \returns the error message.
-    std::string getMessage() const;
+    const std::string& message() const;
+    OF_DEPRECATED_MSG("Use message() instead.", std::string getMessage() const);
 
     /// \returns the data.
     /// \note The JSON data may be empty.
-    Json::Value getData() const;
+    const ofJson& data() const;
+    OF_DEPRECATED_MSG("Use data() instead.", ofJson getData() const);
 
     /// \brief Serialize the Error object to JSON.
     /// \param error the Error object to serialize.
     /// \returns JSONRPC compatible JSON.
-    static Json::Value toJSON(const Error& error);
+    static ofJson toJSON(const Error& error);
 
     /// \brief Deserialize the JSON to a Error object.
     /// \param json JSONRPC compatible JSON to deserialize.
     /// \returns the deserialized Error.
     /// \throws Poco::Exception if the JSON is not valid.
-    static Error fromJSON(const Json::Value& json);
+    static Error fromJSON(const ofJson& json);
 
 protected:
     /// \brief A Number that indicates the error type that occurred.
@@ -99,7 +103,7 @@ protected:
     ///
     /// This may be omitted. The value of this member is defined by the Server
     /// (e.g. detailed error information, nested errors etc.).
-    Json::Value _data;
+    ofJson _data;
 
     /// \brief Error code tag.
     static const std::string ERROR_CODE_TAG;

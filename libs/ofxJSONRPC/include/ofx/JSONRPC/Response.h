@@ -28,7 +28,7 @@
 
 #include <string>
 #include <map>
-#include "json/json.h"
+#include "json.hpp"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/BaseMessage.h"
 
@@ -60,15 +60,15 @@ public:
     /// \param id The id of the original remote call.
     /// \param result The results of the function call as JSON.
     Response(HTTP::ServerEventArgs& evt,
-             const Json::Value& id,
-             const Json::Value& result);
+             const ofJson& id,
+             const ofJson& result);
 
     /// \brief Create an Error Response.
     /// \param id The id of the original remote call.
     /// \param error The Error response. The Error MUST
     ///        contain a valid error code.
     Response(HTTP::ServerEventArgs& evt,
-             const Json::Value& id,
+             const ofJson& id,
              const Error& error);
 
     /// \brief Destroy the Response.
@@ -77,14 +77,16 @@ public:
     /// \brief Get the Result JSON if available.
     /// \returns result JSON data if available.
     /// \note The JSON data will be empty if there is an error.
-    const Json::Value& getResult() const;
+    const ofJson& result() const;
+    OF_DEPRECATED_MSG("Use result() instead.", const ofJson& getResult() const);
 
     /// \brief Get the Error if available.
     ///
     /// The Error code will be NO_ERROR if the call was successful.
     ///
     /// \returns the Error if available.
-    const Error& getError() const;
+    const Error& error() const;
+    OF_DEPRECATED_MSG("Use error() instead.", const Error& getError() const);
 
     /// \brief Query if the Response is an error response.
     /// \returns true iff an error code is present.
@@ -98,17 +100,17 @@ public:
     /// \brief Serialize the Response object to JSON.
     /// \param response the Response object to serialize.
     /// \returns JSONRPC compatible JSON.
-    static Json::Value toJSON(const Response& response);
+    static ofJson toJSON(const Response& response);
 
     /// \brief Deserialize the JSON to a Response object.
     /// \param json JSONRPC compatible JSON to deserialize.
     /// \returns the deserialized Response.
     /// \throws ParseException if the JSON is not valid.
-    static Response fromJSON(HTTP::ServerEventArgs& evt, const Json::Value& json);
+    static Response fromJSON(HTTP::ServerEventArgs& evt, const ofJson& json);
 
 protected:
     /// \brief The result of the remote call.
-    Json::Value _result;
+    ofJson _result;
 
     /// \brief An Error object.  Will be empty if there is no error.
     Error _error;

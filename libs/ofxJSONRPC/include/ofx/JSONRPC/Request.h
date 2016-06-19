@@ -28,7 +28,7 @@
 
 #include <string>
 #include <map>
-#include "json/json.h"
+#include "json.hpp"
 #include "ofx/JSONRPC/Error.h"
 #include "ofx/JSONRPC/BaseMessage.h"
 
@@ -68,14 +68,14 @@ public:
     /// \param method The method's name.
     /// \param parameters The parameters to pass to the method.
     Request(HTTP::ServerEventArgs& evt,
-            const std::string& method, const Json::Value& parameters);
+            const std::string& method, const ofJson& parameters);
 
     /// \brief Create a Request.
     /// \param evt The originating server event.
     /// \param id The transatction identification number.
     /// \param method The method's name.
     Request(HTTP::ServerEventArgs& evt,
-            const Json::Value& id, const std::string& method);
+            const ofJson& id, const std::string& method);
 
     /// \brief Create a Request.
     /// \param evt The originating server event.
@@ -83,20 +83,22 @@ public:
     /// \param method The method's name.
     /// \param parameters The parameters to pass to the method.
     Request(HTTP::ServerEventArgs& evt,
-            const Json::Value& id,
+            const ofJson& id,
             const std::string& method,
-            const Json::Value& parameters);
+            const ofJson& parameters);
 
     /// \brief Destroy the ErrorResponse.
     virtual ~Request();
 
     /// \brief Get the request method.
     /// \returns the request method.
-    const std::string& getMethod() const;
+    const std::string& method() const;
+    OF_DEPRECATED_MSG("Use method() instead.", const std::string& getMethod() const);
 
     /// \brief Get the request parameters.
     /// \returns the request method parameters.
-    const Json::Value& getParameters() const;
+    const ofJson& parameters() const;
+    OF_DEPRECATED_MSG("Use parameters() instead.", const ofJson& getParameters() const);
 
     /// \brief Query whether this Request is a notification.
     /// \returns true iff the id is null.
@@ -110,21 +112,20 @@ public:
     /// \brief Serialize the Request object to JSON.
     /// \param request the Request object to serialize.
     /// \returns JSONRPC compatible JSON.
-    static Json::Value toJSON(const Request& request);
+    static ofJson toJSON(const Request& request);
 
     /// \brief Deserialize the JSON to a Request object.
     /// \param json JSONRPC compatible JSON to deserialize.
     /// \returns deserialized Request.
     /// \throws ParseException if the json is not valid.
-    static Request fromJSON(HTTP::ServerEventArgs& evt,
-                            const Json::Value& json);
+    static Request fromJSON(HTTP::ServerEventArgs& evt, const ofJson& json);
 
 protected:
     /// \brief The method name.
     std::string _method;
 
     /// \brief The method parameters.
-    Json::Value _parameters;
+    ofJson _parameters;
 
     /// \brief Method tag.
     static const std::string METHOD_TAG;

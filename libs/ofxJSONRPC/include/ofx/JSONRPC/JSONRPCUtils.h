@@ -27,7 +27,7 @@
 
 
 #include <string>
-#include "json/json.h"
+#include "json.hpp"
 #include "Poco/UUID.h"
 #include "ofx/JSONRPC/Errors.h"
 #include "ofx/JSONRPC/Response.h"
@@ -47,16 +47,36 @@ public:
     /// \param styled If true, the raw string will be indented
     ///        with returns and thus easier to read (aka pretty print).
     /// \returns A std::string representation of the JSON.
-    static std::string toString(const Json::Value& json, bool styled = false);
+    static std::string toString(const ofJson& json, bool styled = false);
 
-    static bool hasMemberOfType(const Json::Value& json,
-                                const std::string& name,
-                                Json::ValueType type);
+    /// \brief Determine whether the given json has the named key.
+    /// \param json The json to check.
+    /// \param key The key to check.
+    /// \returns true if the given key exists.
+    static bool hasKey(const ofJson& json, const std::string& key);
 
-    static bool hasString(const Json::Value& json,
-                          const std::string& name,
-                          bool requireNonEmpty = false);
+    /// \brief Determine whether the given json has the named key of a certain type.
+    /// \param json The json to check.
+    /// \param key The key to check.
+    /// \param type The data type to check.
+    /// \returns true if the given key exists.
+    static bool hasKeyOfType(const ofJson& json,
+                             const std::string& key,
+                             ofJson::value_t type);
 
+    /// \brief Determine whether the given json has the named key of string type.
+    /// \param json The json to check.
+    /// \param key The key to check.
+    /// \returns true if the given key exists.
+    static bool hasStringKey(const ofJson& json,
+                             const std::string& key);
+
+    /// \brief Determine whether the given json has the named key of integer type.
+    /// \param json The json to check.
+    /// \param key The key to check.
+    /// \returns true if the given key exists.
+    static bool hasIntegerKey(const ofJson& json,
+                              const std::string& key);
 
 };
 

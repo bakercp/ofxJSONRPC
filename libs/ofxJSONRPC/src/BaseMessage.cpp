@@ -36,7 +36,7 @@ const std::string BaseMessage::ID_TAG               = "id";
 
 
 BaseMessage::BaseMessage(HTTP::ServerEventArgs& evt,
-                         const Json::Value& id):
+                         const ofJson& id):
     HTTP::ServerEventArgs(evt),
     _id(id)
 {
@@ -48,7 +48,13 @@ BaseMessage::~BaseMessage()
 }
 
 
-Json::Value BaseMessage::getId() const
+const ofJson& BaseMessage::id() const
+{
+    return _id;
+}
+
+
+ofJson BaseMessage::getId() const
 {
     return _id;
 }

@@ -36,17 +36,17 @@ const std::string Request::PARAMS_TAG = "params";
 
 
 Request::Request(HTTP::ServerEventArgs& evt, const std::string& method):
-    BaseMessage(evt, Json::Value::null),
+    BaseMessage(evt, nullptr),
     _method(method),
-    _parameters(Json::Value())
+    _parameters(nullptr)
 {
 }
 
 
 Request::Request(HTTP::ServerEventArgs& evt,
                  const std::string& method,
-                 const Json::Value& parameters):
-    BaseMessage(evt, Json::Value::null),
+                 const ofJson& parameters):
+    BaseMessage(evt, nullptr),
     _method(method),
     _parameters(parameters)
 {
@@ -54,19 +54,19 @@ Request::Request(HTTP::ServerEventArgs& evt,
 
 
 Request::Request(HTTP::ServerEventArgs& evt,
-                 const Json::Value& id,
+                 const ofJson& id,
                  const std::string& method):
     BaseMessage(evt, id),
     _method(method),
-    _parameters(Json::Value::null)
+    _parameters(nullptr)
 {
 }
 
 
 Request::Request(HTTP::ServerEventArgs& evt,
-                 const Json::Value& id,
+                 const ofJson& id,
                  const std::string& method,
-                 const Json::Value& parameters):
+                 const ofJson& parameters):
     
     BaseMessage(evt, id),
     _method(method),
@@ -80,15 +80,27 @@ Request::~Request()
 }
 
 
-const std::string& Request::getMethod() const
+const std::string& Request::method() const
 {
     return _method;
 }
 
 
-const Json::Value& Request::getParameters() const
+const std::string& Request::getMethod() const
+{
+    return method();
+}
+
+
+const ofJson& Request::parameters() const
 {
     return _parameters;
+}
+
+
+const ofJson& Request::getParameters() const
+{
+    return parameters();
 }
 
 
@@ -104,18 +116,18 @@ std::string Request::toString(bool styled) const
 }
 
 
-Json::Value Request::toJSON(const Request& request)
+ofJson Request::toJSON(const Request& request)
 {
-    Json::Value result;
+    ofJson result;
 
     result[PROTOCOL_VERSION_TAG] = PROTOCOL_VERSION;
 
-    result[ID_TAG] = request.getId();
-    result[METHOD_TAG] = request.getMethod();
+    result[ID_TAG] = request.id();
+    result[METHOD_TAG] = request.method();
 
-    if (!request.getParameters().isNull())
+    if (!request.parameters().is_null())
     {
-        result[PARAMS_TAG] = request.getParameters();
+        result[PARAMS_TAG] = request.parameters();
     }
     
     return result;
@@ -123,45 +135,39 @@ Json::Value Request::toJSON(const Request& request)
 
 
 Request Request::fromJSON(HTTP::ServerEventArgs& evt,
-                          const Json::Value& json)
+                          const ofJson& json)
 {
-    if (json.isMember(PROTOCOL_VERSION_TAG) &&
-        json[PROTOCOL_VERSION_TAG].isString() && // require string
-        json[PROTOCOL_VERSION_TAG].asString() == PROTOCOL_VERSION)
+    if (JSONRPCUtils::hasStringKey(json, PROTOCOL_VERSION_TAG) &&
+        json[PROTOCOL_VERSION_TAG] == PROTOCOL_VERSION)
     {
-        if (json.isMember(METHOD_TAG) &&
-            json[METHOD_TAG].isString()) // require method as string
+        if (JSONRPCUtils::hasStringKey(json, METHOD_TAG))
         {
-            if (json.isMember(ID_TAG))
-            {
-                if (json.isMember(PARAMS_TAG))
-                {
-                    return Request(evt,
-                                   json[ID_TAG],
-                                   json[METHOD_TAG].asString(), // checked above
-                                   json[PARAMS_TAG]);
+            std::string method = json[METHOD_TAG];
 
+            if (JSONRPCUtils::hasKey(json, ID_TAG))
+            {
+                ofJson id = json[ID_TAG];
+
+                if (JSONRPCUtils::hasKey(json, PARAMS_TAG))
+                {
+                    ofJson params = json[PARAMS_TAG];
+                    return Request(evt, id, method, params);
                 }
                 else
                 {
-                    return Request(evt,
-                                   json[ID_TAG],
-                                   json[METHOD_TAG].asString()); // checked above
+                    return Request(evt, id, method);
                 }
             }
             else
             {
-                if (json.isMember(PARAMS_TAG))
+                if (JSONRPCUtils::hasKey(json, PARAMS_TAG))
                 {
-                    return Request(evt,
-                                   json[METHOD_TAG].asString(), // checked above
-                                   json[PARAMS_TAG]);
-
+                    ofJson params = json[PARAMS_TAG];
+                    return Request(evt, method, params);
                 }
                 else
                 {
-                    return Request(evt,
-                                   json[METHOD_TAG].asString()); // checked above
+                    return Request(evt, method);
                 }
             }
         }

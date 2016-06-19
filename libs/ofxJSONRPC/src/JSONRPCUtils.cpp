@@ -30,48 +30,60 @@ namespace ofx {
 namespace JSONRPC {
 
 
-std::string JSONRPCUtils::toString(const Json::Value& json, bool styled)
+std::string JSONRPCUtils::toString(const ofJson& json, bool styled)
 {
     std::string raw;
 
     if (styled)
     {
-        Json::StyledWriter writer;
-        raw = writer.write(json);
+        raw = json.dump(4);
     }
     else
     {
-        Json::FastWriter writer;
-        raw = writer.write(json);
+        raw = json.dump();
     }
 
     return raw;
 }
 
 
-bool JSONRPCUtils::hasMemberOfType(const Json::Value& json,
-                                   const std::string& name,
-                                   Json::ValueType type)
+bool JSONRPCUtils::hasKey(const ofJson& json, const std::string& key)
 {
-    return json.isMember(name) && json[name].isConvertibleTo(type);
+    return json.find(key) != json.end();
 }
 
 
-bool JSONRPCUtils::hasString(const Json::Value& json,
-                             const std::string& name,
-                             bool requireNonEmpty)
+bool JSONRPCUtils::hasKeyOfType(const ofJson& json,
+                                const std::string& key,
+                                ofJson::value_t type)
 {
-    cout << hasMemberOfType(json, name, Json::stringValue) << endl;
+    auto i = json.find(key);
+
+    if (i != json.end())
+    {
+        if (i->type() == type)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    return false;
+}
 
 
-    if (requireNonEmpty)
-    {
-        return hasMemberOfType(json, name, Json::stringValue) && !json[name].asString().empty();
-    }
-    else
-    {
-        return hasMemberOfType(json, name, Json::stringValue);
-    }
+bool JSONRPCUtils::hasStringKey(const ofJson& json,
+                                const std::string& key)
+{
+    return hasKeyOfType(json, key, ofJson::value_t::string);
+}
+
+
+bool JSONRPCUtils::hasIntegerKey(const ofJson& json,
+                                 const std::string& key)
+{
+    return hasKeyOfType(json, key, ofJson::value_t::number_integer);
 }
 
 

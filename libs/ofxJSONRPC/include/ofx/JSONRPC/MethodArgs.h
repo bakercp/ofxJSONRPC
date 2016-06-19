@@ -56,16 +56,16 @@ public:
     /// \param params The JSON contents of the JSONRPC request params.
     ///        If there are no arguments provided, the params are null.
     MethodArgs(HTTP::ServerEventArgs&,
-               const Json::Value& params);
+               const ofJson& params);
 
     /// \brief Destroy the MethodArgs.
     virtual ~MethodArgs();
 
     /// \brief The JSON contents of the JSONRPC request params.
-    const Json::Value params;
+    const ofJson params;
 
     /// \brief The result to be returned, if required.
-    Json::Value result;
+    ofJson result;
 
     /// \brief The error to be returned, if required.
     ///
