@@ -27,7 +27,7 @@
 
 
 #include <string>
-#include "json.hpp"
+#include "ofJson.h"
 #include "ofx/HTTP/ServerEvents.h"
 
 

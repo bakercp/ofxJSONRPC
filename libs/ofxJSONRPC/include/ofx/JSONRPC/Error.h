@@ -29,7 +29,7 @@
 #include <string>
 #include <map>
 #include "ofConstants.h"
-#include "json.hpp"
+#include "ofJson.h"
 #include "ofx/JSONRPC/Errors.h"
 
 
