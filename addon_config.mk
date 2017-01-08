@@ -5,4 +5,4 @@ meta:
 	ADDON_TAGS = "http" "json" "jsonrpc"
 	ADDON_URL = http://github.com/bakercp/ofxJSONRPC
 common:
-	ADDON_DEPENDENCIES = ofxHTTP ofxPoco
+	ADDON_DEPENDENCIES = ofxHTTP
