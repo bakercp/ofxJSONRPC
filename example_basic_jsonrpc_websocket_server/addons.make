@@ -3,4 +3,5 @@ ofxIO
 ofxJSONRPC
 ofxMediaType
 ofxNetworkUtils
+ofxPoco
 ofxSSLManager
