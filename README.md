@@ -7,7 +7,7 @@ Create a JSONRPC server application with openFrameworks.
 
 ## Features
 
-![Screenshot](https://github.com/bakercp/ofxSpatialHash/raw/master/docs/screen_2d.png)
+![Screenshot](https://github.com/bakercp/ofxJSONRPC/raw/master/docs/screen.png)
 
 [JSONRPC 2.0](http://www.jsonrpc.org/specification) Implementation using openFrameworks events, WebSockets, etc.
 
