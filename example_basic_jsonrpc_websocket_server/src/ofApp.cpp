@@ -60,7 +60,15 @@ void ofApp::setup()
 void ofApp::draw()
 {
     ofBackground(255);
-    ofDrawBitmapStringHighlight(userText, ofPoint(14, 18));
+    ofDrawBitmapStringHighlight("Open the URL: " + server.url(), 14, 18);
+    ofDrawBitmapStringHighlight(userText, 14, 42, ofColor::yellow, ofColor::red);
+    
+    fader = ofClamp(fader - 10, 0, 255);
+    ofDrawBitmapStringHighlight(fadingText,
+                                ofGetWidth() / 2 - 25,
+                                ofGetHeight() / 2,
+                                ofColor(0, fader),
+                                ofColor(255, fader));
 }
 
 
@@ -76,6 +84,8 @@ void ofApp::ping()
 {
     pingPlayer.play();
     ofLogVerbose("ofApp::ping") << "Ping'd";
+    fadingText = "ping!";
+    fader = 255;
 }
 
 
@@ -83,6 +93,8 @@ void ofApp::pong()
 {
     pongPlayer.play();
     ofLogVerbose("ofApp::pong") << "Pong'd";
+    fadingText = "pong!";
+    fader = 255;
 }
 
 

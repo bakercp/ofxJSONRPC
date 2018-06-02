@@ -64,5 +64,8 @@ private:
     // modified by multiple clients. In our case, userText must be protected.
     // We mark the mutex as mutable so that it can be used in const functions.
     mutable std::mutex mutex;
+    
+    float fader = 0;
+    std::string fadingText;
 
 };
