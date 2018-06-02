@@ -15,9 +15,9 @@
 class ofApp: public ofBaseApp
 {
 public:
-    void setup();
-    void draw();
-    void exit();
+    void setup() override;
+    void draw() override;
+    void exit() override;
 
     // Registered methods.
     void getText(ofx::JSONRPC::MethodArgs& args);
