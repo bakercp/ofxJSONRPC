@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<!-- Force latest IE rendering engine or ChromeFrame if installed -->
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+<meta charset="utf-8">
+<title>ofx::HTTP::BasicJSONRPCServer</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="img/favicon.ico">
+<!-- Bootstrap styles -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<!-- FontAwesome -->
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<!-- Syntax highlighting. -->
+<link rel="stylesheet" href="css/prism.css">
+<!-- Generic page styles -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">ofx::HTTP::BasicJSONRPCServer Demo</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Basic JSONRPC Websocket Server Demo</h1>
+        <br>
+        <blockquote>
+            <p>
+                <code>ofx::HTTP::BasicJSONRPCServer</code> is a simple server for processing JSONRPC calls.
+            </p>
+        </blockquote>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="pull-left">
+                    <strong>Send Text to the Server (Look for your red and yellow text in the app window)</strong>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="input-group">
+                  <input id="text-to-send" type="text" class="form-control">
+                  <span class="input-group-btn">
+                    <button id="set-text" class="btn btn-default" type="button">Send</button>
+                  </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="pull-left">
+                    <strong>Get Text from the Server</strong>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="input-group">
+                  <input id="text-to-recieve" type="text" class="form-control">
+                  <span class="input-group-btn">
+                    <button id="get-text" class="btn btn-default" type="button">Receive</button>
+                  </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="pull-left">
+                    <strong>Ping the Server</strong>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button id="ping" type="button" class="btn btn-default">Ping</button>
+                <button id="pong" type="button" class="btn btn-default">Pong</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/jquery.jsonrpcclient.js"></script>
+    <script src="./js/jquery.json.js"></script>
+    <script src="./js/prism.js"></script>
+    <script src="./js/ofxUtils.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
